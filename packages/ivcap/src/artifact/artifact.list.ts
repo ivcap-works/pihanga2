@@ -1,0 +1,125 @@
+import { v4 as uuidv4 } from "uuid"
+import {
+  PiRegister,
+  ReduxState,
+  ReduxAction,
+  createOnAction,
+  DispatchF,
+} from "@pihanga/core"
+import { getAccessToken } from ".."
+import { createListAction, ListEvent, LoadListEvent } from "../actions"
+import {
+  getNextPage,
+  createListUrlBuilder,
+  restErrorHandling,
+  dispatchEvent,
+  PromiseT,
+  PropT,
+  getPromise,
+} from "../common"
+import { ACTION_TYPES } from "./artifact.actions"
+
+export type Cursor = string
+export type ArtifactListEvent = ListEvent & {
+  artifacts: ArtifactListItem[]
+  offset: number
+  nextPage?: Cursor
+  prevPage?: Cursor
+}
+
+export type ArtifactListItem = {
+  id: string
+  name: string
+  status: string
+  accountID: string
+}
+
+export type LoadArtifactListEvent = LoadListEvent<ArtifactListEvent>
+
+export function dispatchIvcapGetArtifactList(
+  ev: LoadArtifactListEvent,
+  dispatch: DispatchF,
+): void {
+  const a = createListAction(ACTION_TYPES.LOAD_LIST, ev)
+  dispatch(a)
+}
+
+export const onArtifactList = createOnAction<ArtifactListEvent>(
+  ACTION_TYPES.LIST,
+)
+
+export function getArtifactList<S extends ReduxState>(
+  apiURL: URL,
+  register: PiRegister,
+): (props: PropT<LoadArtifactListEvent>) => PromiseT<S, ArtifactListEvent> {
+  return (props: PropT<LoadArtifactListEvent>) => {
+    const reqID = uuidv4()
+    dispatchIvcapGetArtifactList(
+      { apiURL: apiURL.toString(), reqID, ...props },
+      register.reducer.dispatchFromReducer,
+    )
+    return getPromise<S, ArtifactListEvent>(ACTION_TYPES.LIST, register, reqID)
+  }
+}
+
+
+//type History = Cursor[]
+// const Page2Prev: { [k: Cursor]: Cursor } = {}
+
+//====== API HANDLER
+
+export function init(register: PiRegister): void {
+  register.GET<ReduxState, ReduxAction & LoadArtifactListEvent, any>({
+    name: "loadArtifactList",
+    origin: ({ apiURL }, _) => apiURL,
+    url: createListUrlBuilder("artifacts"),
+    request: (a, _) => ({ ...a, page: removePageOffset(a) } as any),
+    trigger: ACTION_TYPES.LOAD_LIST,
+    headers: () => ({ Authorization: `Bearer ${getAccessToken()}` }),
+    reply: (state, content: any, dispatch, { request }) => {
+      const artifacts = (content.artifacts || []).map(toArtifactListItem)
+      const offset = getOffsetFromPage(request.page)
+      const nextPage = addOffsetFromPage(offset + artifacts.length, getNextPage(content.links))
+      const ev: ArtifactListEvent = {
+        artifacts,
+        offset,
+        nextPage,
+        prevPage: request.page,
+      }
+      dispatchEvent(ev, ACTION_TYPES.LIST, dispatch, request)
+      return state
+    },
+    error: restErrorHandling("ivcap-api:loadArtifactList"),
+  })
+}
+
+function removePageOffset(props: any): string | undefined {
+  const page = props.page
+  if (page) {
+    return page.split(":")[0]
+  } else {
+    return undefined
+  }
+}
+
+function getOffsetFromPage(page?: string): number {
+  return page ? Number(page.split(":")[1]) : 0
+}
+
+function addOffsetFromPage(offset: number, page?: string): string | undefined {
+  return page ? `${page}:${offset}` : undefined
+}
+
+function toArtifactListItem(els: any): ArtifactListItem {
+  // {
+  //   id: 'urn:ivcap:artifact:cbcc1748-1a45-4369-85ee-e631b99676c4',
+  //   name: 'tmppsmdglsm-1154x866.pseudo.png',
+  //   status: 'ready'
+  // }
+  return {
+    id: els.id,
+    name: els.name,
+    status: els.status,
+    accountID: els.account_id,
+  }
+}

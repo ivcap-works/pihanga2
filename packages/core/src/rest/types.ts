@@ -1,0 +1,120 @@
+import { registerActions } from "../redux"
+import { DispatchF, ReduxAction, ReduxState } from "../types"
+
+export const Domain = "pi/rest"
+export const ACTION_TYPES = registerActions(Domain, [
+  // "GET_SUBMITTED",
+  // "GET_RESULT",
+  // "GET_ERROR",
+  // "GET_INTERNAL_ERROR",
+  // "GET_PERIODIC_TICK",
+  "POST_SUBMITTED",
+  "POST_RESULT",
+  "POST_ERROR",
+  "POST_INTERNAL_ERROR",
+  "PUT_SUBMITTED",
+  "PUT_RESULT",
+  "PUT_ERROR",
+  "PUT_INTERNAL_ERROR",
+  "PATCH_SUBMITTED",
+  "PATCH_RESULT",
+  "PATCH_ERROR",
+  "PATCH_INTERNAL_ERROR",
+  "DELETE_SUBMITTED",
+  "DELETE_RESULT",
+  "DELETE_ERROR",
+  "DELETE_INTERNAL_ERROR",
+  "UNAUTHORISED_ERROR",
+  "PERMISSION_DENIED_ERROR",
+  "NOT_FOUND_ERROR",
+  "ERROR",
+])
+
+export type Bindings = { [key: string]: string | number }
+export type PoPuPaRequest = {
+  body: any
+  contentType?: string // if not set and body is 'object' then we send it as jsonconst h = {}
+  bindings?: Bindings
+}
+
+export type RegisterGenericProps<
+  S extends ReduxState,
+  A extends ReduxAction,
+  R,
+> = {
+  name: string
+  origin?: string | ((action: A, state: S) => string | URL) // if defined, will be prepended to 'url' (URL(window.location.href).origin)
+  url: string
+  trigger: string
+  guard?: (action: A, state: S) => boolean
+  headers?: (action: A, state: S) => { [key: string]: string }
+  reply: (
+    state: S,
+    reply: R,
+    dispatcher: DispatchF,
+    result: ResultAction<A>,
+  ) => S
+  error?: (
+    state: S,
+    error: ErrorAction<A>,
+    requestAction: A,
+    dispatch: DispatchF,
+  ) => S
+}
+
+export type PiRegisterGetProps<
+  S extends ReduxState,
+  A extends ReduxAction,
+  R,
+> = RegisterGenericProps<S, A, R> & {
+  request?: (action: A, state: S) => Bindings
+}
+
+export type PiRegisterPoPuPaProps<
+  S extends ReduxState,
+  A extends ReduxAction,
+  R,
+> = RegisterGenericProps<S, A, R> & {
+  request: (action: A, state: S) => PoPuPaRequest
+}
+
+export type PiRegisterDeleteProps<
+  S extends ReduxState,
+  A extends ReduxAction,
+  R,
+> = RegisterGenericProps<S, A, R> & {
+  request?: (action: A, state: S) => Bindings
+}
+
+export type HttpResponse = {
+  statusCode: number
+  headers: { [k: string]: any }
+  content: any
+  contentType: string
+}
+
+export type SubmitAction = ReduxAction & {
+  requestID: string
+  url: string
+  bindings: Bindings
+}
+
+export enum ErrorKind {
+  Unauthorised = "Unauthorised",
+  PermissionDenied = "PermissionDenied",
+  NotFound = "NotFound",
+  Other = "Other",
+}
+
+export type ResultAction<R> = ReduxAction & {
+  queryID: string
+  url: string
+  request: R
+} & HttpResponse
+
+export type ErrorAction<R> = ReduxAction & {
+  requestID: string
+  error: ErrorKind
+  url: string
+  request: R
+} & HttpResponse
