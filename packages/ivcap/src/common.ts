@@ -70,7 +70,7 @@ export function createListUrlBuilder(
   return u
 }
 
-type Links = {
+export type Links = {
   self: string
   first: string
   next?: string

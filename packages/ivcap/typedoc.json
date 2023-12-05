@@ -1,0 +1,9 @@
+{
+  "entryPoints": [
+    "src/index.ts",
+    "src/actions.ts",
+    "src/common.ts"
+  ],
+  "out": "docs",
+  "includeVersion": true
+}

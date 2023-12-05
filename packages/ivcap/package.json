@@ -2,12 +2,29 @@
   "name": "@pihanga/ivcap",
   "version": "2.0.0",
   "private": true,
-  "scripts": {
-    "build": "rm -rf ./lib && tsc && node ../../script/copy.js"
-  },
-  "keywords": [],
-  "author": "",
+  "type": "module",
   "license": "MIT",
+  "author": "max.ott@data61.csiro.au",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "main": "./dist/index.js",
+  "keywords": [
+    "pihanga",
+    "module",
+    "library"
+  ],
+  "scripts": {
+    "docs": "yarn typedoc",
+    "build": "tsc --build --watch && typedoc",
+    "build:watch": "tsc --build --watch && typedoc",
+    "prettier": "prettier --write .",
+    "preview": "vite preview",
+    "test:coverage": "vitest run --coverage",
+    "test:run": "vitest run",
+    "test:watch": "vitest"
+  },
   "dependencies": {
     "uuid": "^9.0.1"
   },
@@ -15,12 +32,23 @@
     "@pihanga/core": "^2.0.0"
   },
   "devDependencies": {
+    "@pihanga/core": "^2.0.0",
+    "@microsoft/tsdoc": "^0.14.1",
     "eslint": "^8.0.0",
     "eslint-config-react-app": "^7.0.1",
     "eslint-plugin-prettier": "^4.2.1",
     "prettier": "^2.7.1",
     "prettier-config-nick": "^1.0.2",
     "typescript": "^5.0.2",
-    "@pihanga/core": "*"
+    "@types/luxon": "^2.3.2",
+    "@types/node": "^17.0.35",
+    "c8": "^7.11.3",
+    "rollup-plugin-typescript-paths": "^1.4.0",
+    "rollup-plugin-visualizer": "^5.10.0",
+    "tslib": "^2.6.2",
+    "typedoc": "^0.25.4",
+    "vite": "^5.0.4",
+    "vite-plugin-progress": "^0.0.7",
+    "vitest": "^0.34.6"
   }
 }

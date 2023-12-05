@@ -1,24 +1,14 @@
 {
   "extends": "../../tsconfig.json",
-  "exclude": [
-    "NEEDS_WORK"
-  ],
-  // "include": [
-  //   "src",
-  //   "../core/src"
-  // ],
   "compilerOptions": {
-    "outDir": "./lib",
-    "rootDir": "./src",
     "lib": [
       "DOM",
       "DOM.Iterable",
       "ESNext"
     ],
-    "paths": {
-      "@pihanga/core": [
-        "../core/src/index.tsx"
-      ]
-    }
-  }
+    "outDir": "./dist"
+  },
+  "include": [
+    "./src"
+  ],
 }
