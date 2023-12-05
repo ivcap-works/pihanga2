@@ -2,12 +2,28 @@
   "name": "@pihanga/core",
   "version": "2.0.0",
   "private": true,
-  "scripts": {
-    "build": "rm -rf ./lib && tsc && node ../../script/copy.js"
-  },
-  "keywords": [],
-  "author": "",
+  "type": "module",
   "license": "MIT",
+  "author": "max.ott@data61.csiro.au",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "main": "./dist/index.js",
+  "keywords": [
+    "pihanga",
+    "module",
+    "library"
+  ],
+  "scripts": {
+    "docs": "yarn typedoc",
+    "build": "tsc --build --watch && typedoc",
+    "build:watch": "tsc --build --watch && typedoc",
+    "prettier": "prettier --write .",
+    "test:coverage": "vitest run --coverage",
+    "test:run": "vitest run",
+    "test:watch": "vitest"
+  },
   "dependencies": {
     "history": "^5.3.0"
   },
@@ -16,24 +32,38 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
+    "@microsoft/tsdoc": "^0.14.1",
     "@reduxjs/toolkit": "^1.8.1",
-    "react-redux": "^8.0.1",
-    "stacktrace-js": "^2.0.2",
-    "tslog": "^4.9.2",
+    "@rollup/plugin-typescript": "^11.1.5",
     "@testing-library/dom": "^9.2.0",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^14.0.0",
     "@testing-library/user-event": "^14.2.5",
+    "@types/luxon": "^2.3.2",
+    "@types/node": "^17.0.35",
     "@types/react": "^18.0.15",
     "@types/react-dom": "^18.0.6",
     "@types/stacktrace-js": "^2.0.3",
     "@types/testing-library__jest-dom": "^5.14.5",
+    "@vitest/coverage-v8": "^1.0.1",
+    "c8": "^7.11.3",
     "eslint": "^8.0.0",
     "eslint-config-react-app": "^7.0.1",
     "eslint-plugin-prettier": "^4.2.1",
     "jsdom": "^21.1.0",
     "prettier": "^2.7.1",
     "prettier-config-nick": "^1.0.2",
-    "typescript": "^5.0.2"
+    "react-redux": "^8.0.1",
+    "rollup-plugin-typescript-paths": "^1.4.0",
+    "rollup-plugin-visualizer": "^5.10.0",
+    "stacktrace-js": "^2.0.2",
+    "tslib": "^2.6.2",
+    "tslog": "^4.9.2",
+    "typedoc": "^0.25.4",
+    "typescript": "^5.0.2",
+    "vite": "^5.0.4",
+    "vite-plugin-dts": "^3.6.4",
+    "vite-plugin-progress": "^0.0.7",
+    "vitest": "^0.34.6"
   }
 }

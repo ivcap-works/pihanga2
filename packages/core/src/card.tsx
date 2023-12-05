@@ -3,7 +3,9 @@ import { useDispatch, useSelector } from "react-redux"
 
 import { getLogger } from "./logger"
 import {
+  CSSModuleClasses,
   CardAction,
+  CardProp,
   DispatchF,
   PiCardDef,
   PiCardRef,
@@ -141,9 +143,9 @@ export function memo<P, T, S extends ReduxState, C>(
   }
 }
 
-type CardProp = {
-  cardName: PiCardRef
-} & { [k: string]: any }
+// export type CardProp = {
+//   cardName: PiCardRef
+// } & { [k: string]: any }
 
 type CompProps = { [k: string]: any }
 type CardInfo = {
@@ -151,7 +153,7 @@ type CardInfo = {
   cardType: PiRegisterComponent
 }
 
-export function Card(props: CardProp): React.ReactNode {
+export function Card(props: CardProp): JSX.Element {
   if (typeof props.cardName !== "string") {
     logger.error("card name is not of type string", props.cardName)
     return <div>Unknown type of cardName '{`${props.cardName}`}'</div>
@@ -180,7 +182,7 @@ function GenericCard(cardName: string, props: CardProp, info: CardInfo) {
   return React.createElement(info.cardType.component, extCardProps, null)
 }
 
-function getCardInfo(cardName: string): [CardInfo?, React.ReactNode?] {
+function getCardInfo(cardName: string): [CardInfo?, JSX.Element?] {
   const mapping = cardMappings[cardName]
   if (!mapping) {
     return [undefined, renderUnknownCard(cardName)]
@@ -288,11 +290,11 @@ function appendEventHandlers(
   return cp
 }
 
-function renderUnknownCard(cardName: string): React.ReactNode {
+function renderUnknownCard(cardName: string): JSX.Element {
   return <div>Unknown card '{cardName}'</div>
 }
 
-function renderUnknownCardType(cardType: string): React.ReactNode {
+function renderUnknownCardType(cardType: string): JSX.Element {
   return <div>Unknown card type '{cardType}'</div>
 }
 

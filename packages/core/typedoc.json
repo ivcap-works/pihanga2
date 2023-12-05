@@ -1,0 +1,9 @@
+{
+  "entryPoints": [
+    "src/index.tsx",
+    "src/types.ts",
+    "src/rest/types.ts"
+  ],
+  "out": "docs",
+  "includeVersion": true
+}
