@@ -1,0 +1,77 @@
+{
+  "name": "@pihanga/joy-ui",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "author": "max.ott@data61.csiro.au",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "main": "./dist/index.js",
+  "keywords": [
+    "pihanga",
+    "module",
+    "library"
+  ],
+  "scripts": {
+    "docs": "yarn typedoc",
+    "build": "tsc --build && typedoc",
+    "build:watch": "tsc --build --watch && typedoc",
+    "prettier": "prettier --write .",
+    "preview": "vite preview",
+    "test:coverage": "vitest run --coverage",
+    "test:run": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@mui/icons-material": "^5.14.19",
+    "@mui/joy": "^5.0.0-beta.17",
+    "classnames": "^2.3.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-drag-drop-files": "^2.3.10",
+    "react-modal": "^3.16.1"
+  },
+  "peerDependencies": {
+    "@pihanga/core": "^2.0.0",
+    "@pihanga/cards": "^2.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@pihanga/core": "^2.0.0",
+    "@types/react-modal": "^3.16.3",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "@microsoft/tsdoc": "^0.14.1",
+    "eslint": "^8.0.0",
+    "eslint-config-react-app": "^7.0.1",
+    "eslint-plugin-prettier": "^4.2.1",
+    "prettier": "^2.7.1",
+    "prettier-config-nick": "^1.0.2",
+    "typescript": "^5.0.2",
+    "@types/luxon": "^2.3.2",
+    "@types/node": "^17.0.35",
+    "c8": "^7.11.3",
+    "rollup-plugin-typescript-paths": "^1.4.0",
+    "rollup-plugin-visualizer": "^5.10.0",
+    "tslib": "^2.6.2",
+    "typedoc": "^0.25.4"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ],
+    "plugins": [
+      "prettier"
+    ],
+    "rules": {
+      "prettier/prettier": "error",
+      "react/jsx-no-target-blank": "off"
+    }
+  },
+  "prettier": "prettier-config-nick"
+}
