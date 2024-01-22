@@ -27,7 +27,6 @@ export type ArtifactDataEvent = RequestEvent & {
 
 export type LoadArtifactDataEvent = BaseEvent<ArtifactDataEvent> & {
   id: string
-  dataURL: string
 }
 
 export function dispatchIvcapGetArtifactData(
@@ -59,7 +58,7 @@ export function getArtifactData<S extends ReduxState>(
 export function init(register: PiRegister): void {
   register.GET<ReduxState, ReduxAction & LoadArtifactDataEvent, any>({
     name: "getArtifactData",
-    origin: ({ dataURL }, _) => new URL(dataURL).origin,
+    origin: ({ apiURL }, _) => apiURL,
     url: "/1/artifacts/:id/blob",
     trigger: ACTION_TYPES.LOAD_DATA,
     request: (a, _) => {

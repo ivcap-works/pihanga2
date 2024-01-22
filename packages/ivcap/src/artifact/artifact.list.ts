@@ -29,9 +29,11 @@ export type ArtifactListEvent = ListEvent & {
 
 export type ArtifactListItem = {
   id: string
-  name: string
   status: string
-  accountID: string
+  mimeType: string
+  name: string
+  size: number
+  href: string
 }
 
 export type LoadArtifactListEvent = LoadListEvent<ArtifactListEvent>
@@ -77,7 +79,7 @@ export function init(register: PiRegister): void {
     trigger: ACTION_TYPES.LOAD_LIST,
     headers: () => ({ Authorization: `Bearer ${getAccessToken()}` }),
     reply: (state, content: any, dispatch, { request }) => {
-      const artifacts = (content.artifacts || []).map(toArtifactListItem)
+      const artifacts = (content.items || []).map(toArtifactListItem)
       const offset = getOffsetFromPage(request.page)
       const nextPage = addOffsetFromPage(offset + artifacts.length, getNextPage(content.links))
       const ev: ArtifactListEvent = {
@@ -118,8 +120,10 @@ function toArtifactListItem(els: any): ArtifactListItem {
   // }
   return {
     id: els.id,
-    name: els.name,
     status: els.status,
-    accountID: els.account_id,
+    mimeType: els["mime-type"],
+    name: els.name,
+    size: els.size,
+    href: els.href
   }
 }
