@@ -24,7 +24,9 @@ node_modules
 coverage
 
 # Production
-build
+buil
+dist
+
 **/lib
 **/lib/*
 **/NEEDS_WORK
