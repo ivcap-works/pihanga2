@@ -17,7 +17,7 @@
   ],
   "scripts": {
     "docs": "yarn typedoc",
-    "build": "tsc --build --watch && typedoc",
+    "build": "tsc --build && typedoc",
     "build:watch": "tsc --build --watch && typedoc",
     "prettier": "prettier --write .",
     "test:coverage": "vitest run --coverage",

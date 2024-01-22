@@ -24,11 +24,13 @@ export type ShowPageEvent = {
 export const onShowPage = createOnAction<ShowPageEvent>(ACTION_TYPES.SHOW_PAGE)
 
 export const showPage = (dispatch: DispatchF, path: string[], query?: PathQuery) => {
-  dispatch<ReduxAction & ShowPageEvent>({
-    type: ACTION_TYPES.SHOW_PAGE,
-    path, query, fromBrowser: false
-  })
+  dispatch(createShowPageAction(path, query))
 }
+
+export const createShowPageAction = (path: string[], query?: PathQuery): ReduxAction & ShowPageEvent => ({
+  type: ACTION_TYPES.SHOW_PAGE,
+  path, query, fromBrowser: false
+})
 
 export type NavigateToPageEvent = {
   url: string

@@ -63,12 +63,6 @@ export type PiRegisterOneShotReducerF = <
 ) => void
 
 
-// export type MapperF<S extends ReduxState, A extends ReduxAction> = (
-//   state: S,
-//   action: A,
-//   dispatch: DispatchF,
-// ) => S
-
 // CARDS
 
 // context props given to <Card> in parent card
@@ -77,11 +71,13 @@ export type PiDefCtxtProps = { [k: string]: any }
 // type for <Card .../>
 export type CardProp = {
   cardName: PiCardRef
+  cardKey?: string
+  parentCard: string
 } & PiDefCtxtProps
 
 
 // type which needs to be implemented by card components
-export type PiCardProps<P, E> = P & {
+export type PiCardProps<P, E = {}> = P & {
   cardName: string
   children?: React.ReactNode
   _cls: (elName: string | string[], styles?: CSSModuleClasses) => string
@@ -102,6 +98,7 @@ export type StateMapper<T, S extends ReduxState, C = PiDefCtxtProps> = (
 
 export type StateMapperContext<C> = {
   cardName: string
+  cardKey?: string
   ctxtProps: C
   ref?: RefF
 }
@@ -135,3 +132,14 @@ export type PiCardDef = {
 } & {
   [k: string]: GenericCardParameterT
 }
+
+// METACARD
+
+export type PiRegisterMetaCard = {
+  type: string,
+  mapper: MetaCardMapperF
+  events?: { [key: string]: string }
+}
+
+export type RegisterCardF = (name: string, parameters: PiCardDef) => PiCardRef
+export type MetaCardMapperF = (name: string, props: any, registerCard: RegisterCardF) => PiCardDef

@@ -10,8 +10,11 @@ import {
   ReduxAction,
   ReduxState,
   PiReducer,
+  RegisterCardF,
+  MetaCardMapperF,
+  PiRegisterMetaCard,
 } from "./types"
-import { Card, registerCard, registerCardComponent } from "./card"
+import { Card, registerCard, registerCardComponent, registerMetacard } from "./card"
 import { createReducer } from "./reducer"
 import { ON_INIT_ACTION, currentRoute, init as routerInit } from "./router"
 
@@ -34,17 +37,19 @@ const logger = getLogger("root")
 export type {
   PiMapProps,
   PiCardDef,
+  RegisterCardF,
   ReduxState,
   ReduxAction,
   DispatchF,
+  PiDefCtxtProps,
 } from "./types"
 export { registerActions, actionTypesToEvents, createOnAction } from "./redux"
-export { Card, memo, createCardDeclaration } from "./card"
+export { Card, memo, createCardDeclaration, isCardRef } from "./card"
 export { getLogger } from "./logger"
 export type { PiCardProps, PiCardRef } from "./types"
 export type { ErrorAction as RestErrorAction } from "./rest"
 
-export { showPage, onInit, onShowPage, onNavigateToPage } from "./router"
+export { showPage, onInit, onShowPage, createShowPageAction, onNavigateToPage } from "./router"
 export type { ShowPageEvent, NavigateToPageEvent } from "./router"
 
 export interface PiRegister {
@@ -56,14 +61,13 @@ export interface PiRegister {
    * Register a meta card which expands a single card definition of type `name`
    * into a new set of cards which can be registered in turn through `registerCards`.
    *
-   * The `transformF` function takes the `cardName` and `cardDef` as the two paramters
-   * and is expected to return a map where the keys are new card anmes and their respective
-   * values the respective card declaration.
+   * The `transformF` function takes the property declaration and uses the
+   * the common `PiRegister` to define the inner content of this meta card
    *
    * @param {string} type
-   * @param {function} transformF
+   * @param {function} mapper
    */
-  // metaCard<T>(type: string, transformF: PiMetaTransformerF<T>): void;
+  metaCard<C>(declaration: PiRegisterMetaCard): void
 
   GET<S extends ReduxState, A extends ReduxAction, R>(
     props: PiRegisterGetProps<S, A, R>,
@@ -90,9 +94,19 @@ export const DEFAULT_REDUX_STATE = {
   pihanga: {},
 }
 
+export type StartProps = {
+  // redux settins
+  disableSerializableStateCheck?: boolean
+  disableSerializableActionCheck?: boolean
+  ignoredActions?: string[]
+  ignoredActionPaths?: string[]
+  ignoredStatePaths?: string[]
+}
+
 export function start<S extends Partial<ReduxState>>(
   initialState: S,
   inits: ((register: PiRegister) => void)[] = [],
+  props: StartProps = {}
 ): PiRegister {
   const state = {
     ...DEFAULT_REDUX_STATE,
@@ -109,6 +123,19 @@ export function start<S extends Partial<ReduxState>>(
   }
   const [reducer, piReducer] = createReducer(state, dispatcherW)
   const route = routerInit(piReducer)
+
+  const ignoredActions = ([] as string[]).concat(props.ignoredActions || [])
+  const ignoredActionPaths = [
+    "apiURL", // from IVCAP
+    "mapper",
+    "content", // from REST
+    "request",
+    "headers",
+    "cause",
+    "data",
+  ].concat(props.ignoredActionPaths || [])
+  const ignoredPaths = ["cause.content"].concat(props.ignoredStatePaths || [])
+
   const store = configureStore({
     reducer,
     preloadedState: state as any, // keep type checking happy
@@ -116,24 +143,21 @@ export function start<S extends Partial<ReduxState>>(
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware({
         serializableCheck: {
-          //ignoredActions: ['your/action/type'],
-          ignoredActionPaths: [
-            "apiURL", // from IVCAP
-            "mapper",
-            "content", // from REST
-            "request",
-            "headers",
-            "cause",
-          ],
-          // ignoredPaths: ["cause.content"],
-        },
-      }),
+          ignoredActions,
+          ignoredActionPaths,
+          ignoredPaths,
+          ignoreState: props.disableSerializableStateCheck,
+          ignoreAction: props.disableSerializableActionCheck,
+        }
+      })
   })
   dispatchF = store.dispatch
 
+  const card = registerCard(piReducer.register, dispatchF)
   const register: PiRegister = {
-    card: registerCard(piReducer.register),
+    card,
     cardComponent: registerCardComponent,
+    metaCard: registerMetacard(card),
     reducer: piReducer,
     GET: registerGET(piReducer),
     PUT: registerPUT(piReducer),
@@ -156,7 +180,7 @@ function RootComponent(store: any) {
   return (
     <React.StrictMode>
       <Provider store={store}>
-        <Card cardName="page" />
+        <Card cardName="page" parentCard="" />
       </Provider>
     </React.StrictMode>
   )
