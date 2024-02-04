@@ -1,29 +1,30 @@
-// import { PiRegister } from "@pihanga/core";
-// import { init as serviceInit } from "./service";
-// import { init as orderInit } from "./order";
 import { PiRegister } from "@pihanga/core"
-import { init as artifactInit } from "./artifact"
-// import { init as metadataInit } from "./NEEDS_WORK/metadata";
+import { artifactInit } from "./artifact"
+import { aspectInit } from "./aspect"
+import { serviceInit } from "./service";
+import { orderInit } from "./order";
 
-// export * from "./actions";
-// export * from "./service";
-// export * from "./order";
+export * from "./actions";
+export * from "./service";
+export * from "./order";
 export * from "./artifact"
 export type * from "./artifact"
-// export * from "./common";
-// export * from "./NEEDS_WORK/metadata";
+export * from "./aspect"
+export type * from "./aspect"
+export * from "./common";
 export * from "./actions";
 
 let _accessToken: string | undefined = undefined
 
 export type URL = string
 export type URN = string
+export type * from "./common"
 
-export function init(register: PiRegister): void {
-  // serviceInit(register);
-  // orderInit(register);
+export function ivcapInit(register: PiRegister): void {
   artifactInit(register)
-  // metadataInit(register);
+  aspectInit(register)
+  orderInit(register);
+  serviceInit(register);
 }
 
 export function setAccessToken(accessToken: string): void {

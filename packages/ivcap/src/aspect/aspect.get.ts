@@ -11,30 +11,29 @@ import { createReadAction, LoadRecordEvent } from "../actions"
 import {
   restErrorHandling,
   dispatchEvent,
-  PromiseT,
-  PropT,
+  PromiseT, PropT,
   getPromise,
   RequestEvent,
 } from "../common"
-import { ACTION_TYPES } from "./artifact.actions"
+import { ASPECT_ACTION } from "./aspect.actions"
 
-export type ArtifactRecordEvent = RequestEvent & {
-  artifact: ArtifactRecord
+export type AspectRecordEvent = RequestEvent & {
+  aspect: AspectRecord
 }
 
-// id: 'urn:ivcap:artifact:bafdd6ed-e74c-4b82-b1a6-80c0a777ec0e',
-// name: 'http://artifact.local/urn:ivcap:artifact:1f8c8c66-2ea6-4f95-a7c2-9b7e7bf91e30.png',
+// id: 'urn:ivcap:aspect:bafdd6ed-e74c-4b82-b1a6-80c0a777ec0e',
+// name: 'http://aspect.local/urn:ivcap:aspect:1f8c8c66-2ea6-4f95-a7c2-9b7e7bf91e30.png',
 // status: 'ready',
 // 'mime-type': 'image/png',
 // size: 16388,
 // etag: '',
 // 'created-at': '2023-11-08T06:59:16Z',
 // 'last-modified-at': '2023-11-08T06:59:16Z',
-// policy: 'urn:ivcap:policy:ivcap.base.artifact',
+// policy: 'urn:ivcap:policy:ivcap.base.aspect',
 // account: 'urn:ivcap:account:45a06508-5c3a-4678-8e6d-e6399bf27538',
-// dataRef: 'https://develop.ivcap.net/1/artifacts/bafdd6ed-e74c-4b82-b1a6-80c0a777ec0e/blob',
+// dataRef: 'https://develop.ivcap.net/1/aspects/bafdd6ed-e74c-4b82-b1a6-80c0a777ec0e/blob',
 
-export type ArtifactRecord = {
+export type AspectRecord = {
   id: string
   name: string
   status: string
@@ -47,32 +46,32 @@ export type ArtifactRecord = {
   account: string
 }
 
-export type LoadArtifactRecordEvent = LoadRecordEvent<ArtifactRecordEvent>
+export type LoadAspectRecordEvent = LoadRecordEvent<AspectRecordEvent>
 
-export function dispatchIvcapGetArtifactRecord(
-  ev: LoadArtifactRecordEvent,
+export function dispatchIvcapGetAspectRecord(
+  ev: LoadAspectRecordEvent,
   dispatch: DispatchF,
 ): void {
-  const a = createReadAction(ACTION_TYPES.LOAD_RECORD, ev)
+  const a = createReadAction(ASPECT_ACTION.LOAD_RECORD, ev)
   dispatch(a)
 }
 
-export const onArtifactRecord = createOnAction<ArtifactRecordEvent>(
-  ACTION_TYPES.RECORD,
+export const onAspectRecord = createOnAction<AspectRecordEvent>(
+  ASPECT_ACTION.RECORD,
 )
 
-export function getArtifactRecord<S extends ReduxState>(
+export function getAspectRecord<S extends ReduxState>(
   apiURL: URL,
   register: PiRegister,
-): (props: PropT<LoadArtifactRecordEvent>) => PromiseT<S, ArtifactRecordEvent> {
-  return (props: PropT<LoadArtifactRecordEvent>) => {
+): (props: PropT<LoadAspectRecordEvent>) => PromiseT<S, AspectRecordEvent> {
+  return (props: PropT<LoadAspectRecordEvent>) => {
     const reqID = uuidv4()
-    dispatchIvcapGetArtifactRecord(
+    dispatchIvcapGetAspectRecord(
       { apiURL: apiURL.toString(), reqID, ...props },
       register.reducer.dispatchFromReducer,
     )
-    return getPromise<S, ArtifactRecordEvent>(
-      ACTION_TYPES.RECORD,
+    return getPromise<S, AspectRecordEvent>(
+      ASPECT_ACTION.RECORD,
       register,
       reqID,
     )
@@ -81,37 +80,37 @@ export function getArtifactRecord<S extends ReduxState>(
 
 //====== API HANDLER
 
-export function init(register: PiRegister): void {
-  register.GET<ReduxState, ReduxAction & LoadArtifactRecordEvent, any>({
-    name: "getArtifactRecord",
+export function getInit(register: PiRegister): void {
+  register.GET<ReduxState, ReduxAction & LoadAspectRecordEvent, any>({
+    name: "getAspectRecord",
     origin: ({ apiURL }, _) => apiURL,
-    url: "/1/artifacts/:id",
-    trigger: ACTION_TYPES.LOAD_RECORD,
+    url: "/1/aspects/:id",
+    trigger: ASPECT_ACTION.LOAD_RECORD,
     request: ({ id }, _) => ({ id }),
     headers: () => ({ Authorization: `Bearer ${getAccessToken()}` }),
     reply: (state, content: any, dispatch, { request }) => {
-      const ev: ArtifactRecordEvent = {
-        artifact: toArtifactRecord(content),
+      const ev: AspectRecordEvent = {
+        aspect: toAspectRecord(content),
       }
-      dispatchEvent(ev, ACTION_TYPES.RECORD, dispatch, request)
+      dispatchEvent(ev, ASPECT_ACTION.RECORD, dispatch, request)
       return state
     },
-    error: restErrorHandling("ivcap-api:getArtifactRecord"),
+    error: restErrorHandling("ivcap-api:getAspectRecord"),
   })
 }
 
-function toArtifactRecord(els: any): ArtifactRecord {
-  // id: 'urn:ivcap:artifact:bafdd6ed-e74c-4b82-b1a6-80c0a777ec0e',
-  // name: 'http://artifact.local/urn:ivcap:artifact:1f8c8c66-2ea6-4f95-a7c2-9b7e7bf91e30.png',
+function toAspectRecord(els: any): AspectRecord {
+  // id: 'urn:ivcap:aspect:bafdd6ed-e74c-4b82-b1a6-80c0a777ec0e',
+  // name: 'http://aspect.local/urn:ivcap:aspect:1f8c8c66-2ea6-4f95-a7c2-9b7e7bf91e30.png',
   // status: 'ready',
   // 'mime-type': 'image/png',
   // size: 16388,
   // etag: '',
   // 'created-at': '2023-11-08T06:59:16Z',
   // 'last-modified-at': '2023-11-08T06:59:16Z',
-  // policy: 'urn:ivcap:policy:ivcap.base.artifact',
+  // policy: 'urn:ivcap:policy:ivcap.base.aspect',
   // account: 'urn:ivcap:account:45a06508-5c3a-4678-8e6d-e6399bf27538',
-  // dataRef: 'https://develop.ivcap.net/1/artifacts/bafdd6ed-e74c-4b82-b1a6-80c0a777ec0e/blob',
+  // dataRef: 'https://develop.ivcap.net/1/aspects/bafdd6ed-e74c-4b82-b1a6-80c0a777ec0e/blob',
   return {
     id: els.id,
     name: els.name,

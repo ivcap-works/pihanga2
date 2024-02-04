@@ -1,0 +1,93 @@
+import { v4 as uuidv4 } from "uuid"
+import {
+  PiRegister,
+  ReduxState,
+  ReduxAction,
+  createOnAction,
+  DispatchF,
+} from "@pihanga/core"
+import { URN, getAccessToken } from ".."
+import { BaseEvent } from "../actions"
+import {
+  restErrorHandling,
+  dispatchEvent,
+  PromiseT,
+  PropT,
+  getPromise,
+  RequestEvent,
+} from "../common"
+import { ASPECT_ACTION } from "./aspect.actions"
+import { AspectRecord } from "./aspect.get"
+
+export type CreateAspectEvent = BaseEvent<AspectCreatedEvent> & {
+  refID: string; // for internal reference
+  entity: URN
+  schema: URN
+  content: any
+  contentType: string
+}
+
+export type AspectCreatedEvent = RequestEvent & {
+  refID: string,
+  aspectID: URN,
+}
+
+export function dispatchIvcapCreateAspect(
+  ev: CreateAspectEvent,
+  dispatch: DispatchF,
+): void {
+  const a = { type: ASPECT_ACTION.CREATE, ...ev }
+  dispatch(a)
+}
+
+export const onAspectUploaded = createOnAction<AspectCreatedEvent>(
+  ASPECT_ACTION.CREATE,
+)
+
+export function createAspect<S extends ReduxState>(
+  apiURL: URL,
+  register: PiRegister,
+): (props: PropT<CreateAspectEvent>) => PromiseT<S, AspectCreatedEvent> {
+  return (props: PropT<CreateAspectEvent>) => {
+    const reqID = uuidv4()
+    dispatchIvcapCreateAspect(
+      { apiURL: apiURL.toString(), reqID, ...props },
+      register.reducer.dispatchFromReducer,
+    )
+    return getPromise<S, AspectCreatedEvent>(
+      ASPECT_ACTION.CREATED,
+      register,
+      reqID,
+    )
+  }
+}
+
+//====== API HANDLER
+
+export function createInit(register: PiRegister): void {
+  register.POST<ReduxState, ReduxAction & CreateAspectEvent, any>({
+    name: "createAspect",
+    origin: ({ apiURL }, _) => apiURL,
+    url: "/1/aspects?entity=:entity&schema=:schema",
+    trigger: ASPECT_ACTION.CREATE,
+    request: ({ entity, schema, content, contentType }) => {
+      return {
+        bindings: { entity, schema },
+        body: content,
+        contentType,
+      }
+    },
+    headers: () => ({
+      Authorization: `Bearer ${getAccessToken()}`,
+    }),
+    reply: (state, reply: any, dispatch, { request }) => {
+      const ev: AspectCreatedEvent = {
+        refID: request.refID,
+        aspectID: reply.id,
+      };
+      dispatchEvent(ev, ASPECT_ACTION.CREATED, dispatch, request);
+      return state
+    },
+    error: restErrorHandling("ivcap-api:createAspect"),
+  })
+}

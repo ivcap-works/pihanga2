@@ -75,7 +75,7 @@ export function artifacts<S extends ReduxState>(apiURL: URL, register: PiRegiste
   }
 }
 
-export function init(register: PiRegister): void {
+export function artifactInit(register: PiRegister): void {
   createInit(register)
   getInit(register)
   listInit(register)
