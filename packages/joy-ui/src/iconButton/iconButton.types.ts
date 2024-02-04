@@ -1,6 +1,6 @@
 import { SxProps } from "@mui/material"
 import { PiCardRef, createCardDeclaration, createOnAction, registerActions } from "@pihanga/core"
-import { ColorT, DecoratorT, SizeT, VariantT } from "@pihanga/cards/dist/types"
+import { ColorT, DecoratorT, SizeT, VariantT } from "@pihanga/cards/dist/types/common"
 import { IconId } from "@pihanga/cards/dist/icons"
 
 export const CARD_TYPE = "icon_button"

@@ -28,6 +28,8 @@ export * from "./framework"
 export * from "./table"
 // export type * from "@pihanga/cards/src/types/table"
 
+
+export * from "./accordion"
 export * from "./button"
 export * from "./buttonGroup"
 

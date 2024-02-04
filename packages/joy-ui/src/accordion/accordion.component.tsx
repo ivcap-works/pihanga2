@@ -1,10 +1,10 @@
 import React from "react"
 import { Card, PiCardProps, PiCardRef, isCardRef } from "@pihanga/core"
 import {
-  ComponentEvents,
+  AccordionEvents,
   AccordionProps,
-  Item,
-} from "@pihanga/cards/dist/types/accordion"
+  AccordionItem,
+} from "@pihanga/cards/src"
 import {
   Accordion,
   AccordionDetails,
@@ -15,18 +15,20 @@ import {
 import { SxProps } from "@mui/material"
 
 export type ComponentProps = AccordionProps & {
-  sx?: {
-    root?: SxProps
-    items?: {
-      [id: string]: {
-        title?: SxProps
-        content?: SxProps
-      }
+  sx?: AccordionSX
+}
+
+export type AccordionSX = {
+  root?: SxProps
+  items?: {
+    [id: string]: {
+      title?: SxProps
+      content?: SxProps
     }
   }
 }
 
-export const DEF_ITEM = "_default"
+export const DEF_ACCORDION_ITEM = "_default"
 
 export const DEF_SX = {
   root: {},
@@ -39,7 +41,7 @@ export const DEF_SX = {
 }
 
 export const AccoridonComponent = (
-  props: PiCardProps<ComponentProps, ComponentEvents>,
+  props: PiCardProps<ComponentProps, AccordionEvents>,
 ): React.ReactNode => {
   const {
     items,
@@ -52,7 +54,7 @@ export const AccoridonComponent = (
     _cls,
   } = props
 
-  function renderItem(item: Item, idx: number): React.ReactNode {
+  function renderItem(item: AccordionItem, idx: number): React.ReactNode {
     const p: any = { variant: item.variant, color: item.color }
     if (item.expanded !== undefined) {
       p.expanded = item.expanded
@@ -64,6 +66,7 @@ export const AccoridonComponent = (
       p.defaultExpanded = item.defaultExpanded
     }
     const isx = sx?.items || {}
+    const titleSX = isx[item.id]?.title || isx[DEF_ACCORDION_ITEM]?.title
     return (
       <Accordion
         {...p}
@@ -71,10 +74,16 @@ export const AccoridonComponent = (
         className={_cls(["item", `item-${item.id || idx}`])}
         key={item.id || idx}
       >
-        <AccordionSummary sx={isx[item.id]?.title || isx[DEF_ITEM]?.title}>
-          {renderContent(item.title)}
+        <AccordionSummary
+          sx={titleSX}
+          className={_cls(["item-title", `item-title-${item.id || idx}`])}
+        >
+          {renderContent(item.content)}
         </AccordionSummary>
-        <AccordionDetails sx={isx[item.id]?.content || isx[DEF_ITEM]?.content}>
+        <AccordionDetails
+          sx={isx[item.id]?.content || isx[DEF_ACCORDION_ITEM]?.content}
+          className={_cls(["item-content", `item-content-${item.id || idx}`])}
+        >
           {renderContent(item.content)}
         </AccordionDetails>
       </Accordion>
@@ -107,6 +116,7 @@ export const AccoridonComponent = (
       disableDivider={disableDivider}
       variant={variant}
       sx={sx?.root || DEF_SX.root}
+      className={_cls("root")}
       data-pihanga={cardName}
     >
       {items.map(renderItem)}

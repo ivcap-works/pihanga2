@@ -24,6 +24,7 @@ import {
   ProgressColumn,
   TableRow,
   ToggleColumn,
+  StringColumn,
 } from "@pihanga/cards/src/types/table"
 import { SxProps } from "@mui/material"
 import { renderDecorator } from "../utils"
@@ -65,9 +66,7 @@ export const Component = (
   const {
     columns = [],
     data = [],
-    // rowSelectionActionMapper: rowSelectionActionTemplate,
-    // showDetailActionMapper: showDetailActionTemplate,
-
+    hideColumnHeaders,
     dataFormatter = {},
     hasDetails,
     manageDetails,
@@ -90,6 +89,17 @@ export const Component = (
 
     onNextPage,
     onPrevPage: onPreviousPage,
+
+    borderAxis,
+    hoverRow,
+    color,
+    noWrap,
+    size,
+    stripe,
+    variant,
+    stickyHeader,
+    stickyFooter,
+
     sheetWrap,
     cardName,
     joy,
@@ -174,17 +184,46 @@ export const Component = (
 
   // }
 
+  function renderHeader() {
+    return (
+      <>
+        <colgroup>
+          {visibleCols.map((col) => {
+            let width = `${col.columnWidth}`
+            if (col.type === TableColumnTypeE._Detail) {
+              width ||= "32px"
+            }
+            const style = { width, ...col.headerStyle }
+            return (
+              <col style={style} className={_cls(col.label)} key={col.label} />
+            )
+          })}
+        </colgroup>
+        {!hideColumnHeaders && (
+          <thead>
+            <tr>{visibleCols.map(renderColumnHeader)}</tr>
+          </thead>
+        )}
+      </>
+    )
+  }
+
   function renderTable() {
     return (
       <Table
         aria-labelledby="tableTitle"
-        stickyHeader
-        hoverRow
+        borderAxis={borderAxis}
+        hoverRow={hoverRow}
+        color={color}
+        noWrap={noWrap}
+        size={size}
+        stripe={stripe}
+        variant={variant}
+        stickyHeader={stickyHeader}
+        stickyFooter={stickyFooter}
         sx={joy?.sx?.table || DEF_SX.table}
       >
-        <thead>
-          <tr>{visibleCols.map(renderColumnHeader)}</tr>
-        </thead>
+        {renderHeader()}
         <tbody className="table-tbody">{renderTableContent()}</tbody>
       </Table>
     )
@@ -268,6 +307,11 @@ export const Component = (
     if (f) {
       value = f(value, col)
     } else {
+      if (col.type === TableColumnTypeE.String) {
+        const v = value ? (value as number) : 0
+        return renderText(value as string, col, idx)
+      }
+
       if (col.type === TableColumnTypeE.Progress) {
         const v = value ? (value as number) : 0
         return renderProgressBar(v, col, idx)
@@ -290,8 +334,38 @@ export const Component = (
       // }
     }
     return (
-      <td key={idx} className={_cls(["td-default", `td-default-${col.label}`])}>
-        <Typography level="body-xs">{`${value}`}</Typography>
+      <td
+        key={idx}
+        style={col.cellStyle}
+        className={_cls(["td-default", `td-default-${col.label}`])}
+      >
+        <Typography
+          level={"body-xs"}
+          style={col.valueStyle}
+        >{`${value}`}</Typography>
+      </td >
+    )
+  }
+
+  function renderText(
+    value: string,
+    col: StringColumn,
+    idx: number,
+  ): React.ReactNode {
+    return (
+      <td
+        key={idx}
+        style={col.cellStyle}
+        className={_cls(["td-string", `td-string-${col.label}`])}
+      >
+        <Typography
+          level={col.level || "body-xs"}
+          variant={col.variant}
+          textColor={col.textColor}
+          fontSize={col.fontSize}
+          fontWeight={col.fontWeight}
+          style={col.valueStyle}
+        >{`${value}`}</Typography>
       </td>
     )
   }

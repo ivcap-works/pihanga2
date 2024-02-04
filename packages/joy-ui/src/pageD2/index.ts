@@ -58,6 +58,7 @@ function mapper(
         })
         return s
       },
+      onItemClickedMapper: props.mainMenuOnItemClickedMapper
     }),
   )
 

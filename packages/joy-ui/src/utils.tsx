@@ -1,14 +1,16 @@
 import React from "react"
 import { Avatar, Chip } from "@mui/joy"
 import { getIcon } from "@pihanga/cards/dist/icons"
-import { DecoratorT, DecoratorE } from "@pihanga/cards/dist/types"
+import { DecoratorT, DecoratorE } from "@pihanga/cards/src"
 
 
 export function renderDecorator(d?: DecoratorT): React.ReactNode {
   if (!d) return null
   switch (d.type) {
     case DecoratorE.Icon:
-      return getIcon(d.icon, { fontSize: d.fontSize, sx: d.sx })
+      // @ts-ignore.
+      const sx = d.sx
+      return getIcon(d.icon, { fontSize: d.fontSize, sx })
     case DecoratorE.Avatar:
       return <Avatar size={d.size} src={d.src} />
     case DecoratorE.Chip:

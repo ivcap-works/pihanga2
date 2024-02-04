@@ -18,7 +18,7 @@ import { Toggler } from "./toggler.component"
 import { registerMuiIcon } from "../icons"
 import { renderDecorator } from "../utils"
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown"
-import { DecoratorE, IconDecoratorT } from "@pihanga/cards/dist/types"
+import { DecoratorE, IconDecoratorT } from "@pihanga/cards/src"
 import { SxProps } from "@mui/joy/styles/types"
 
 export const NESTED_ICON_NAME = registerMuiIcon(KeyboardArrowDownIcon)

@@ -1,4 +1,4 @@
-import { PiCardRef, createOnAction, registerActions } from "@pihanga/core"
+import { PiCardRef, ReduxAction, createOnAction, registerActions } from "@pihanga/core"
 import { IconId } from "@pihanga/cards/dist/icons"
 import {
   CARD_TYPE,
@@ -27,7 +27,10 @@ export type ComponentProps = {
   actionCard?: PiCardRef
 
   mainMenu: MenuItem[]
+  mainMenuOnItemClickedMapper?: (ev: ItemClickedEvent) => ReduxAction
+
   secondaryMenu?: MenuItem[]
+  secondaryMenuOnItemClickedMapper?: (ev: ItemClickedEvent) => ReduxAction
 }
 
 export type UserProps = {
