@@ -1,5 +1,5 @@
 import { SxProps } from "@mui/material"
-import { ColorT, DecoratorT, VariantT } from "."
+import { ColorT, DecoratorT, VariantT } from "./common"
 
 export type BreadcrumbsProps = {
   breadcrumbs: BreadCrumb[]

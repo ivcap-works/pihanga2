@@ -1,10 +1,11 @@
 //import { SxProps } from "@mui/material"
 import {
+  ReduxAction,
   createCardDeclaration,
   createOnAction,
   registerActions,
 } from "@pihanga/core"
-import { DecoratorT, TypographyLevelT } from "."
+import { DecoratorT, TypographyLevelT } from "./common"
 
 export const CARD_TYPE = "list"
 export const List = createCardDeclaration<ListProps, ComponentEvents>(CARD_TYPE)
@@ -44,6 +45,7 @@ export type Item = {
   endDecorator?: DecoratorT
   titleLevel?: TypographyLevelT // "title-sm"
   subTitleLevel?: TypographyLevelT // "body-sm"
+  onItemClickedMapper?: (ev: ItemClickedEvent) => ReduxAction
 }
 
 export type ItemClickedEvent = {

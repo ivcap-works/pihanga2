@@ -1,4 +1,4 @@
-import { ColorT, VariantT } from "@pihanga/cards/dist/types"
+import { ColorT, VariantT } from "../dist/types/common"
 import { PiCardRef, createCardDeclaration } from "@pihanga/core"
 
 export const SPINNER_TYPE = "spinner"

@@ -7,7 +7,7 @@ import {
   createOnAction,
   registerActions,
 } from "@pihanga/core"
-import { ColorT } from "."
+import { ColorT } from "./common"
 
 import { ButtonProps } from "./button"
 import { LinkProps } from "./link"

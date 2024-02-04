@@ -7,7 +7,8 @@ import {
   createOnAction,
   registerActions,
 } from "@pihanga/core"
-import { ColorT, DecoratorT, VariantT } from "."
+import { ColorT, DecoratorT, SizeT, VariantT } from "./common"
+import { TypographyLevelT } from "./common"
 
 export const CARD_TYPE = "table"
 
@@ -68,8 +69,7 @@ type DEF_ROW_TYPE = { [k: string]: any }
 export type TableProps<D = DEF_ROW_TYPE> = {
   columns: GenericColumn[]
   data: TableRow<D>[]
-  rowSelectionActionMapper?: RowEventMapper<D>
-  showDetailActionMapper?: RowEventMapper<D>
+  hideColumnHeaders?: boolean
   dataFormatter?: ColumnDict<TableColumnFormatter>
   hasDetails?: boolean // if true rows could show details
   manageDetails?: boolean // when true internally manage which detail card to show
@@ -81,6 +81,15 @@ export type TableProps<D = DEF_ROW_TYPE> = {
   showSearch?: boolean
   showFooter?: boolean
   cardOnEmpty?: PiCardRef // card to display when no items are available
+  borderAxis?: BorderAxisT //The axis to display a border on the table cell.
+  hoverRow?: boolean //  If true, the table row will shade on hover.
+  color?: ColorT
+  noWrap?: boolean //  If true, the body cells will not wrap, but instead will truncate with a text overflow ellipsis.
+  size?: SizeT // Size of default fonts
+  stripe?: StripeT // The odd or even row of the table body will have subtle background color.
+  variant?: VariantT
+  stickyHeader?: boolean // If true, the header always appear at the bottom of the overflow table.
+  stickyFooter?: boolean // If true, the footer always appear at the bottom of the overflow table.
   sheetWrap?: {
     // control enclosing sheet
     notUsed: boolean // don't wrap table in sheet
@@ -94,7 +103,10 @@ export type TableColumn = {
   label: string
   title?: string // if not defined, use capitalised 'label'
   sortable?: boolean
+  columnWidth?: number | string
   headerStyle?: React.CSSProperties
+  cellStyle?: React.CSSProperties
+  valueStyle?: React.CSSProperties
 }
 
 // Whenever something is added to ColumnType, also add it to ColumnDict
@@ -140,6 +152,11 @@ export type TableDetailContext<T = DEF_ROW_TYPE> = {
 
 export type StringColumn = TableColumn & {
   type: TableColumnTypeE.String
+  level?: TypographyLevelT
+  variant?: VariantT
+  textColor?: any
+  fontSize?: SizeT | string
+  fontWeight?: SizeT | string
 }
 
 export type DetailColumnT = TableColumn & {
@@ -248,6 +265,15 @@ export type GenericColumn =
   | IconColumn
   | StatusColumn
   | HiddenColumn
+
+export type BorderAxisT =
+  // The axis to display a border on the table cell.
+  // default: 'xBetween'
+  "both" | "bothBetween" | "none" | "x" | "xBetween" | "y" | "yBetween" | string
+
+export type StripeT =
+  // The odd or even row of the table body will have subtle background color.
+  "odd" | "even" | string
 
 //*** EVENTS */
 

@@ -1,5 +1,5 @@
 import { PiCardRef, createCardDeclaration } from "@pihanga/core"
-import { ColorT, SizeT, VariantT } from "."
+import { ColorT, SizeT, VariantT } from "./common"
 
 const CARD_TYPE = "button-group"
 export const ButtonGroup = createCardDeclaration<ButtonGroupProps>(CARD_TYPE)

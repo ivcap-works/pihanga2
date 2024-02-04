@@ -4,7 +4,7 @@ import {
   createOnAction,
   registerActions,
 } from "@pihanga/core"
-import { ColorT, DecoratorT, SizeT, VariantT } from "."
+import { ColorT, DecoratorT, SizeT, VariantT } from "./common"
 
 export const CARD_TYPE = "button"
 export const Button = createCardDeclaration<ButtonProps, ComponentEvents>(

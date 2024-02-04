@@ -1,4 +1,3 @@
-import { SxProps } from "@mui/joy/styles/types"
 import { IconId } from "../icons"
 
 export type ColorT = "danger" | "neutral" | "primary" | "success" | "warning"
@@ -25,7 +24,7 @@ export type DecoratorT =
   | ChipDecoratorT
   | CardDecoratorT
 
-export type IconDecoratorT = { sx?: SxProps } & {
+export type IconDecoratorT = {
   type: DecoratorE.Icon
   icon: IconId
   fontSize?: SizeT

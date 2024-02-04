@@ -1,5 +1,5 @@
 import { PiCardRef, createCardDeclaration } from "@pihanga/core"
-import { ColorT, VariantT, DecoratorT, SizeT, TypographyLevelT } from "."
+import { ColorT, VariantT, DecoratorT, SizeT, TypographyLevelT } from "./common"
 
 export const TYPOGRAPHY_TYPE = "typography"
 export const Typography =

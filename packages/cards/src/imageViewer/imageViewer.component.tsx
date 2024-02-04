@@ -1,11 +1,11 @@
 import React from "react"
 import { PiCardProps } from "@pihanga/core"
-import { ComponentEvents, ImageViewerProps } from "../types/imageViewer"
+import { ImageViewerEvents, ImageViewerProps } from "./imageViewer"
 
 export type ComponentProps = ImageViewerProps & {}
 
 export const ImageViewerComponent = (
-  props: PiCardProps<ComponentProps, ComponentEvents>,
+  props: PiCardProps<ComponentProps, ImageViewerEvents>,
 ): React.ReactNode => {
   const { imgURL, caption, width, height, onClicked, cardName, _cls } = props
 

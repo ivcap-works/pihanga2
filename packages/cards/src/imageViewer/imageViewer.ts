@@ -4,16 +4,18 @@ import {
   registerActions,
 } from "@pihanga/core"
 
-export const IMAGE_TYPE = "image-viewer"
+export const IMAGE_VIEWER_TYPE = "image-viewer"
 export const ImageViewer = createCardDeclaration<
   ImageViewerProps,
-  ComponentEvents
->(IMAGE_TYPE)
+  ImageViewerEvents
+>(IMAGE_VIEWER_TYPE)
 
-export const ACTION_TYPES = registerActions(IMAGE_TYPE, ["clicked"])
+export const IMAGE_VIEWER_ACTION = registerActions(IMAGE_VIEWER_TYPE, [
+  "clicked",
+])
 
 export const onImageViewerClicked = createOnAction<CloseEvent>(
-  ACTION_TYPES.CLICKED,
+  IMAGE_VIEWER_ACTION.CLICKED,
 )
 
 export type ImageViewerProps = {
@@ -23,8 +25,8 @@ export type ImageViewerProps = {
   height?: number
 }
 
-export type ClickedEvent = {}
+export type ImageViewerClickedEvent = {}
 
-export type ComponentEvents = {
-  onClicked: ClickedEvent
+export type ImageViewerEvents = {
+  onClicked: ImageViewerClickedEvent
 }

@@ -1,13 +1,14 @@
 import { PiRegister, actionTypesToEvents } from "@pihanga/core"
 
 import { ImageViewerComponent } from "./imageViewer.component"
-import { ACTION_TYPES } from "../types/imageViewer"
-import { IMAGE_TYPE } from "../types/imageViewer"
+import { IMAGE_VIEWER_ACTION, IMAGE_VIEWER_TYPE } from "./imageViewer"
 
-export function init(register: PiRegister): void {
+export * from "./imageViewer"
+
+export function imageViewerInit(register: PiRegister): void {
   register.cardComponent({
-    name: IMAGE_TYPE,
+    name: IMAGE_VIEWER_TYPE,
     component: ImageViewerComponent,
-    events: actionTypesToEvents(ACTION_TYPES),
+    events: actionTypesToEvents(IMAGE_VIEWER_ACTION),
   })
 }

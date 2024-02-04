@@ -4,26 +4,28 @@ import {
   createOnAction,
   registerActions,
 } from "@pihanga/core"
-import { ColorT, SizeT, VariantT } from "."
+import { ColorT, SizeT, VariantT } from "./types/common"
 
-export const CARD_TYPE = "accordion"
+export const ACCORDION_TYPE = "accordion"
 
-export const ACTION_TYPES = registerActions(CARD_TYPE, ["changed"])
+export const ACCORDION_ACTION = registerActions(ACCORDION_TYPE, ["changed"])
 
-export const onChanged = createOnAction<ChangedEvent>(ACTION_TYPES.CHANGED)
+export const onChanged = createOnAction<AccordionChangedEvent>(
+  ACCORDION_ACTION.CHANGED,
+)
 
-export const Accordion = createCardDeclaration<AccordionProps, ComponentEvents>(
-  CARD_TYPE,
+export const Accordion = createCardDeclaration<AccordionProps, AccordionEvents>(
+  ACCORDION_TYPE,
 )
 
 export type AccordionProps = {
-  items: Item[]
+  items: AccordionItem[]
   size?: SizeT
   disableDivider?: boolean // if true, the divider between accordions will be hidden.
   variant?: VariantT
 }
 
-export type Item = {
+export type AccordionItem = {
   id: string
   title: string | PiCardRef | PiCardRef[]
   content: string | PiCardRef | PiCardRef[]
@@ -34,11 +36,11 @@ export type Item = {
   defaultExpanded?: boolean //  If true, expands the accordion by default.
 }
 
-export type ChangedEvent = {
+export type AccordionChangedEvent = {
   itemID: string
   expanded: boolean
 }
 
-export type ComponentEvents = {
-  onChanged: ChangedEvent
+export type AccordionEvents = {
+  onChanged: AccordionChangedEvent
 }

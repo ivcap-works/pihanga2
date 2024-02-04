@@ -5,7 +5,7 @@ import {
   createOnAction,
   registerActions,
 } from "@pihanga/core"
-import { ColorT, DecoratorT, SizeT, TypographyLevelT, VariantT } from "."
+import { ColorT, DecoratorT, SizeT, TypographyLevelT, VariantT } from "./common"
 
 export const LINK_TYPE = "link"
 export const Link = createCardDeclaration<LinkProps, ComponentEvents>(LINK_TYPE)
