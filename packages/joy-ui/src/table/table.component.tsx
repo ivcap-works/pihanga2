@@ -25,7 +25,9 @@ import {
   TableRow,
   ToggleColumn,
   StringColumn,
+  DateColumn,
 } from "@pihanga/cards/src/types/table"
+import { DEF_DATE_FORMATTER } from "@pihanga/cards/src/types/dataGrid"
 import { SxProps } from "@mui/material"
 import { renderDecorator } from "../utils"
 import { LinearProgress } from "@mui/joy"
@@ -308,8 +310,11 @@ export const Component = (
       value = f(value, col)
     } else {
       if (col.type === TableColumnTypeE.String) {
-        const v = value ? (value as number) : 0
         return renderText(value as string, col, idx)
+      }
+      if (col.type === TableColumnTypeE.Date) {
+        // const v = value ? (value as Date) : 0
+        return renderDate(value, col, idx)
       }
 
       if (col.type === TableColumnTypeE.Progress) {
@@ -368,6 +373,29 @@ export const Component = (
         >{`${value}`}</Typography>
       </td>
     )
+  }
+
+  function renderDate(
+    value: unknown,
+    col: DateColumn,
+    idx: number,
+  ): React.ReactNode {
+    var s: string
+    if (value instanceof Date) {
+      const f = col.dateFormatter || ((d) => DEF_DATE_FORMATTER.format(d))
+      s = f(value)
+    } else if (typeof value === "string") {
+      s = col.dateFormatter ? col.dateFormatter(new Date(value)) : value
+    } else if (typeof value === "number") {
+      const d = new Date(value)
+      const f = col.dateFormatter || ((d) => DEF_DATE_FORMATTER.format(d))
+      s = f(d)
+    } else if (value === null) {
+      s = ""
+    } else {
+      s = `unnknown date '${value}'`
+    }
+    return renderText(s, col as any as StringColumn, idx)
   }
 
   function renderDetailsIcon(row: TableRow, idx: number): React.ReactNode {

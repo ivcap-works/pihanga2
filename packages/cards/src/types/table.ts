@@ -9,6 +9,7 @@ import {
 } from "@pihanga/core"
 import { ColorT, DecoratorT, SizeT, VariantT } from "./common"
 import { TypographyLevelT } from "./common"
+import { DEF_DATE_FORMATTER } from "./dataGrid"
 
 export const CARD_TYPE = "table"
 
@@ -150,13 +151,16 @@ export type TableDetailContext<T = DEF_ROW_TYPE> = {
   row: TableRow<T>
 }
 
-export type StringColumn = TableColumn & {
-  type: TableColumnTypeE.String
+type _TextColumn = TableColumn & {
   level?: TypographyLevelT
   variant?: VariantT
   textColor?: any
   fontSize?: SizeT | string
   fontWeight?: SizeT | string
+}
+
+export type StringColumn = _TextColumn & {
+  type: TableColumnTypeE.String
 }
 
 export type DetailColumnT = TableColumn & {
@@ -179,8 +183,9 @@ export type BooleanColumn = TableColumn & {
   type: TableColumnTypeE.Boolean
 }
 
-export type DateColumn = TableColumn & {
+export type DateColumn = _TextColumn & {
   type: TableColumnTypeE.Date
+  dateFormatter?: (d: Date) => string
 }
 
 type EnumDictionary<T extends string | symbol | number, U> = {

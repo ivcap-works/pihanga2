@@ -26,9 +26,9 @@ export type OrderRecord = {
   id: string;
   name?: string;
   status: string;
-  orderedAt: Date;
-  startedAt?: Date;
-  finishedAt?: Date;
+  orderedAt: string;
+  startedAt?: string;
+  finishedAt?: string;
   parameters: OrderParameter[];
   products: OrderProduct[];
   service: URN;
@@ -143,7 +143,7 @@ export function toOrderRecord(els: any): OrderRecord {
     };
   });
 
-  const products = (els.products || []).map((p: any) => {
+  const products = (els.products?.items || []).map((p: any) => {
     return {
       id: p.id,
       name: p.name,
@@ -159,18 +159,13 @@ export function toOrderRecord(els: any): OrderRecord {
     id: els.id,
     name: els.name,
     status: els.status,
-    orderedAt: toDate("ordered-at", els)!,
-    startedAt: toDate("started-at", els),
-    finishedAt: toDate("finished-at", els),
+    orderedAt: els["ordered-at"],
+    startedAt: els["started-at"],
+    finishedAt: els["finished-at"],
     parameters,
     products,
     service: els.service?.id,
     account: els.account?.id,
     policy: els.policy
   };
-}
-
-function toDate(name: string, els: any): Date | undefined {
-  const v = els[name];
-  return v ? new Date(v) : undefined;
 }

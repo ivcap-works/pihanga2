@@ -40,8 +40,8 @@ export type ArtifactRecord = {
   status: string
   mimeType: string
   size: number
-  createdAt: number // UNIX time in msec
-  lastModifiedAt: number // UNIX time in msec
+  createdAt: string
+  lastModifiedAt: string
   dataURL: string
   policy: string
   account: string
@@ -118,8 +118,8 @@ function toArtifactRecord(els: any): ArtifactRecord {
     status: els.status,
     mimeType: els["mime-type"],
     size: els.size,
-    createdAt: Date.parse(els["created-at"]),
-    lastModifiedAt: Date.parse(els["last-modified-at"]),
+    createdAt: els["created-at"],
+    lastModifiedAt: els["last-modified-at"],
     dataURL: els.dataRef,
     policy: els.policy,
     account: els.account,

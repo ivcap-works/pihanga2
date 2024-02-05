@@ -31,9 +31,9 @@ export type OrderListItem = {
   id: string;
   name: string;
   status: string;
-  orderedAt: Date;
-  startedAt?: Date;
-  finishedAt?: Date;
+  orderedAt: string;
+  startedAt?: string;
+  finishedAt?: string;
   service: string;
   account: string;
   href: URL;
@@ -127,9 +127,9 @@ function toOrderListItem(els: any): OrderListItem {
     id: els.id,
     name: els.name,
     status: els.status,
-    orderedAt: toDate("ordered-at", els)!,
-    startedAt: toDate("started-at", els),
-    finishedAt: toDate("finished-at", els),
+    orderedAt: els["ordered-at"],
+    startedAt: els["started-at"],
+    finishedAt: els["finished-at"],
     service: els.service,
     account: els.account,
     href: els.href,
