@@ -3,9 +3,24 @@ import type {
   PiRegister,
   ReduxAction,
   ReduxState,
-} from "@pihanga/core"
-import type { RestErrorAction } from "@pihanga/core"
+} from "@pihanga2/core"
+import type { RestErrorAction } from "@pihanga2/core"
 import { ACTION_TYPES, BaseEvent, ErrorAction } from "./actions"
+import { GetOAuthContext, OAuthContextT } from "./auth/common"
+
+// export type Deployment = {
+//   url: URL,
+// }
+
+// export const Deployments: { [k: string]: Deployment } = {}
+
+export const CommonProps = (name: string) => ({
+  name,
+  context: () => GetOAuthContext(),
+  origin: (_1: any, _2: any, ctxt: OAuthContextT) => ctxt.ivcapURL,
+  headers: (_1: any, _2: any, ctxt: OAuthContextT) => ({ Authorization: `Bearer ${ctxt.token}` }),
+  error: restErrorHandling(`ivcap-api:${name}`),
+})
 
 export function dispatchEvent<T, R extends BaseEvent<any>>(
   ev: T,
@@ -63,7 +78,7 @@ export function createListUrlBuilder(
     "at-time": "atTime",
   }).map(([k, v]) => `${k}=?${v}`)
   if (extend) {
-    const q2 = Object.entries(extend).map(([k, v]) => `${k}=${v}`)
+    const q2 = Object.entries(extend).map(([k, v]) => `${k}=?${v}`)
     q = q.concat(q2)
   }
   const u = `/1/${service}?${q.join("&")}`

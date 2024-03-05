@@ -5,8 +5,8 @@ import {
   ReduxAction,
   createOnAction,
   DispatchF,
-} from "@pihanga/core"
-import { getAccessToken } from ".."
+} from "@pihanga2/core"
+import { dispatchIvcapAuthError, getAccessToken } from ".."
 import { createListAction, ListEvent, LoadListEvent } from "../actions"
 import {
   getNextPage,
@@ -16,8 +16,10 @@ import {
   PromiseT,
   PropT,
   getPromise,
+  CommonProps,
 } from "../common"
 import { ACTION_TYPES } from "./artifact.actions"
+import { GetOAuthContext, OAuthContextT } from "../auth/common"
 
 export type Cursor = string
 export type ArtifactListEvent = ListEvent & {
@@ -71,13 +73,12 @@ export function getArtifactList<S extends ReduxState>(
 //====== API HANDLER
 
 export function init(register: PiRegister): void {
-  register.GET<ReduxState, ReduxAction & LoadArtifactListEvent, any>({
-    name: "loadArtifactList",
-    origin: ({ apiURL }, _) => apiURL,
+  register.GET<ReduxState, ReduxAction & LoadArtifactListEvent, any, OAuthContextT>({
+    ...CommonProps("loadArtifactList"),
     url: createListUrlBuilder("artifacts"),
     request: (a, _) => ({ ...a, page: removePageOffset(a) } as any),
     trigger: ACTION_TYPES.LOAD_LIST,
-    headers: () => ({ Authorization: `Bearer ${getAccessToken()}` }),
+    // headers: (_1, _2, ctxt) => ({ Authorization: `Bearer ${ctxt.token}` }),
     reply: (state, content: any, dispatch, { request }) => {
       const artifacts = (content.items || []).map(toArtifactListItem)
       const offset = getOffsetFromPage(request.page)
@@ -91,7 +92,6 @@ export function init(register: PiRegister): void {
       dispatchEvent(ev, ACTION_TYPES.LIST, dispatch, request)
       return state
     },
-    error: restErrorHandling("ivcap-api:loadArtifactList"),
   })
 }
 

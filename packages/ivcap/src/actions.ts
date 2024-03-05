@@ -2,7 +2,7 @@ import {
   createOnAction,
   ReduxAction,
   registerActions,
-} from "@pihanga/core"
+} from "@pihanga2/core"
 
 export const ACTION_TYPES = registerActions("ivcap", [
   "INIT",

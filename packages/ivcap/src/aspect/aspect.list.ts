@@ -5,7 +5,7 @@ import {
   ReduxAction,
   createOnAction,
   DispatchF,
-} from "@pihanga/core"
+} from "@pihanga2/core"
 import { URN, getAccessToken } from ".."
 import { createListAction, ListEvent, LoadListEvent } from "../actions"
 import {
@@ -16,6 +16,7 @@ import {
   PromiseT,
   PropT,
   getPromise,
+  CommonProps,
 } from "../common"
 import { ASPECT_ACTION } from "./aspect.actions"
 
@@ -76,12 +77,12 @@ export function getAspectList<S extends ReduxState>(
 
 export function listInit(register: PiRegister): void {
   register.GET<ReduxState, ReduxAction & LoadAspectListEvent, any>({
-    name: "loadAspectList",
-    origin: ({ apiURL }, _) => apiURL,
-    url: createListUrlBuilder("aspects"),
+    ...CommonProps("loadAspectList"),
+    url: createListUrlBuilder("aspects", {
+      entity: "entity", schema: "schema", "content-path": "contentPath"
+    }),
     request: (a, _) => ({ ...a, page: removePageOffset(a) } as any),
     trigger: ASPECT_ACTION.LOAD_LIST,
-    headers: () => ({ Authorization: `Bearer ${getAccessToken()}` }),
     reply: (state, content: any, dispatch, { request }) => {
       const aspects = (content.items || []).map(toAspectListItem)
       const offset = getOffsetFromPage(request.page)

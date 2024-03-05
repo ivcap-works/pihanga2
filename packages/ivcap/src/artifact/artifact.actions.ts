@@ -1,4 +1,4 @@
-import { registerActions } from "@pihanga/core"
+import { registerActions } from "@pihanga2/core"
 
 export const ACTION_TYPES = registerActions("ivcap/artifact", [
   "load_list",

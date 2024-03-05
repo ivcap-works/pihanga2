@@ -5,7 +5,7 @@ import {
   ReduxAction,
   createOnAction,
   DispatchF,
-} from "@pihanga/core"
+} from "@pihanga2/core"
 import { URN, getAccessToken } from ".."
 import { BaseEvent } from "../actions"
 import {
@@ -15,8 +15,10 @@ import {
   PropT,
   getPromise,
   RequestEvent,
+  CommonProps,
 } from "../common"
 import { ACTION_TYPES } from "./artifact.actions"
+import { OAuthContextT } from "../auth/common"
 
 export type CreateArtifactEvent = BaseEvent<ArtifactCreatedEvent> & {
   file: File
@@ -92,9 +94,8 @@ export const onArtifactUploadProgress =
 //====== API HANDLER
 
 export function init(register: PiRegister): void {
-  register.POST<ReduxState, ReduxAction & CreateArtifactEvent, any>({
-    name: "createArtifact",
-    origin: ({ apiURL }, _) => apiURL,
+  register.POST<ReduxState, ReduxAction & CreateArtifactEvent, any, OAuthContextT>({
+    ...CommonProps("createArtifact"),
     url: "/1/artifacts",
     trigger: ACTION_TYPES.UPLOAD_DATA,
     request: ({ file }) => {
@@ -103,8 +104,8 @@ export function init(register: PiRegister): void {
         contentType: file.type,
       }
     },
-    headers: ({ name, file }) => ({
-      Authorization: `Bearer ${getAccessToken()}`,
+    headers: ({ name, file }, _, ctxt) => ({
+      Authorization: `Bearer ${ctxt.token}`,
       "X-Content-Length": `${file.size}`,
       "X-Content-Type": `${file.type}`,
       "Upload-Length": `${file.size}`,
@@ -143,12 +144,10 @@ export function init(register: PiRegister): void {
       }
       return state
     },
-    error: restErrorHandling("ivcap-api:createArtifact"),
   })
 
-  register.PATCH<ReduxState, ReduxAction & ArtifactPartialUploadEvent, any>({
-    name: "uploadArtifactPartial",
-    origin: ({ apiURL }, _) => apiURL,
+  register.PATCH<ReduxState, ReduxAction & ArtifactPartialUploadEvent, any, OAuthContextT>({
+    ...CommonProps("uploadArtifactPartial"),
     url: "/1/artifacts/:id/blob",
     trigger: ACTION_TYPES.UPLOAD_PARTIAL,
     request: ({ artifactURN, content, offset, chunkSize, contentType }) => {
@@ -159,10 +158,10 @@ export function init(register: PiRegister): void {
         contentType,
       }
     },
-    headers: ({ offset, chunkSize, size }) => {
+    headers: ({ offset, chunkSize, size }, _, ctxt) => {
       const l = Math.min(chunkSize, size - offset)
       return {
-        Authorization: `Bearer ${getAccessToken()}`,
+        Authorization: `Bearer ${ctxt.token}`,
         "Content-Type": "application/offset+octet-stream",
         "Content-Length": `${l}`,
         "Upload-Length": `${size}`,
@@ -203,6 +202,5 @@ export function init(register: PiRegister): void {
       }
       return state
     },
-    error: restErrorHandling("ivcap-api:uploadArtifactPartial"),
   })
 }

@@ -5,7 +5,7 @@ import {
   ReduxAction,
   createOnAction,
   DispatchF,
-} from "@pihanga/core"
+} from "@pihanga2/core"
 import { getAccessToken } from ".."
 import { createListAction, ListEvent, LoadListEvent } from "../actions"
 import {
@@ -16,6 +16,7 @@ import {
   PromiseT,
   PropT,
   getPromise,
+  CommonProps,
 } from "../common"
 import { ORDER_ACTION } from "./order.actions"
 
@@ -71,12 +72,10 @@ export function getOrderList<S extends ReduxState>(
 
 export function listInit(register: PiRegister): void {
   register.GET<ReduxState, ReduxAction & LoadOrderListEvent, any>({
-    name: "loadOrderList",
-    origin: ({ apiURL }, _) => apiURL,
+    ...CommonProps("loadOrderList"),
     url: createListUrlBuilder("orders"),
     request: (a, _) => ({ ...a, page: removePageOffset(a) } as any),
     trigger: ORDER_ACTION.LOAD_LIST,
-    headers: () => ({ Authorization: `Bearer ${getAccessToken()}` }),
     reply: (state, content: any, dispatch, { request }) => {
       const orders = (content.items || []).map(toOrderListItem)
       const offset = getOffsetFromPage(request.page)
@@ -90,7 +89,6 @@ export function listInit(register: PiRegister): void {
       dispatchEvent(ev, ORDER_ACTION.LIST, dispatch, request)
       return state
     },
-    error: restErrorHandling("ivcap-api:loadOrderList"),
   })
 }
 

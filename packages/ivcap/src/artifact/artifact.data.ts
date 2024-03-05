@@ -5,7 +5,7 @@ import {
   ReduxAction,
   createOnAction,
   DispatchF,
-} from "@pihanga/core"
+} from "@pihanga2/core"
 import { getAccessToken } from ".."
 import { BaseEvent, createReadAction } from "../actions"
 import {
@@ -15,6 +15,7 @@ import {
   PropT,
   getPromise,
   RequestEvent,
+  CommonProps,
 } from "../common"
 import { ACTION_TYPES } from "./artifact.actions"
 
@@ -57,15 +58,13 @@ export function getArtifactData<S extends ReduxState>(
 
 export function init(register: PiRegister): void {
   register.GET<ReduxState, ReduxAction & LoadArtifactDataEvent, any>({
-    name: "getArtifactData",
-    origin: ({ apiURL }, _) => apiURL,
+    ...CommonProps("getArtifactData"),
     url: "/1/artifacts/:id/blob",
     trigger: ACTION_TYPES.LOAD_DATA,
     request: (a, _) => {
       const id = a.id.split(":")[3]
       return { id }
     },
-    headers: () => ({ Authorization: `Bearer ${getAccessToken()}` }),
     reply: (state, content: any, dispatch, { request, contentType }) => {
       const blob = content as Blob
       const evb: ArtifactDataEvent = {
@@ -77,6 +76,5 @@ export function init(register: PiRegister): void {
       dispatchEvent(evb, ACTION_TYPES.DATA, dispatch, request)
       return state
     },
-    error: restErrorHandling("ivcap-api:getArtifactData"),
   })
 }

@@ -5,7 +5,7 @@ import {
   ReduxAction,
   createOnAction,
   DispatchF,
-} from "@pihanga/core"
+} from "@pihanga2/core"
 import { URN, getAccessToken } from ".."
 import { BaseEvent } from "../actions"
 import {
@@ -15,6 +15,7 @@ import {
   PropT,
   getPromise,
   RequestEvent,
+  CommonProps,
 } from "../common"
 import { ASPECT_ACTION } from "./aspect.actions"
 import { AspectRecord } from "./aspect.get"
@@ -66,8 +67,7 @@ export function createAspect<S extends ReduxState>(
 
 export function createInit(register: PiRegister): void {
   register.POST<ReduxState, ReduxAction & CreateAspectEvent, any>({
-    name: "createAspect",
-    origin: ({ apiURL }, _) => apiURL,
+    ...CommonProps("createAspect"),
     url: "/1/aspects?entity=:entity&schema=:schema",
     trigger: ASPECT_ACTION.CREATE,
     request: ({ entity, schema, content, contentType }) => {
@@ -77,9 +77,6 @@ export function createInit(register: PiRegister): void {
         contentType,
       }
     },
-    headers: () => ({
-      Authorization: `Bearer ${getAccessToken()}`,
-    }),
     reply: (state, reply: any, dispatch, { request }) => {
       const ev: AspectCreatedEvent = {
         refID: request.refID,
@@ -88,6 +85,5 @@ export function createInit(register: PiRegister): void {
       dispatchEvent(ev, ASPECT_ACTION.CREATED, dispatch, request);
       return state
     },
-    error: restErrorHandling("ivcap-api:createAspect"),
   })
 }

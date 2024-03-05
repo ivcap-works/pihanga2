@@ -1,8 +1,9 @@
-import { PiRegister } from "@pihanga/core"
+import { PiRegister } from "@pihanga2/core"
 import { artifactInit } from "./artifact"
 import { aspectInit } from "./aspect"
 import { serviceInit } from "./service";
 import { orderInit } from "./order";
+import { authInit } from "./auth";
 
 export * from "./actions";
 export * from "./service";
@@ -13,8 +14,10 @@ export * from "./aspect"
 export type * from "./aspect"
 export * from "./common";
 export * from "./actions";
+export * from "./auth"
 
 let _accessToken: string | undefined = undefined
+
 
 export type URL = string
 export type URN = string
@@ -25,6 +28,7 @@ export function ivcapInit(register: PiRegister): void {
   aspectInit(register)
   orderInit(register);
   serviceInit(register);
+  authInit(register)
 }
 
 export function setAccessToken(accessToken: string): void {

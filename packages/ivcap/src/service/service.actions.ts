@@ -1,4 +1,4 @@
-import { registerActions } from "@pihanga/core"
+import { registerActions } from "@pihanga2/core"
 
 export const SERVICE_ACTION = registerActions("ivcap/service", [
   "load_list",

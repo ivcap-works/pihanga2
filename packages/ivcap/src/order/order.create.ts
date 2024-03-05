@@ -5,7 +5,7 @@ import {
   ReduxAction,
   createOnAction,
   DispatchF,
-} from "@pihanga/core"
+} from "@pihanga2/core"
 import { URN, getAccessToken } from ".."
 import { BaseEvent } from "../actions"
 import {
@@ -15,6 +15,7 @@ import {
   PropT,
   getPromise,
   RequestEvent,
+  CommonProps,
 } from "../common"
 import { ORDER_ACTION } from "./order.actions"
 import { OrderRecord, toOrderRecord } from "./order.get"
@@ -70,8 +71,7 @@ export function createOrder<S extends ReduxState>(
 
 export function createInit(register: PiRegister): void {
   register.POST<ReduxState, ReduxAction & CreateOrderEvent, any>({
-    name: "createOrder",
-    origin: ({ apiURL }, _) => apiURL,
+    ...CommonProps("createOrder"),
     url: "/1/orders",
     trigger: ORDER_ACTION.CREATE,
     request: ({ name, serviceID, parameters }) => {
@@ -80,7 +80,6 @@ export function createInit(register: PiRegister): void {
         contentType: "application/json",
       };
     },
-    headers: () => ({ Authorization: `Bearer ${getAccessToken()}` }),
     reply: (state, content: any, dispatch, { request }) => {
       const order = toOrderRecord(content);
       const ev: OrderCreatedEvent = {
@@ -90,6 +89,5 @@ export function createInit(register: PiRegister): void {
       dispatchEvent(ev, ORDER_ACTION.CREATED, dispatch, request);
       return state;
     },
-    error: restErrorHandling("ivcap-api:createOrder"),
   })
 }

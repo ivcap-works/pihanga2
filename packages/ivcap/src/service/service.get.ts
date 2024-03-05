@@ -5,7 +5,7 @@ import {
   ReduxAction,
   createOnAction,
   DispatchF,
-} from "@pihanga/core"
+} from "@pihanga2/core"
 import { URN, getAccessToken } from ".."
 import { createReadAction, LoadRecordEvent } from "../actions"
 import {
@@ -15,6 +15,7 @@ import {
   PropT,
   getPromise,
   RequestEvent,
+  CommonProps,
 } from "../common"
 import { SERVICE_ACTION } from "./service.actions"
 
@@ -93,12 +94,10 @@ export function getServiceRecord<S extends ReduxState>(
 
 export function getInit(register: PiRegister): void {
   register.GET<ReduxState, ReduxAction & LoadServiceRecordEvent, any>({
-    name: "getServiceRecord",
-    origin: ({ apiURL }, _) => apiURL,
+    ...CommonProps("getServiceR"),
     url: "/1/services/:id",
     trigger: SERVICE_ACTION.LOAD_RECORD,
     request: ({ id }, _) => ({ id }),
-    headers: () => ({ Authorization: `Bearer ${getAccessToken()}` }),
     reply: (state, content: any, dispatch, { request }) => {
       const ev: ServiceRecordEvent = {
         service: toServiceRecord(content),
@@ -106,7 +105,6 @@ export function getInit(register: PiRegister): void {
       dispatchEvent(ev, SERVICE_ACTION.RECORD, dispatch, request)
       return state
     },
-    error: restErrorHandling("ivcap-api:getServiceRecord"),
   })
 }
 

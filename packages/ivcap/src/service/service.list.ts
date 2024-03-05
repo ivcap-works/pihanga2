@@ -5,7 +5,7 @@ import {
   ReduxAction,
   createOnAction,
   DispatchF,
-} from "@pihanga/core"
+} from "@pihanga2/core"
 import { getAccessToken } from ".."
 import { createListAction, ListEvent, LoadListEvent } from "../actions"
 import {
@@ -16,6 +16,7 @@ import {
   PromiseT,
   PropT,
   getPromise,
+  CommonProps,
 } from "../common"
 import { SERVICE_ACTION } from "./service.actions"
 
@@ -67,12 +68,10 @@ export function getServiceList<S extends ReduxState>(
 
 export function listInit(register: PiRegister): void {
   register.GET<ReduxState, ReduxAction & LoadServiceListEvent, any>({
-    name: "loadServiceList",
-    origin: ({ apiURL }, _) => apiURL,
+    ...CommonProps("loadServiceList"),
     url: createListUrlBuilder("services"),
     request: (a, _) => ({ ...a, page: removePageOffset(a) } as any),
     trigger: SERVICE_ACTION.LOAD_LIST,
-    headers: () => ({ Authorization: `Bearer ${getAccessToken()}` }),
     reply: (state, content: any, dispatch, { request }) => {
       const services = (content.items || []).map(toServiceListItem)
       const offset = getOffsetFromPage(request.page)
@@ -86,7 +85,6 @@ export function listInit(register: PiRegister): void {
       dispatchEvent(ev, SERVICE_ACTION.LIST, dispatch, request)
       return state
     },
-    error: restErrorHandling("ivcap-api:loadServiceList"),
   })
 }
 

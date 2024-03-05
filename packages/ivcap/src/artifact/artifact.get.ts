@@ -5,8 +5,8 @@ import {
   ReduxAction,
   createOnAction,
   DispatchF,
-} from "@pihanga/core"
-import { getAccessToken } from ".."
+} from "@pihanga2/core"
+import { dispatchIvcapAuthError, getAccessToken } from ".."
 import { createReadAction, LoadRecordEvent } from "../actions"
 import {
   restErrorHandling,
@@ -15,8 +15,10 @@ import {
   PropT,
   getPromise,
   RequestEvent,
+  CommonProps,
 } from "../common"
 import { ACTION_TYPES } from "./artifact.actions"
+import { GetOAuthContext } from "../auth/common"
 
 export type ArtifactRecordEvent = RequestEvent & {
   artifact: ArtifactRecord
@@ -83,12 +85,10 @@ export function getArtifactRecord<S extends ReduxState>(
 
 export function init(register: PiRegister): void {
   register.GET<ReduxState, ReduxAction & LoadArtifactRecordEvent, any>({
-    name: "getArtifactRecord",
-    origin: ({ apiURL }, _) => apiURL,
+    ...CommonProps("getArtifactRecord"),
     url: "/1/artifacts/:id",
     trigger: ACTION_TYPES.LOAD_RECORD,
     request: ({ id }, _) => ({ id }),
-    headers: () => ({ Authorization: `Bearer ${getAccessToken()}` }),
     reply: (state, content: any, dispatch, { request }) => {
       const ev: ArtifactRecordEvent = {
         artifact: toArtifactRecord(content),
@@ -96,7 +96,6 @@ export function init(register: PiRegister): void {
       dispatchEvent(ev, ACTION_TYPES.RECORD, dispatch, request)
       return state
     },
-    error: restErrorHandling("ivcap-api:getArtifactRecord"),
   })
 }
 

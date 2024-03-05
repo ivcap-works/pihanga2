@@ -1,5 +1,5 @@
 import { PropT, PromiseT } from "../common"
-import { ReduxState, PiRegister } from "@pihanga/core"
+import { ReduxState, PiRegister } from "@pihanga2/core"
 import {
   LoadArtifactDataEvent,
   ArtifactDataEvent,

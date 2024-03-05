@@ -5,7 +5,7 @@ import {
   ReduxAction,
   createOnAction,
   DispatchF,
-} from "@pihanga/core"
+} from "@pihanga2/core"
 import { getAccessToken } from ".."
 import { createReadAction, LoadRecordEvent } from "../actions"
 import {
@@ -14,6 +14,7 @@ import {
   PromiseT, PropT,
   getPromise,
   RequestEvent,
+  CommonProps,
 } from "../common"
 import { ASPECT_ACTION } from "./aspect.actions"
 
@@ -82,12 +83,10 @@ export function getAspectRecord<S extends ReduxState>(
 
 export function getInit(register: PiRegister): void {
   register.GET<ReduxState, ReduxAction & LoadAspectRecordEvent, any>({
-    name: "getAspectRecord",
-    origin: ({ apiURL }, _) => apiURL,
+    ...CommonProps("getAspect"),
     url: "/1/aspects/:id",
     trigger: ASPECT_ACTION.LOAD_RECORD,
     request: ({ id }, _) => ({ id }),
-    headers: () => ({ Authorization: `Bearer ${getAccessToken()}` }),
     reply: (state, content: any, dispatch, { request }) => {
       const ev: AspectRecordEvent = {
         aspect: toAspectRecord(content),
@@ -95,7 +94,6 @@ export function getInit(register: PiRegister): void {
       dispatchEvent(ev, ASPECT_ACTION.RECORD, dispatch, request)
       return state
     },
-    error: restErrorHandling("ivcap-api:getAspectRecord"),
   })
 }
 

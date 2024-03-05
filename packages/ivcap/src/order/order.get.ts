@@ -5,7 +5,7 @@ import {
   ReduxAction,
   createOnAction,
   DispatchF,
-} from "@pihanga/core"
+} from "@pihanga2/core"
 import { URN, getAccessToken } from ".."
 import { createReadAction, LoadRecordEvent } from "../actions"
 import {
@@ -15,6 +15,7 @@ import {
   PropT,
   getPromise,
   RequestEvent,
+  CommonProps,
 } from "../common"
 import { ORDER_ACTION } from "./order.actions"
 
@@ -87,12 +88,10 @@ export function getOrderRecord<S extends ReduxState>(
 
 export function getInit(register: PiRegister): void {
   register.GET<ReduxState, ReduxAction & LoadOrderRecordEvent, any>({
-    name: "getOrderRecord",
-    origin: ({ apiURL }, _) => apiURL,
+    ...CommonProps("getOrder"),
     url: "/1/orders/:id",
     trigger: ORDER_ACTION.LOAD_RECORD,
     request: ({ id }, _) => ({ id }),
-    headers: () => ({ Authorization: `Bearer ${getAccessToken()}` }),
     reply: (state, content: any, dispatch, { request }) => {
       const ev: OrderRecordEvent = {
         order: toOrderRecord(content),
@@ -100,7 +99,6 @@ export function getInit(register: PiRegister): void {
       dispatchEvent(ev, ORDER_ACTION.RECORD, dispatch, request)
       return state
     },
-    error: restErrorHandling("ivcap-api:getOrderRecord"),
   })
 }
 
@@ -164,8 +162,8 @@ export function toOrderRecord(els: any): OrderRecord {
     finishedAt: els["finished-at"],
     parameters,
     products,
-    service: els.service?.id,
-    account: els.account?.id,
+    service: els.service,
+    account: els.account,
     policy: els.policy
   };
 }
