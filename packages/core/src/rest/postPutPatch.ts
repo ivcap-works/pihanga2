@@ -7,7 +7,7 @@ import {
 } from "./types"
 import { RequestF, registerCommon } from "./utils"
 
-export function registerPOST<S extends ReduxState, A extends ReduxAction, R>(
+export function registerPOST<S extends ReduxState, A extends ReduxAction, R, C = any>(
   reducer: PiReducer,
 ): (props: PiRegisterPoPuPaProps<S, A, R>) => void {
   return function (props: PiRegisterPoPuPaProps<S, A, R>) {
@@ -30,7 +30,7 @@ export function registerPOST<S extends ReduxState, A extends ReduxAction, R>(
   }
 }
 
-export function registerPUT<S extends ReduxState, A extends ReduxAction, R>(
+export function registerPUT<S extends ReduxState, A extends ReduxAction, R, C = any>(
   reducer: PiReducer,
 ): (props: PiRegisterPoPuPaProps<S, A, R>) => void {
   return function (props: PiRegisterPoPuPaProps<S, A, R>) {
@@ -53,9 +53,9 @@ export function registerPUT<S extends ReduxState, A extends ReduxAction, R>(
   }
 }
 
-export function registerPATCH<S extends ReduxState, A extends ReduxAction, R>(
+export function registerPATCH<S extends ReduxState, A extends ReduxAction, R, C = any>(
   reducer: PiReducer,
-): (props: PiRegisterPoPuPaProps<S, A, R>) => void {
+): (props: PiRegisterPoPuPaProps<S, A, R, C>) => void {
   return function (props: PiRegisterPoPuPaProps<S, A, R>) {
     const { name, request } = props
 

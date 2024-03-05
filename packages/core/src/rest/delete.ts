@@ -2,16 +2,16 @@ import { PiReducer, ReduxAction, ReduxState } from "../types"
 import { registerCommon } from "./utils"
 import { Bindings, ACTION_TYPES, PiRegisterDeleteProps } from "./types"
 
-export function registerDELETE<S extends ReduxState, A extends ReduxAction, R>(
+export function registerDELETE<S extends ReduxState, A extends ReduxAction, R, C = any>(
   reducer: PiReducer,
-): (props: PiRegisterDeleteProps<S, A, R>) => void {
+): (props: PiRegisterDeleteProps<S, A, R, C>) => void {
   return function (props: PiRegisterDeleteProps<S, A, R>) {
     _registerDELETE(props, reducer)
   }
 }
 
-function _registerDELETE<S extends ReduxState, A extends ReduxAction, R>(
-  props: PiRegisterDeleteProps<S, A, R>,
+function _registerDELETE<S extends ReduxState, A extends ReduxAction, R, C = any>(
+  props: PiRegisterDeleteProps<S, A, R, C>,
   reducer: PiReducer,
 ) {
   const { name, request } = props

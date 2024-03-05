@@ -397,9 +397,13 @@ function cls_f(
 function propEq(oldP: CompProps, newP: CompProps): boolean {
   let result = true
   for (const [k, v] of Object.entries(newP)) {
-    if (oldP[k] !== v) {
-      result = false
-      break
+    const ov = oldP[k]
+    if (ov !== v) {
+      // two empty arrays are considered to be different, but we don't agree :)
+      if (!(Array.isArray(v) && !v.length && Array.isArray(ov) && !ov.length)) {
+        result = false
+        break
+      }
     }
   }
   RegisterCardState.changed(newP.cardName, result, newP)
@@ -575,6 +579,6 @@ function makeSafe(v: any): any {
       return p
     }, {} as { [k: string]: any })
   }
-  logger.log(">>> reject", v, typeof v)
+  logger.warn(">>> reject", v, typeof v)
   return "..."
 }

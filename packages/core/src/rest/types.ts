@@ -28,6 +28,7 @@ export const ACTION_TYPES = registerActions(Domain, [
   "PERMISSION_DENIED_ERROR",
   "NOT_FOUND_ERROR",
   "ERROR",
+  "CONTEXT_ERROR"
 ])
 
 export type Bindings = { [key: string]: string | number }
@@ -41,13 +42,15 @@ export type RegisterGenericProps<
   S extends ReduxState,
   A extends ReduxAction,
   R,
+  C = any,
 > = {
   name: string
-  origin?: string | ((action: A, state: S) => string | URL) // if defined, will be prepended to 'url' (URL(window.location.href).origin)
+  origin?: string | ((action: A, state: S, context: C) => string | URL) // if defined, will be prepended to 'url' (URL(window.location.href).origin)
   url: string
   trigger: string
-  guard?: (action: A, state: S) => boolean
-  headers?: (action: A, state: S) => { [key: string]: string }
+  context?: (action: A, state: S) => Promise<C> | null
+  guard?: (action: A, state: S, dispatcher: DispatchF, context: C) => boolean
+  headers?: (action: A, state: S, context: C) => { [key: string]: string }
   reply: (
     state: S,
     reply: R,
@@ -66,7 +69,8 @@ export type PiRegisterGetProps<
   S extends ReduxState,
   A extends ReduxAction,
   R,
-> = RegisterGenericProps<S, A, R> & {
+  C = any,
+> = RegisterGenericProps<S, A, R, C> & {
   request?: (action: A, state: S) => Bindings
 }
 
@@ -74,7 +78,8 @@ export type PiRegisterPoPuPaProps<
   S extends ReduxState,
   A extends ReduxAction,
   R,
-> = RegisterGenericProps<S, A, R> & {
+  C = any,
+> = RegisterGenericProps<S, A, R, C> & {
   request: (action: A, state: S) => PoPuPaRequest
 }
 
@@ -82,7 +87,8 @@ export type PiRegisterDeleteProps<
   S extends ReduxState,
   A extends ReduxAction,
   R,
-> = RegisterGenericProps<S, A, R> & {
+  C = any,
+> = RegisterGenericProps<S, A, R, C> & {
   request?: (action: A, state: S) => Bindings
 }
 
@@ -118,3 +124,8 @@ export type ErrorAction<R> = ReduxAction & {
   url: string
   request: R
 } & HttpResponse
+
+export type ContextErrorAction = ReduxAction & {
+  error: string
+  pendingAction: ReduxAction
+}

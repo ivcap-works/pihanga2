@@ -41,7 +41,11 @@ export type {
   ReduxState,
   ReduxAction,
   DispatchF,
+  ReduceF,
   PiDefCtxtProps,
+  StateMapperContext,
+  StateMapper,
+  PiReducer,
 } from "./types"
 export { registerActions, actionTypesToEvents, createOnAction } from "./redux"
 export { Card, memo, createCardDeclaration, isCardRef } from "./card"
@@ -69,20 +73,20 @@ export interface PiRegister {
    */
   metaCard<C>(declaration: PiRegisterMetaCard): void
 
-  GET<S extends ReduxState, A extends ReduxAction, R>(
-    props: PiRegisterGetProps<S, A, R>,
+  GET<S extends ReduxState, A extends ReduxAction, R, C = any>(
+    props: PiRegisterGetProps<S, A, R, C>,
   ): void
-  PUT<S extends ReduxState, A extends ReduxAction, R>(
-    props: PiRegisterPoPuPaProps<S, A, R>,
+  PUT<S extends ReduxState, A extends ReduxAction, R, C = any>(
+    props: PiRegisterPoPuPaProps<S, A, R, C>,
   ): void
-  POST<S extends ReduxState, A extends ReduxAction, R>(
-    props: PiRegisterPoPuPaProps<S, A, R>,
+  POST<S extends ReduxState, A extends ReduxAction, R, C = any>(
+    props: PiRegisterPoPuPaProps<S, A, R, C>,
   ): void
-  PATCH<S extends ReduxState, A extends ReduxAction, R>(
-    props: PiRegisterPoPuPaProps<S, A, R>,
+  PATCH<S extends ReduxState, A extends ReduxAction, R, C = any>(
+    props: PiRegisterPoPuPaProps<S, A, R, C>,
   ): void
-  DELETE<S extends ReduxState, A extends ReduxAction, R>(
-    props: PiRegisterDeleteProps<S, A, R>,
+  DELETE<S extends ReduxState, A extends ReduxAction, R, C = any>(
+    props: PiRegisterDeleteProps<S, A, R, C>,
   ): void
   //registerPeriodicGET<S extends ReduxState, A extends ReduxAction, R>(props: PiRegisterPeridicGetProps<S, A, R>): void;
 

@@ -11,16 +11,16 @@ export const ACTION_TYPES = registerActions(`${Domain}/get`, [
   // "PERIODIC_TICK",
 ])
 
-export function registerGET<S extends ReduxState, A extends ReduxAction, R>(
+export function registerGET<S extends ReduxState, A extends ReduxAction, R, C = any>(
   reducer: PiReducer,
-): (props: PiRegisterGetProps<S, A, R>) => void {
-  return function (props: PiRegisterGetProps<S, A, R>) {
+): (props: PiRegisterGetProps<S, A, R, C>) => void {
+  return function (props: PiRegisterGetProps<S, A, R, C>) {
     _registerGET(props, reducer)
   }
 }
 
-function _registerGET<S extends ReduxState, A extends ReduxAction, R>(
-  props: PiRegisterGetProps<S, A, R>,
+function _registerGET<S extends ReduxState, A extends ReduxAction, R, C = any>(
+  props: PiRegisterGetProps<S, A, R, C>,
   reducer: PiReducer,
 ) {
   const { name, request } = props

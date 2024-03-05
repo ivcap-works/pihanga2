@@ -1,6 +1,9 @@
+import { current } from "immer"
 import { DispatchF, PiReducer, ReduxAction, ReduxState } from "../types"
 import {
+  ACTION_TYPES,
   Bindings,
+  ContextErrorAction,
   ErrorAction,
   ErrorKind,
   HttpResponse,
@@ -60,9 +63,9 @@ export type RequestF<S extends ReduxState, A extends ReduxAction> = (
   action: A,
 ) => [RequestInit, Bindings]
 
-export function registerCommon<S extends ReduxState, A extends ReduxAction, R>(
+export function registerCommon<S extends ReduxState, A extends ReduxAction, R, C = any>(
   reducer: PiReducer,
-  props: RegisterGenericProps<S, A, R>,
+  props: RegisterGenericProps<S, A, R, C>,
   requestF: RequestF<S, A>,
   submitType: string,
   resultType: string,
@@ -74,6 +77,7 @@ export function registerCommon<S extends ReduxState, A extends ReduxAction, R>(
     origin = window.location.href,
     url,
     trigger,
+    context,
     guard,
     headers,
     reply,
@@ -96,65 +100,85 @@ export function registerCommon<S extends ReduxState, A extends ReduxAction, R>(
   reducer.register<S, A>(
     trigger,
     (state: S, action: A, dispatch: DispatchF) => {
-      if (guard) {
-        if (!guard(action, state)) {
-          return state
-        }
-      }
-      let bindings: Bindings = {}
-      let request: RequestInit
-      let url2: URL
-      try {
-        ;[request, bindings] = requestF(state, action)
-        if (headers) {
-          const h = headers(action, state)
-          request.headers = request.headers ? { ...request.headers, ...h } : h
-        }
-        let o: string
-        if (typeof origin === "function") {
-          const ox = origin(action, state)
-          o = ox instanceof URL ? ox.toString() : ox
-        } else {
-          o = origin
-        }
-        url2 = buildURL(url, o, bindings)
-      } catch (e: any) {
-        dispatch({
-          type: intErrorType,
-          error: e?.message,
-          call: name,
-          action,
-          bindings,
-        })
-        return state
-      }
-
-      dispatch({
-        type: submitType,
-        requestID: name,
-        url: url2.toString(),
-        bindings,
-      })
-      _fetch(url2, request)
-        .then((resp) => {
-          if (resp.statusCode < 300) {
-            const a: ResultAction<A> = {
-              type: resultType,
-              queryID: name,
-              ...resp,
-              url: url2.toString(),
-              request: action,
+      const ctxtP = context ? context(action, state) : null
+      if (ctxtP) {
+        // const s = current(state) // need
+        ctxtP
+          .then((ctxt) => handleEvent(null as unknown as S, action, dispatch, ctxt))
+          .catch((err) => {
+            const a: ContextErrorAction = {
+              type: ACTION_TYPES.CONTEXT_ERROR,
+              error: err.toString(),
+              pendingAction: action
             }
             dispatch(a)
-          } else {
-            const a = createErrorAction(errorType, resp, name, url2, action)
-            dispatch(a)
-          }
-        })
-        .catch((error) => console.log("_fetch", error))
+          })
+      } else {
+        // we should remove state as argument
+        handleEvent(null as unknown as S, action, dispatch, {} as any)
+      }
       return state
-    },
-  )
+    })
+
+  function handleEvent(state: S, action: A, dispatch: DispatchF, ctxt: C): S {
+    if (guard) {
+      if (!guard(action, state, dispatch, ctxt)) {
+        return state
+      }
+    }
+    let bindings: Bindings = {}
+    let request: RequestInit
+    let url2: URL
+    try {
+      ;[request, bindings] = requestF(state, action)
+      if (headers) {
+        const h = headers(action, state, ctxt)
+        request.headers = request.headers ? { ...request.headers, ...h } : h
+      }
+      let o: string
+      if (typeof origin === "function") {
+        const ox = origin(action, state, ctxt)
+        o = ox instanceof URL ? ox.toString() : ox
+      } else {
+        o = origin
+      }
+      url2 = buildURL(url, o, bindings)
+    } catch (e: any) {
+      dispatch({
+        type: intErrorType,
+        error: e?.message,
+        call: name,
+        action,
+        bindings,
+      })
+      return state
+    }
+
+    dispatch({
+      type: submitType,
+      requestID: name,
+      url: url2.toString(),
+      bindings,
+    })
+    _fetch(url2, request)
+      .then((resp) => {
+        if (resp.statusCode < 300) {
+          const a: ResultAction<A> = {
+            type: resultType,
+            queryID: name,
+            ...resp,
+            url: url2.toString(),
+            request: action,
+          }
+          dispatch(a)
+        } else {
+          const a = createErrorAction(errorType, resp, name, url2, action)
+          dispatch(a)
+        }
+      })
+      .catch((error) => console.log("_fetch", error))
+    return state
+  }
 
   reducer.register<S, ResultAction<A>>(resultType, (state, ra, dispatch) => {
     return reply(state, ra.content, dispatch, ra)
