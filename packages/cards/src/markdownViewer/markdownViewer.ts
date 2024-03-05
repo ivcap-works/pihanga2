@@ -1,6 +1,6 @@
 import type { PluggableList } from "react-markdown/lib/react-markdown"
-import { createCardDeclaration } from "@pihanga/core"
-import { CSSModuleClasses } from "@pihanga/core/dist/types"
+import { createCardDeclaration } from "@pihanga2/core"
+import { CSSModuleClasses } from "@pihanga2/core/dist/types"
 
 export const MARKDOWN_TYPE = "markdown-viewer"
 export const MarkdownViewer =

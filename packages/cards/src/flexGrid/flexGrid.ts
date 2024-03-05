@@ -1,7 +1,7 @@
-import { createCardDeclaration } from "@pihanga/core"
+import { createCardDeclaration } from "@pihanga2/core"
 
 export const FLEX_GRID_TYPE = "flex_grid"
-export const FLEX_GRID = createCardDeclaration<FlexGridProps>(FLEX_GRID_TYPE)
+export const FlexGrid = createCardDeclaration<FlexGridProps>(FLEX_GRID_TYPE)
 
 export type FlexGridProps = {
   cards: string[]

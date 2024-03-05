@@ -2,7 +2,7 @@ import {
   createCardDeclaration,
   createOnAction,
   registerActions,
-} from "@pihanga/core"
+} from "@pihanga2/core"
 
 export const IMAGE_VIEWER_TYPE = "image-viewer"
 export const ImageViewer = createCardDeclaration<

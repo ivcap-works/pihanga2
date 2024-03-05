@@ -1,4 +1,4 @@
-import { PiRegister, actionTypesToEvents } from "@pihanga/core"
+import { PiRegister, actionTypesToEvents } from "@pihanga2/core"
 
 import { FileDropComponent } from "./fileDrop.component"
 import { FILE_DROP_ACTION, FILE_DROP_TYPE } from "./fileDrop"

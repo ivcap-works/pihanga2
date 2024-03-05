@@ -1,5 +1,5 @@
 import React from "react"
-import { PiCardProps } from "@pihanga/core"
+import { PiCardProps } from "@pihanga2/core"
 import { FileUploader } from "react-drag-drop-files"
 import {
   DEF_FILE_DROP_FILE_TYPES,

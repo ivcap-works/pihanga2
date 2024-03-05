@@ -2,7 +2,7 @@ import {
   createCardDeclaration,
   createOnAction,
   registerActions,
-} from "@pihanga/core"
+} from "@pihanga2/core"
 import { ThemeKeys } from "react-json-view"
 
 export const JSON_TYPE = "json-viewer"

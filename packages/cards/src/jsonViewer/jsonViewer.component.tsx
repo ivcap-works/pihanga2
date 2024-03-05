@@ -1,4 +1,4 @@
-import { PiCardProps } from "@pihanga/core"
+import { PiCardProps } from "@pihanga2/core"
 import React, { useLayoutEffect, useRef } from "react"
 import ReactJson, { ReactJsonViewProps } from "react-json-view"
 import { JsonViewerProps, JsonViewerEvents } from "./jsonViewer"

@@ -1,4 +1,4 @@
-import { createCardDeclaration, registerActions } from "@pihanga/core"
+import { createCardDeclaration, registerActions } from "@pihanga2/core"
 
 export const GOOGLE_MAP_TYPE = "google-map"
 export const GoogleMap = createCardDeclaration<GoogleMapProps>(GOOGLE_MAP_TYPE)

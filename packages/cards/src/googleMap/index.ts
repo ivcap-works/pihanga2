@@ -1,4 +1,4 @@
-import { PiRegister, actionTypesToEvents } from "@pihanga/core"
+import { PiRegister, actionTypesToEvents } from "@pihanga2/core"
 
 import { GoogleMapComponent } from "./googleMap.component"
 import { GOOGLE_MAP_ACTION, GOOGLE_MAP_TYPE } from "./googleMap"

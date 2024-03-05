@@ -1,4 +1,4 @@
-import { PiRegister } from "@pihanga/core"
+import { PiRegister } from "@pihanga2/core"
 
 import { FlexGridComponent } from "./flexGrid.component"
 import { FLEX_GRID_TYPE } from "./flexGrid"

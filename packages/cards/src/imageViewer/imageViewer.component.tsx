@@ -1,5 +1,5 @@
 import React from "react"
-import { PiCardProps } from "@pihanga/core"
+import { PiCardProps } from "@pihanga2/core"
 import { ImageViewerEvents, ImageViewerProps } from "./imageViewer"
 
 export type ComponentProps = ImageViewerProps & {}

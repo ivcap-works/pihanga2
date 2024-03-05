@@ -3,8 +3,8 @@ import {
   createCardDeclaration,
   createOnAction,
   registerActions,
-} from "@pihanga/core"
-import { ColorT, SizeT, VariantT } from "./types/common"
+} from "@pihanga2/core"
+import { ColorT, SizeT, VariantT } from "./common"
 
 export const ACCORDION_TYPE = "accordion"
 
@@ -27,7 +27,7 @@ export type AccordionProps = {
 
 export type AccordionItem = {
   id: string
-  title: string | PiCardRef | PiCardRef[]
+  title: PiCardRef | PiCardRef[] | string
   content: string | PiCardRef | PiCardRef[]
   expanded?: boolean // If true, expands the accordion, otherwise collapse it.
   disabled?: boolean

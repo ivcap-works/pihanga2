@@ -1,4 +1,4 @@
-import { PiRegister } from "@pihanga/core"
+import { PiRegister } from "@pihanga2/core"
 
 import { MarkdownViewerComponent } from "./markdownViewer.component"
 import { MARKDOWN_TYPE } from "./markdownViewer"

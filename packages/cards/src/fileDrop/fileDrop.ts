@@ -2,7 +2,7 @@ import {
   createCardDeclaration,
   createOnAction,
   registerActions,
-} from "@pihanga/core"
+} from "@pihanga2/core"
 
 export const FILE_DROP_TYPE = "file-drop"
 export const FileDrop = createCardDeclaration<FileDropProps, FileDropEvents>(

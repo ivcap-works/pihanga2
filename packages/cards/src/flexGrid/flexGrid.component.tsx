@@ -1,5 +1,5 @@
 import React from "react"
-import { Card, PiCardProps } from "@pihanga/core"
+import { Card, PiCardProps } from "@pihanga2/core"
 import { FlexGridProps } from "./flexGrid"
 
 export const FlexGridComponent = (

@@ -1,4 +1,4 @@
-import { PiRegister, actionTypesToEvents } from "@pihanga/core"
+import { PiRegister, actionTypesToEvents } from "@pihanga2/core"
 
 import { JSON_TYPE, JSON_VIEWER_ACTION } from "./jsonViewer"
 import { ImageViewerComponent } from "./jsonViewer.component"

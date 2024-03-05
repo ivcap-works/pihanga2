@@ -1,4 +1,4 @@
-import { PiRegister, actionTypesToEvents } from "@pihanga/core"
+import { PiRegister, actionTypesToEvents } from "@pihanga2/core"
 
 import { ImageViewerComponent } from "./imageViewer.component"
 import { IMAGE_VIEWER_ACTION, IMAGE_VIEWER_TYPE } from "./imageViewer"

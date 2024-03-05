@@ -1,4 +1,4 @@
-import { PiRegister } from "@pihanga/core"
+import { PiRegister } from "@pihanga2/core"
 
 // Import all local components
 import { imageViewerInit } from "./imageViewer"
@@ -7,14 +7,16 @@ import { markdownViewerInit } from "./markdownViewer"
 import { fileDropInit } from "./fileDrop"
 import { flexGridInit } from "./flexGrid"
 import { googleMapInit } from "./googleMap"
+import { routerInit } from "./router"
 
 export * from "./imageViewer"
 export * from "./jsonViewer"
 export * from "./markdownViewer"
-export * from "./types/common"
+export * from "./common"
 export * from "./accordion"
 export * from "./fileDrop"
 export * from "./flexGrid"
+export * from "./icons"
 
 export function init(register: PiRegister): void {
   imageViewerInit(register)
@@ -23,4 +25,5 @@ export function init(register: PiRegister): void {
   fileDropInit(register)
   flexGridInit(register)
   googleMapInit(register)
+  routerInit(register)
 }

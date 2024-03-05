@@ -1,5 +1,5 @@
 {
-  "name": "@pihanga/cards",
+  "name": "@pihanga2/cards",
   "version": "2.0.0",
   "private": true,
   "type": "module",
@@ -36,12 +36,12 @@
     "@react-google-maps/api": "^2.19.2"
   },
   "peerDependencies": {
-    "@pihanga/core": "^2.0.0",
+    "@pihanga2/core": "^2.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@pihanga/core": "^2.0.0",
+    "@pihanga2/core": "^2.0.0",
     "@types/googlemaps": "^3.43.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

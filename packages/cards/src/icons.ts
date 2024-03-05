@@ -1,12 +1,24 @@
 import React from "react"
 
-const icons: any[] = []
-
 export type IconId = number
 
-export function registerIcon(el: any): IconId {
+const icons: any[] = []
+const name2icon: { [name: string]: IconId } = {}
+
+export function registerIcon(el: any, name?: string): IconId {
   icons.push(el)
-  return icons.length - 1
+  const id = icons.length - 1
+  if (name) {
+    if (name2icon[name] !== undefined) {
+      throw new Error(`icon '${name}' already registered`)
+    }
+    name2icon[name] = id
+  }
+  return id
+}
+
+export function getIconId(name: string): IconId | undefined {
+  return name2icon[name]
 }
 
 // can't figure out what the proper return type is, SVvgIconT does
@@ -14,6 +26,9 @@ export function registerIcon(el: any): IconId {
 export function getIcon(idx: IconId, props?: any): React.ReactNode {
   const icon = icons[idx]
   if (!icon) return null
+  // if (typeof icon === "object" && icon["$$typeof"]) {
+  //   return icon
+  // }
   const el = React.createElement(icon, props)
   return el
 }
