@@ -1,10 +1,7 @@
 import React from "react"
-import { Card, PiCardProps } from "@pihanga/core"
-import { ComponentEvents, ComponentProps, DEF_ROOT_SX } from "./chip.types"
-import { Avatar, Chip, ChipDelete } from "@mui/joy"
-import { DeleteForever } from "@mui/icons-material"
-import { DecoratorT, DecoratorE } from "@pihanga/cards/dist/types/common"
-import { getIcon } from "@pihanga/cards/dist/icons"
+import { PiCardProps } from "@pihanga2/core"
+import { ComponentEvents, ComponentProps } from "./chip.types"
+import { Chip } from "@mui/joy"
 import { renderDecorator } from "../utils"
 
 export const Component = (

@@ -1,5 +1,5 @@
 import React from "react"
-import { Card, PiCardProps } from "@pihanga/core"
+import { Card, PiCardProps } from "@pihanga2/core"
 import { ComponentEvents, FooProps, DEF_SX } from "./foo.types"
 import { Box } from "@mui/joy"
 

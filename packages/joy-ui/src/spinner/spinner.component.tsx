@@ -1,8 +1,8 @@
-import { Card, PiCardProps } from "@pihanga/core"
+import { Card, PiCardProps } from "@pihanga2/core"
 import React from "react"
 import CircularProgress from "@mui/joy/CircularProgress"
 import { SxProps } from "@mui/joy/styles/types"
-import { DEF_SPINNER_HEIGHT, SpinnerProps } from "@pihanga/cards/src/spinner"
+import { DEF_SPINNER_HEIGHT, SpinnerProps } from "@pihanga2/cards/src/spinner"
 import Box from "@mui/joy/Box"
 
 export type ComponentProps = SpinnerProps & {

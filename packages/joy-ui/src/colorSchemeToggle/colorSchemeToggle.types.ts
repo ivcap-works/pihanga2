@@ -1,9 +1,9 @@
-import { IconId } from "@pihanga/cards/dist/icons"
+import { IconId } from "@pihanga2/cards/src/icons"
 import {
   createCardDeclaration,
   createOnAction,
   registerActions,
-} from "@pihanga/core"
+} from "@pihanga2/core"
 
 export const CARD_TYPE = "colorSchemeToggle"
 export const ColoreSchemeToggle = createCardDeclaration<ColorSchemeToggleProps, ComponentEvents>(CARD_TYPE)

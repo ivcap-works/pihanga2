@@ -1,10 +1,10 @@
 import React from "react"
-import { PiCardProps } from "@pihanga/core"
+import { PiCardProps } from "@pihanga2/core"
 import {
   ComponentEvents,
   Item,
   ListProps,
-} from "@pihanga/cards/dist/types/list"
+} from "@pihanga2/cards/src/list"
 import {
   List,
   ListItem,
@@ -18,7 +18,7 @@ import { Toggler } from "./toggler.component"
 import { registerMuiIcon } from "../icons"
 import { renderDecorator } from "../utils"
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown"
-import { DecoratorE, IconDecoratorT } from "@pihanga/cards/src"
+import { DecoratorE, IconDecoratorT } from "@pihanga2/cards/src"
 import { SxProps } from "@mui/joy/styles/types"
 
 export const NESTED_ICON_NAME = registerMuiIcon(KeyboardArrowDownIcon)
@@ -77,7 +77,7 @@ export const Component = (
       <ListItem key={it.id || idx} nested>
         <Toggler
           renderToggle={({ open, setOpen }) => {
-            const endDecorator: IconDecoratorT = {
+            const endDecorator: IconDecoratorT & { sx: SxProps } = {
               type: DecoratorE.Icon,
               icon: NESTED_ICON_NAME,
               sx: { transform: open ? "rotate(180deg)" : "none" },

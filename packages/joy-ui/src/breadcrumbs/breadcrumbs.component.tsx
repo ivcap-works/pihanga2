@@ -1,5 +1,5 @@
 import React from "react"
-import { PiCardProps } from "@pihanga/core"
+import { PiCardProps } from "@pihanga2/core"
 import { Box, Breadcrumbs, Link, Typography } from "@mui/joy"
 import { renderDecorator } from "../utils"
 
@@ -9,7 +9,7 @@ import {
   BreadCrumb,
   ComponentEvents,
   BreadcrumbsProps,
-} from "@pihanga/cards/dist/types/breadcrumbs"
+} from "@pihanga2/cards/src/breadcrumbs"
 import { SxProps } from "@mui/joy/styles/types"
 
 export type ComponentProps = BreadcrumbsProps & {
@@ -35,6 +35,7 @@ export const Component = (
   const last = breadcrumbs[l - 1]
 
   function renderLink(l: BreadCrumb) {
+    const sx = (l as any).joy?.sx as SxProps
     return (
       <Link
         component="button"
@@ -45,7 +46,7 @@ export const Component = (
         fontWeight={l.fontWeight || 500}
         underline={l.underline || "hover"}
         variant={l.variant || "plain"}
-        sx={l.sx || {}}
+        sx={sx}
         key={l.id}
       >
         {renderDecorator(l.decorator)}

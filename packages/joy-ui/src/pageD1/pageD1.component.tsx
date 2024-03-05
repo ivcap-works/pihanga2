@@ -3,7 +3,7 @@ import Box from "@mui/joy/Box"
 import Typography from "@mui/joy/Typography"
 
 // import OrderList from "../../../components/OrderList"
-import { Card, PiCardProps } from "@pihanga/core"
+import { Card, PiCardProps } from "@pihanga2/core"
 import { ComponentProps, DEF_ROOT_SX } from "./pageD1.types"
 
 export const Component = (

@@ -1,7 +1,7 @@
 import * as React from "react"
 import Box from "@mui/joy/Box"
 
-import { Card, PiCardProps } from "@pihanga/core"
+import { Card, PiCardProps } from "@pihanga2/core"
 import { ComponentProps } from "./box.types"
 
 export const Component = (

@@ -1,10 +1,16 @@
-import { SxProps } from "@mui/material"
-import { PiCardRef, createCardDeclaration, createOnAction, registerActions } from "@pihanga/core"
-import { ColorT, DecoratorT, SizeT, VariantT } from "@pihanga/cards/dist/types/common"
-import { IconId } from "@pihanga/cards/dist/icons"
+import {
+  createCardDeclaration,
+  createOnAction,
+  registerActions,
+} from "@pihanga2/core"
+import { ColorT, SizeT, VariantT } from "@pihanga2/cards/src/common"
+import { IconId } from "@pihanga2/cards/src/icons"
 
 export const CARD_TYPE = "icon_button"
-export const IconButton = createCardDeclaration<IconButtonProps, ComponentEvents>(CARD_TYPE)
+export const IconButton = createCardDeclaration<
+  IconButtonProps,
+  ComponentEvents
+>(CARD_TYPE)
 
 export const ACTION_TYPES = registerActions(CARD_TYPE, ["clicked"])
 
@@ -19,8 +25,6 @@ export type IconButtonProps = {
   color?: ColorT
   variant?: VariantT
 }
-
-
 
 export type ClickedEvent = {}
 

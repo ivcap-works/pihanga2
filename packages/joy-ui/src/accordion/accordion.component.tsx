@@ -1,10 +1,10 @@
 import React from "react"
-import { Card, PiCardProps, PiCardRef, isCardRef } from "@pihanga/core"
+import { Card, PiCardProps, PiCardRef, isCardRef } from "@pihanga2/core"
 import {
   AccordionEvents,
   AccordionProps,
   AccordionItem,
-} from "@pihanga/cards/src"
+} from "@pihanga2/cards/src"
 import {
   Accordion,
   AccordionDetails,
@@ -78,7 +78,7 @@ export const AccoridonComponent = (
           sx={titleSX}
           className={_cls(["item-title", `item-title-${item.id || idx}`])}
         >
-          {renderContent(item.content)}
+          {renderContent(item.title)}
         </AccordionSummary>
         <AccordionDetails
           sx={isx[item.id]?.content || isx[DEF_ACCORDION_ITEM]?.content}

@@ -1,4 +1,4 @@
-import { PiRegister, createCardDeclaration } from "@pihanga/core"
+import { PiRegister, createCardDeclaration } from "@pihanga2/core"
 
 import { Component } from "./box.component"
 import type { ComponentProps } from "./box.types"

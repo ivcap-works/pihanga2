@@ -4,7 +4,7 @@ import {
   createCardDeclaration,
   createOnAction,
   registerActions,
-} from "@pihanga/core"
+} from "@pihanga2/core"
 
 export const CARD_TYPE = "foo"
 export const Foo = createCardDeclaration<FooProps, ComponentEvents>(CARD_TYPE)

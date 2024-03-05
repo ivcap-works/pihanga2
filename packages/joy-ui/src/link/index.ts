@@ -2,14 +2,14 @@ import {
   PiRegister,
   createCardDeclaration,
   actionTypesToEvents,
-} from "@pihanga/core"
+} from "@pihanga2/core"
 
 import { Component } from "./link.component"
 import {
   type LinkProps,
   type ComponentEvents,
   ACTION_TYPES,
-} from "@pihanga/cards/src/types/link"
+} from "@pihanga2/cards/src/link"
 
 export const CARD_TYPE = "joy/link"
 export const JyLink = createCardDeclaration<LinkProps, ComponentEvents>(

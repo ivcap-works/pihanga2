@@ -4,7 +4,7 @@ import {
   createCardDeclaration,
   createOnAction,
   actionTypesToEvents,
-} from "@pihanga/core"
+} from "@pihanga2/core"
 
 import { Component } from "./chip.component"
 import type { ComponentProps, SelectEvent, DeleteEvent } from "./chip.types"

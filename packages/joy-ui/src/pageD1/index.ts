@@ -1,4 +1,4 @@
-import { PiRegister, createCardDeclaration } from "@pihanga/core"
+import { PiRegister, createCardDeclaration } from "@pihanga2/core"
 
 import { Component } from "./pageD1.component"
 import type { ComponentProps } from "./pageD1.types"

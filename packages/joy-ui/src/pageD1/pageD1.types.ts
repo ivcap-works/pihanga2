@@ -1,5 +1,5 @@
 import { SxProps } from "@mui/material"
-import { PiCardRef } from "@pihanga/core"
+import { PiCardRef } from "@pihanga2/core"
 
 export type ComponentProps = {
   pageTitle: string
@@ -18,10 +18,10 @@ export type ComponentProps = {
 
 export const DEF_ROOT_SX: SxProps = { display: "flex", minHeight: "100dvh" }
 
-export type SomeEvent = {
-  something: string
-}
+// export type SomeEvent = {
+//   something: string
+// }
 
-export type ComponentEvents = {
-  onSomething: SomeEvent
-}
+// export type ComponentEvents = {
+//   onSomething: SomeEvent
+// }

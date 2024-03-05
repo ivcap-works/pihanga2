@@ -1,13 +1,23 @@
-import { PiCardRef, ReduxAction, createOnAction, registerActions } from "@pihanga/core"
-import { IconId } from "@pihanga/cards/dist/icons"
+import {
+  PiCardRef,
+  PiDefCtxtProps,
+  ReduxAction,
+  StateMapperContext,
+  createOnAction,
+  registerActions,
+} from "@pihanga2/core"
+import { IconId } from "@pihanga2/cards/src/icons"
 import {
   CARD_TYPE,
   ItemClickedEvent,
   Item as MenuItem,
-} from "@pihanga/cards/dist/types/list"
-import { BreadCrumb } from "@pihanga/cards/dist/types/breadcrumbs"
+} from "@pihanga2/cards/src/list"
+import { BreadCrumb } from "@pihanga2/cards/src/breadcrumbs"
 
-export const ACTION_TYPES = registerActions(CARD_TYPE, ["menu_clicked"])
+export const ACTION_TYPES = registerActions(CARD_TYPE, [
+  "menu_clicked",
+  "secondary_menu_clicked",
+])
 
 export const onItemClicked = createOnAction<ItemClickedEvent>(
   ACTION_TYPES.MENU_CLICKED,
@@ -27,10 +37,7 @@ export type ComponentProps = {
   actionCard?: PiCardRef
 
   mainMenu: MenuItem[]
-  mainMenuOnItemClickedMapper?: (ev: ItemClickedEvent) => ReduxAction
-
   secondaryMenu?: MenuItem[]
-  secondaryMenuOnItemClickedMapper?: (ev: ItemClickedEvent) => ReduxAction
 }
 
 export type UserProps = {
@@ -40,5 +47,6 @@ export type UserProps = {
 }
 
 export type ComponentEvents = {
-  onMenuClicked: ItemClickedEvent
+  onMainMenuItemClicked: ItemClickedEvent
+  onSecondaryMenuItemClicked: ItemClickedEvent
 }

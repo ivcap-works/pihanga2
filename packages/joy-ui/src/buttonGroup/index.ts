@@ -1,7 +1,7 @@
-import { PiRegister, createCardDeclaration } from "@pihanga/core"
+import { PiRegister, createCardDeclaration } from "@pihanga2/core"
 
 import { Component } from "./buttonGroup.component"
-import type { ButtonGroupProps } from "@pihanga/cards/src/types/buttonGroup"
+import type { ButtonGroupProps } from "@pihanga2/cards/src/buttonGroup"
 
 const CARD_TYPE = "joy/button-group"
 export const JyButtonGroup = createCardDeclaration<ButtonGroupProps>(CARD_TYPE)

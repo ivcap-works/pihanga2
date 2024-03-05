@@ -1,7 +1,7 @@
-import { PiRegister, createCardDeclaration } from "@pihanga/core"
+import { PiRegister, createCardDeclaration } from "@pihanga2/core"
 
 import { TypographyComponent } from "./typography.component"
-import type { TypographyProps } from "@pihanga/cards/src/types/typography"
+import type { TypographyProps } from "@pihanga2/cards/src/typography"
 
 export const CARD_TYPE = "joy/typography"
 export const JyTypography = createCardDeclaration<TypographyProps>(CARD_TYPE)

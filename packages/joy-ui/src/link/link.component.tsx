@@ -1,8 +1,8 @@
 import React from "react"
-import { Card, PiCardProps } from "@pihanga/core"
+import { Card, PiCardProps } from "@pihanga2/core"
 import { Link, Tooltip } from "@mui/joy"
 
-import { ComponentEvents, LinkProps } from "@pihanga/cards/src/types/link"
+import { ComponentEvents, LinkProps } from "@pihanga2/cards/src/link"
 import { SxProps } from "@mui/joy/styles/types"
 
 export type ComponentPropse = LinkProps & {

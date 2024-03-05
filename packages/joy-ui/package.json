@@ -1,5 +1,5 @@
 {
-  "name": "@pihanga/joy-ui",
+  "name": "@pihanga2/joy-ui",
   "version": "2.0.0",
   "private": true,
   "type": "module",
@@ -26,22 +26,26 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@mui/icons-material": "^5.14.19",
-    "@mui/joy": "^5.0.0-beta.17",
-    "classnames": "^2.3.2",
+    "@mui/icons-material": "^5.15.12",
+    "@mui/joy": "^5.0.0-beta.30",
+    "@mui/material": "^5.15.12",
+    "@mui/styled-engine": "5.15.11",
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.0",
+    "classnames": "^2.5.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-drag-drop-files": "^2.3.10",
     "react-modal": "^3.16.1"
   },
   "peerDependencies": {
-    "@pihanga/core": "^2.0.0",
-    "@pihanga/cards": "^2.0.0",
+    "@pihanga2/core": "^2.0.0",
+    "@pihanga2/cards": "^2.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@pihanga/core": "^2.0.0",
+    "@pihanga2/core": "^2.0.0",
     "@types/react-modal": "^3.16.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

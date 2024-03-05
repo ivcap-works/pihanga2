@@ -1,6 +1,6 @@
 import React from "react"
-import { PiCardProps } from "@pihanga/core"
-import { ComponentEvents, ButtonProps } from "@pihanga/cards/dist/types/button"
+import { PiCardProps } from "@pihanga2/core"
+import { ComponentEvents, ButtonProps } from "@pihanga2/cards/src/button"
 import { Button, Tooltip } from "@mui/joy"
 import { renderDecorator } from "../utils"
 import { SxProps } from "@mui/material"

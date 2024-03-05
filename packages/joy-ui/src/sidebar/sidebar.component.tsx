@@ -22,8 +22,8 @@ import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded"
 // import { Component as ColorSchemeToggle } from "../colorSchemeToggle/colorSchemeToggle.component"
 // import { closeSidebar } from "../../../utils"
 import { ComponentEvents, SidebarProps } from "./sidebar.types"
-import { PiCardProps, Card as PiCard } from "@pihanga/core"
-import { getIcon } from "@pihanga/cards/dist/icons"
+import { PiCardProps, Card as PiCard } from "@pihanga2/core"
+import { getIcon } from "@pihanga2/cards/src/icons"
 import { JyColorSchemeToggle } from "../colorSchemeToggle"
 
 export type ComponentProps = SidebarProps & {
@@ -93,6 +93,7 @@ export const Component = (
     withSearch,
     onOpenSidebar,
     onCloseSidebar,
+    onUserLogout,
     joy,
     cardName,
   } = props
@@ -265,7 +266,12 @@ export const Component = (
               </Typography>
             )}
           </Box>
-          <IconButton size="sm" variant="plain" color="neutral">
+          <IconButton
+            size="sm"
+            variant="plain"
+            color="neutral"
+            onClick={() => onUserLogout({})}
+          >
             <LogoutRoundedIcon />
           </IconButton>
         </Box>

@@ -11,7 +11,7 @@ import Typography from "@mui/joy/Typography"
 
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown"
 
-import { Card, PiCardProps, PiCardRef } from "@pihanga/core"
+import { Card, PiCardProps, PiCardRef } from "@pihanga2/core"
 import {
   ChipColumn,
   TableColumn,
@@ -26,8 +26,8 @@ import {
   ToggleColumn,
   StringColumn,
   DateColumn,
-} from "@pihanga/cards/src/types/table"
-import { DEF_DATE_FORMATTER } from "@pihanga/cards/src/types/dataGrid"
+} from "@pihanga2/cards/src/table"
+import { DEF_DATE_FORMATTER } from "@pihanga2/cards/src/dataGrid"
 import { SxProps } from "@mui/material"
 import { renderDecorator } from "../utils"
 import { LinearProgress } from "@mui/joy"
@@ -36,12 +36,14 @@ type ExtColumnT = GenericColumn | DetailColumnT
 type Order = "asc" | "desc"
 
 export type ComponentProps = TableProps & {
-  joy?: {
-    sx?: {
-      root?: SxProps
-      table?: SxProps
-    }
-  }
+  sx?: TableSX
+}
+
+export type TableSX = {
+  root?: SxProps
+  table?: SxProps
+  colgroup?: SxProps
+  thead?: SxProps
 }
 
 const DEF_SX = {
@@ -104,7 +106,7 @@ export const Component = (
 
     sheetWrap,
     cardName,
-    joy,
+    sx,
     _cls,
   } = props
   const [showingDetail, setShowingDetail] = React.useState<
@@ -189,22 +191,22 @@ export const Component = (
   function renderHeader() {
     return (
       <>
-        <colgroup>
+        <Box component="colgroup" sx={sx?.colgroup}>
           {visibleCols.map((col) => {
-            let width = `${col.columnWidth}`
+            let width = col.columnWidth // `${col.columnWidth}`
             if (col.type === TableColumnTypeE._Detail) {
-              width ||= "32px"
+              width ||= "44px"
             }
             const style = { width, ...col.headerStyle }
             return (
               <col style={style} className={_cls(col.label)} key={col.label} />
             )
           })}
-        </colgroup>
+        </Box>
         {!hideColumnHeaders && (
-          <thead>
+          <Box component="thead" sx={sx?.thead}>
             <tr>{visibleCols.map(renderColumnHeader)}</tr>
-          </thead>
+          </Box>
         )}
       </>
     )
@@ -223,7 +225,7 @@ export const Component = (
         variant={variant}
         stickyHeader={stickyHeader}
         stickyFooter={stickyFooter}
-        sx={joy?.sx?.table || DEF_SX.table}
+        sx={sx?.table || DEF_SX.table}
       >
         {renderHeader()}
         <tbody className="table-tbody">{renderTableContent()}</tbody>
@@ -619,7 +621,7 @@ export const Component = (
         <td colSpan={columns.length + 1}>
           <Card
             cardName={row.detailCard}
-            cardKey={row.id}
+            cardKey={`detail-${row.id}`}
             row={row}
             parentCard={cardName}
             key={`${cardName}-${row.id || idx}-detail`}
@@ -649,7 +651,7 @@ export const Component = (
     return (
       <Sheet
         variant={sheetWrap?.variant || "outlined"}
-        sx={joy?.sx?.root || DEF_SX.root}
+        sx={sx?.root || DEF_SX.root}
         className={_cls("root")}
         data-pihanga={cardName}
       >
@@ -658,7 +660,7 @@ export const Component = (
     )
   } else {
     return (
-      <Box sx={joy?.sx?.root || DEF_SX.root} data-pihanga={cardName}>
+      <Box sx={sx?.root || DEF_SX.root} data-pihanga={cardName}>
         {renderTable()}
       </Box>
     )

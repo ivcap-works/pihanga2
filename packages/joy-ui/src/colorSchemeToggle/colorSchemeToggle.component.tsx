@@ -1,6 +1,6 @@
 import React from "react"
 import { useColorScheme } from "@mui/joy/styles"
-import { Card, PiCardProps } from "@pihanga/core"
+import { Card, PiCardProps } from "@pihanga2/core"
 import {
   ComponentEvents,
   ColorSchemeToggleProps,

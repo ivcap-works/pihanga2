@@ -3,7 +3,7 @@ import { CssVarsProvider } from "@mui/joy/styles"
 import CssBaseline from "@mui/joy/CssBaseline"
 
 
-import { Card, PiCardProps } from "@pihanga/core"
+import { Card, PiCardProps } from "@pihanga2/core"
 import { ComponentProps } from "./framework.types"
 
 export const Component = (

@@ -2,14 +2,14 @@ import {
   PiRegister,
   createCardDeclaration,
   actionTypesToEvents,
-} from "@pihanga/core"
+} from "@pihanga2/core"
 
 import { AccoridonComponent } from "./accordion.component"
 import {
   type AccordionProps,
   type ImageViewerEvents,
   ACCORDION_ACTION,
-} from "@pihanga/cards/src"
+} from "@pihanga2/cards/src"
 
 export type { AccordionSX } from "./accordion.component"
 export { DEF_ACCORDION_ITEM } from "./accordion.component"

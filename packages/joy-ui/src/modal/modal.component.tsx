@@ -1,11 +1,11 @@
 import React from "react"
-import { Card, PiCardProps } from "@pihanga/core"
+import { Card, PiCardProps } from "@pihanga2/core"
 import {
   ComponentEvents,
   MODAL_MAX_WIDTH_DEF,
   MODAL_MIN_WIDTH_DEF,
   ModalProps,
-} from "@pihanga/cards/src/types/modal"
+} from "@pihanga2/cards/src/modal"
 import { SxProps } from "@mui/joy/styles/types"
 import { Modal, Sheet, ModalClose, Typography } from "@mui/joy"
 

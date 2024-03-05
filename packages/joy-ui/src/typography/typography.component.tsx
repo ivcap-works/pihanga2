@@ -1,7 +1,7 @@
 import React from "react"
 import { SxProps } from "@mui/material"
-import { Card, PiCardProps } from "@pihanga/core"
-import { TypographyProps } from "@pihanga/cards/src/types/typography"
+import { Card, PiCardProps } from "@pihanga2/core"
+import { TypographyProps } from "@pihanga2/cards/src/typography"
 import { Typography } from "@mui/joy"
 import { renderDecorator } from "../utils"
 

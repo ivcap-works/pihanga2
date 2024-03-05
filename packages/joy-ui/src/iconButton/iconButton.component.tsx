@@ -1,8 +1,8 @@
 import React from "react"
-import { PiCardProps } from "@pihanga/core"
+import { PiCardProps } from "@pihanga2/core"
 import { ComponentEvents, IconButtonProps } from "./iconButton.types"
 import { IconButton, Tooltip } from "@mui/joy"
-import { getIcon } from "@pihanga/cards/dist/icons"
+import { getIcon } from "@pihanga2/cards/src/icons"
 import { SxProps } from "@mui/joy/styles/types"
 
 export type ComponentProps = IconButtonProps & {

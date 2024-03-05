@@ -1,7 +1,7 @@
 import React from "react"
 import { Avatar, Chip } from "@mui/joy"
-import { getIcon } from "@pihanga/cards/dist/icons"
-import { DecoratorT, DecoratorE } from "@pihanga/cards/src"
+import { getIcon } from "@pihanga2/cards/src/icons"
+import { DecoratorT, DecoratorE } from "@pihanga2/cards/src"
 
 
 export function renderDecorator(d?: DecoratorT): React.ReactNode {

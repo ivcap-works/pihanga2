@@ -8,7 +8,7 @@ import {
   createCardDeclaration,
   type PiDefCtxtProps,
   actionTypesToEvents,
-} from "@pihanga/core"
+} from "@pihanga2/core"
 
 import {
   ACTION_TYPES,
@@ -20,8 +20,9 @@ import { JySidebar } from "../sidebar"
 import { JyList } from "../list"
 import { JyPage1 } from "../pageD1"
 import { JyBreadcrumbs } from "../breadcrumbs"
-import { Item } from "@pihanga/cards/dist/types/list"
-import { StateMapper } from "@pihanga/core/dist/types"
+import { Item } from "@pihanga2/cards/src/list"
+import { ReduxAction, StateMapper } from "@pihanga2/core/dist/types"
+import { ItemClickedEvent } from "@pihanga2/cards/src/list"
 
 export const PAGED2_TYPE = "joy/pageD2"
 export const JyPageD2 = createCardDeclaration<ComponentProps, ComponentEvents>(
@@ -58,7 +59,7 @@ function mapper(
         })
         return s
       },
-      onItemClickedMapper: props.mainMenuOnItemClickedMapper,
+      onItemClickedMapper: props.onMainMenuItemClickedMapper,
     }),
   )
 
@@ -72,6 +73,15 @@ function mapper(
       "secondaryMenu",
       JyList({
         items,
+        onItemClicked: (s, a, d) => {
+          d({
+            type: ACTION_TYPES.SECONDARY_MENU_CLICKED,
+            cardID: name,
+            itemID: a.itemID,
+          })
+          return s
+        },
+        onItemClickedMapper: props.onSecondaryMenuItemClickedMapper,
       }),
     )
   }
@@ -106,7 +116,7 @@ function mapper(
     actionCard: props.actionCard,
     modalCard: props.modal,
   })
-  main.onMenuClicked = props.onMenuClicked
+  // main.onMenuClicked = props.onMenuClicked
   return main
 }
 

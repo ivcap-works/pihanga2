@@ -1,5 +1,5 @@
 import React from "react"
-import { PiCardProps } from "@pihanga/core"
+import { PiCardProps } from "@pihanga2/core"
 import GlobalStyles from "@mui/joy/GlobalStyles"
 import Sheet from "@mui/joy/Sheet"
 import IconButton from "@mui/joy/IconButton"

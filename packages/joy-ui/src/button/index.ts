@@ -2,14 +2,14 @@ import {
   PiRegister,
   createCardDeclaration,
   actionTypesToEvents,
-} from "@pihanga/core"
+} from "@pihanga2/core"
 
 import { Component } from "./button.component"
 import {
   ACTION_TYPES,
   type ButtonProps,
   type ComponentEvents,
-} from "@pihanga/cards/dist/types/button"
+} from "@pihanga2/cards/src/button"
 
 const CARD_TYPE = "joy/button"
 export const JyButton = createCardDeclaration<ButtonProps, ComponentEvents>(

@@ -1,4 +1,4 @@
-import { PiRegister } from "@pihanga/core"
+import { PiRegister } from "@pihanga2/core"
 
 // Import all local components
 import { init as frameworkInit } from "./framework"
@@ -21,12 +21,13 @@ import { init as colorSchemeToggleInit } from "./colorSchemeToggle"
 import { init as page2Init } from "./pageD2"
 import { init as modalInit } from "./modal"
 import { init as spinnerInit } from "./spinner"
+import { init as loginInit } from "./login"
 
 export * from "./icons"
 
 export * from "./framework"
 export * from "./table"
-// export type * from "@pihanga/cards/src/types/table"
+// export type * from "@pihanga2/cards/src/table"
 
 
 export * from "./accordion"
@@ -57,6 +58,7 @@ export function init(register: PiRegister): void {
   colorSchemeToggleInit(register)
   modalInit(register)
   spinnerInit(register)
+  loginInit(register)
 
   page2Init(register)
 

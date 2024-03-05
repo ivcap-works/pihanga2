@@ -2,12 +2,12 @@ import {
   PiRegister,
   actionTypesToEvents,
   createCardDeclaration,
-} from "@pihanga/core"
+} from "@pihanga2/core"
 import {
   ACTION_TYPES,
   ComponentEvents,
   type ModalProps,
-} from "@pihanga/cards/src/types/modal"
+} from "@pihanga2/cards/src/modal"
 import { ModalComponent } from "./modal.component"
 
 export const CARD_TYPE = "joy/modal"

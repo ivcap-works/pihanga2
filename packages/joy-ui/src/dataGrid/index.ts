@@ -4,17 +4,17 @@ import {
   ReduxState,
   PiMapProps,
   PiCardDef,
-} from "@pihanga/core"
+} from "@pihanga2/core"
 
 import { Component } from "./dataGrid.component"
 import {
   type DataGridProps,
   type DataGridEvents,
   DATA_GRID_ACTION,
-} from "@pihanga/cards/src/types/dataGrid"
+} from "@pihanga2/cards/src/dataGrid"
 
 // is not a type, need to additionally export it as a non-type
-export { DataGridElTypeE } from "@pihanga/cards/src/types/dataGrid"
+export { DataGridElTypeE } from "@pihanga2/cards/src/dataGrid"
 
 const CARD_TYPE = "joy/dataGrid"
 

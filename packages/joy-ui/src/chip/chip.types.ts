@@ -1,7 +1,5 @@
 import { SxProps } from "@mui/material"
-import { } from "@mui/material/styles/createTypography"
-import { PiCardRef } from "@pihanga/core"
-import { ColorT, DecoratorT, SizeT, VariantT } from "@pihanga/cards/dist/types/common"
+import { ColorT, DecoratorT, SizeT, VariantT } from "@pihanga2/cards/src/common"
 
 export type ChipProps = {
   label: string

@@ -4,10 +4,10 @@ import {
   createCardDeclaration,
   createOnAction,
   actionTypesToEvents,
-} from "@pihanga/core"
+} from "@pihanga2/core"
 
 import { Component } from "./breadcrumbs.component"
-import type { BreadcrumbsProps, SomeEvent } from "@pihanga/cards/dist/types/breadcrumbs"
+import type { BreadcrumbsProps, SomeEvent } from "@pihanga2/cards/src/breadcrumbs"
 
 export const CARD_TYPE = "joy/breadcrumbs"
 export const JyBreadcrumbs = createCardDeclaration<BreadcrumbsProps>(CARD_TYPE)

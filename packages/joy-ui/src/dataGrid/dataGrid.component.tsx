@@ -1,6 +1,6 @@
 import React, { Fragment } from "react"
 import { SxProps } from "@mui/material"
-import { Card, PiCardProps } from "@pihanga/core"
+import { Card, PiCardProps } from "@pihanga2/core"
 import {
   CardEl,
   CheckboxEl,
@@ -13,14 +13,14 @@ import {
   LinkEl,
   StatusEl,
   TextEl,
-  TiteledEl,
   TitledDataGridEl,
   DEF_DATE_FORMATTER,
-} from "@pihanga/cards/src/types/dataGrid"
+} from "@pihanga2/cards/src/dataGrid"
 import { Box, Divider, Typography, styled } from "@mui/joy"
 import { Component as ButtonComponent } from "../button/button.component"
 import { Component as LinkComponent } from "../link/link.component"
 import { TypographyComponent } from "../typography/typography.component"
+import { ButtonProps } from "@pihanga2/cards/src/button"
 
 type ComponentProps = DataGridProps & {
   joy?: {

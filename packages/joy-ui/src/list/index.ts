@@ -2,17 +2,13 @@ import {
   PiRegister,
   createCardDeclaration,
   actionTypesToEvents,
-} from "@pihanga/core"
+} from "@pihanga2/core"
 
-import { Component } from "./list.component"
-import {
-  ACTION_TYPES,
-  ComponentEvents,
-  type ListProps,
-} from "@pihanga/cards/dist/types/list"
+import { Component, type ComponentProps } from "./list.component"
+import { ACTION_TYPES, ComponentEvents } from "@pihanga2/cards/src/list"
 
 export const CARD_TYPE = "joy/list"
-export const JyList = createCardDeclaration<ListProps, ComponentEvents>(
+export const JyList = createCardDeclaration<ComponentProps, ComponentEvents>(
   CARD_TYPE,
 )
 

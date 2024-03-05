@@ -2,7 +2,7 @@ import {
   PiRegister,
   createCardDeclaration,
   actionTypesToEvents,
-} from "@pihanga/core"
+} from "@pihanga2/core"
 
 import { FooComponent } from "./foo.component"
 import { type FooProps, type ComponentEvents, ACTION_TYPES } from "./foo.types"

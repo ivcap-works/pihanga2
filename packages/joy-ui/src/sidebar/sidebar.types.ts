@@ -3,8 +3,8 @@ import {
   createCardDeclaration,
   createOnAction,
   registerActions,
-} from "@pihanga/core"
-import { IconId } from "@pihanga/cards/dist/icons"
+} from "@pihanga2/core"
+import { IconId } from "@pihanga2/cards/src/icons"
 
 export const CARD_TYPE = "sidebar"
 export const Sidebar = createCardDeclaration<SidebarProps, ComponentEvents>(
@@ -14,6 +14,7 @@ export const Sidebar = createCardDeclaration<SidebarProps, ComponentEvents>(
 export const ACTION_TYPES = registerActions(CARD_TYPE, [
   "open_sidebar",
   "close_sidebar",
+  "user_logout",
 ])
 
 export const onOpenSidebar = createOnAction<CloseSidebarEvent>(
@@ -22,6 +23,10 @@ export const onOpenSidebar = createOnAction<CloseSidebarEvent>(
 
 export const onCloseSidebar = createOnAction<CloseSidebarEvent>(
   ACTION_TYPES.CLOSE_SIDEBAR,
+)
+
+export const onUserLogout = createOnAction<UserLogoutEvent>(
+  ACTION_TYPES.USER_LOGOUT,
 )
 
 export type SidebarProps = {
@@ -40,8 +45,10 @@ export type SidebarProps = {
 
 export type OpenSidebarEvent = {}
 export type CloseSidebarEvent = {}
+export type UserLogoutEvent = {}
 
 export type ComponentEvents = {
   onOpenSidebar: OpenSidebarEvent
   onCloseSidebar: CloseSidebarEvent
+  onUserLogout: UserLogoutEvent
 }
