@@ -1,5 +1,0 @@
-.grid:not(:first-child) {
-  border-top: var(--tblr-card-border-width) solid var(--tblr-card-border-color);
-  margin-top: 1em;
-  padding-top: 1em;
-}
