@@ -120,7 +120,7 @@ export type EventHandler<T, S extends ReduxState> = {
 }
 
 export type EventMapper<T> = {
-  [Key in keyof T as `${Key & string}Mapper`]?: (ev: T[Key]) => ReduxAction
+  [Key in keyof T as `${Key & string}Mapper`]?: (ev: T[Key]) => ReduxAction | null
 }
 
 export type GenericCardParameterT =

@@ -1,7 +1,7 @@
 {
   "name": "@pihanga2/joy-ui",
-  "version": "2.0.0",
-  "private": true,
+  "version": "0.1.0",
+  "private": false,
   "type": "module",
   "license": "MIT",
   "author": "max.ott@data61.csiro.au",
@@ -39,13 +39,12 @@
     "react-modal": "^3.16.1"
   },
   "peerDependencies": {
-    "@pihanga2/core": "^2.0.0",
-    "@pihanga2/cards": "^2.0.0",
+    "@pihanga2/core": "^0.1.0",
+    "@pihanga2/cards": "^0.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@pihanga2/core": "^2.0.0",
     "@types/react-modal": "^3.16.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

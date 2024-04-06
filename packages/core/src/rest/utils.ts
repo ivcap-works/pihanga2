@@ -10,24 +10,25 @@ import {
   RegisterGenericProps,
   ResultAction,
 } from "./types"
+import { RestContentType } from "./enums"
 
 export function parseResponse(
   response: Response,
-): Promise<[any, string, Response]> {
-  const contentType = response.headers.get("content-type")
-  if (contentType) {
-    switch (contentType) {
+): Promise<[any, RestContentType, string, Response]> {
+  const mimeType = response.headers.get("content-type")
+  if (mimeType) {
+    switch (mimeType) {
       case "application/json":
-        return response.json().then((j) => [j, contentType, response])
+        return response.json().then((j) => [j, RestContentType.Object, mimeType, response])
       case "application/jose":
-        return response.text().then((t) => [t, contentType, response])
+        return response.text().then((t) => [t, RestContentType.Text, mimeType, response])
       default:
-        if (contentType.startsWith("text")) {
-          return response.text().then((t) => [t, contentType, response])
+        if (mimeType.startsWith("text")) {
+          return response.text().then((t) => [t, RestContentType.Text, mimeType, response])
         }
     }
   }
-  return response.blob().then((t) => [t, "unknown", response])
+  return response.blob().then((t) => [t, RestContentType.Blob, mimeType || "unknown", response])
 }
 
 export function createErrorAction<R>(
@@ -243,12 +244,22 @@ function resolveBinding(
 function _fetch(url: URL, request: RequestInit): Promise<HttpResponse> {
   return fetch(url, request)
     .then(parseResponse)
-    .then(([content, contentType, response]) => {
+    .then(([content, contentType, mimeType, response]) => {
       return {
         statusCode: response.status,
         content,
         contentType,
+        mimeType,
+        size: getSize(response),
         headers: response.headers,
       }
     })
+}
+
+function getSize(response: Response): number {
+  const s = response.headers.get("Content-Length")
+  if (!s) {
+    return -1
+  }
+  return Number(s)
 }

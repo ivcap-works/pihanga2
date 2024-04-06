@@ -1,7 +1,7 @@
 {
   "name": "@pihanga2/cards",
-  "version": "2.0.0",
-  "private": true,
+  "version": "0.1.0",
+  "private": false,
   "type": "module",
   "license": "MIT",
   "author": "max.ott@data61.csiro.au",
@@ -17,13 +17,14 @@
   ],
   "scripts": {
     "docs": "yarn typedoc",
-    "build": "tsc --build && typedoc",
+    "build": "tsc --build && yarn copy-css && typedoc",
     "build:watch": "tsc --build --watch && typedoc",
     "prettier": "prettier --write .",
     "preview": "vite preview",
     "test:coverage": "vitest run --coverage",
     "test:run": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "copy-css": "cd src && copyfiles ./**/*.css ../dist"
   },
   "dependencies": {
     "react-json-view": "^1.21.3",
@@ -36,12 +37,11 @@
     "@react-google-maps/api": "^2.19.2"
   },
   "peerDependencies": {
-    "@pihanga2/core": "^2.0.0",
+    "@pihanga2/core": "^0.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@pihanga2/core": "^2.0.0",
     "@types/googlemaps": "^3.43.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -61,7 +61,8 @@
     "typedoc": "^0.25.4",
     "vite": "^5.0.4",
     "vite-plugin-progress": "^0.0.7",
-    "vitest": "^0.34.6"
+    "vitest": "^0.34.6",
+    "copyfiles": "^2.4.1"
   },
   "eslintConfig": {
     "extends": [

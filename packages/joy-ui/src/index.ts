@@ -35,8 +35,9 @@ export * from "./button"
 export * from "./buttonGroup"
 
 export * from "./dataGrid"
-
+export * from "./sidebar"
 export * from "./pageD2"
+export * from "./login"
 
 export function init(register: PiRegister): void {
   frameworkInit(register)

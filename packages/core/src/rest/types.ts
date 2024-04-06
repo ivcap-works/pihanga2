@@ -1,3 +1,4 @@
+import { RestContentType } from ".."
 import { registerActions } from "../redux"
 import { DispatchF, ReduxAction, ReduxState } from "../types"
 
@@ -92,11 +93,14 @@ export type PiRegisterDeleteProps<
   request?: (action: A, state: S) => Bindings
 }
 
+
 export type HttpResponse = {
   statusCode: number
   headers: { [k: string]: any }
   content: any
-  contentType: string
+  contentType: RestContentType
+  mimeType: string
+  size: number
 }
 
 export type SubmitAction = ReduxAction & {

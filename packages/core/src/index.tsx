@@ -52,6 +52,7 @@ export { Card, memo, createCardDeclaration, isCardRef } from "./card"
 export { getLogger } from "./logger"
 export type { PiCardProps, PiCardRef } from "./types"
 export type { ErrorAction as RestErrorAction } from "./rest"
+export { RestContentType } from "./rest"
 
 export { showPage, onInit, onShowPage, createShowPageAction, onNavigateToPage } from "./router"
 export type { ShowPageEvent, NavigateToPageEvent } from "./router"

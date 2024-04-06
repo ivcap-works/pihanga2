@@ -28,7 +28,7 @@ export function isCardRef(p: any): boolean {
 type Mapping = {
   cardType: string
   props: { [k: string]: unknown }
-  eventMappers: { [k: string]: (ev: Action) => Action }
+  eventMappers: { [k: string]: (ev: Action) => Action | null }
 }
 
 type MetaCard = {
@@ -214,17 +214,19 @@ export function memo<P, T, S extends ReduxState, C>(
 ): (state: S, context: StateMapperContext<C>) => T {
   const lastFilter: { [k: string]: P } = {}
   const lastValue: { [k: string]: T } = {}
+  const isNotFirst: { [k: string]: boolean } = {}
 
   return (state: S, context: StateMapperContext<C>): T => {
     const k = context.cardKey || "-"
     const fv = filterF(state, context)
-    if (fv === lastFilter[k]) {
+    if (fv === lastFilter[k] && isNotFirst[k]) {
       // nothing changed
       return lastValue[k]
     }
     lastFilter[k] = fv
     const v = mapperF(fv, context, state)
     lastValue[k] = v
+    isNotFirst[k] = true
     return v
   }
 }
@@ -434,7 +436,7 @@ function appendEventHandlers(
       cp[name] = (a: AnyAction) => {
         a.cardID = cardName
         const a2 = m(a)
-        dispatch(a2)
+        if (a2) dispatch(a2)
       }
     } else {
       cp[name] = (a: AnyAction) => {

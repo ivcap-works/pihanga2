@@ -1,4 +1,21 @@
+import {
+  createCardDeclaration,
+  createOnAction,
+  registerActions,
+} from "@pihanga2/core"
 import { ColorT, DecoratorT, VariantT } from "./common"
+
+export const BREADCRUMB_TYPE = "breadcrumb"
+export const Breadcrumbs = createCardDeclaration<
+  BreadcrumbsProps,
+  BreadcrumbEvents
+>(BREADCRUMB_TYPE)
+
+export const BREADCRUMB_ACTION = registerActions(BREADCRUMB_TYPE, ["select"])
+
+export const onSelect = createOnAction<BreadcrumbSelectEvent>(
+  BREADCRUMB_ACTION.SELECT,
+)
 
 export type BreadcrumbsProps = {
   breadcrumbs: BreadCrumb[]
@@ -22,10 +39,10 @@ export enum UnderlineE {
   None = "none",
 }
 
-export type SomeEvent = {
-  something: string
+export type BreadcrumbSelectEvent = {
+  id: string
 }
 
-export type ComponentEvents = {
-  onSomething: SomeEvent
+export type BreadcrumbEvents = {
+  onSelect: BreadcrumbSelectEvent
 }

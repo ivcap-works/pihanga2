@@ -1,7 +1,7 @@
 {
   "name": "@pihanga2/core",
-  "version": "2.0.0",
-  "private": true,
+  "version": "0.1.0",
+  "private": false,
   "type": "module",
   "license": "MIT",
   "author": "max.ott@data61.csiro.au",

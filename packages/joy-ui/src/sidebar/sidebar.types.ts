@@ -6,27 +6,9 @@ import {
 } from "@pihanga2/core"
 import { IconId } from "@pihanga2/cards/src/icons"
 
-export const CARD_TYPE = "sidebar"
-export const Sidebar = createCardDeclaration<SidebarProps, ComponentEvents>(
-  CARD_TYPE,
-)
-
-export const ACTION_TYPES = registerActions(CARD_TYPE, [
-  "open_sidebar",
-  "close_sidebar",
-  "user_logout",
-])
-
-export const onOpenSidebar = createOnAction<CloseSidebarEvent>(
-  ACTION_TYPES.OPEN_SIDEBAR,
-)
-
-export const onCloseSidebar = createOnAction<CloseSidebarEvent>(
-  ACTION_TYPES.CLOSE_SIDEBAR,
-)
-
-export const onUserLogout = createOnAction<UserLogoutEvent>(
-  ACTION_TYPES.USER_LOGOUT,
+export const SIDEBAR_TYPE = "sidebar"
+export const Sidebar = createCardDeclaration<SidebarProps, SidebarEvents>(
+  SIDEBAR_TYPE,
 )
 
 export type SidebarProps = {
@@ -41,13 +23,32 @@ export type SidebarProps = {
     email?: string
     avatarSrc?: string
   }
+  withColorSchemeToggle?: boolean
 }
+
+export const SIDEBAR_ACTION = registerActions(SIDEBAR_TYPE, [
+  "open_sidebar",
+  "close_sidebar",
+  "user_logout",
+])
+
+export const onOpenSidebar = createOnAction<CloseSidebarEvent>(
+  SIDEBAR_ACTION.OPEN_SIDEBAR,
+)
+
+export const onCloseSidebar = createOnAction<CloseSidebarEvent>(
+  SIDEBAR_ACTION.CLOSE_SIDEBAR,
+)
+
+export const onUserLogout = createOnAction<UserLogoutEvent>(
+  SIDEBAR_ACTION.USER_LOGOUT,
+)
 
 export type OpenSidebarEvent = {}
 export type CloseSidebarEvent = {}
 export type UserLogoutEvent = {}
 
-export type ComponentEvents = {
+export type SidebarEvents = {
   onOpenSidebar: OpenSidebarEvent
   onCloseSidebar: CloseSidebarEvent
   onUserLogout: UserLogoutEvent

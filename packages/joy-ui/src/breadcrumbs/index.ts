@@ -1,27 +1,26 @@
 import {
-  registerActions,
   PiRegister,
   createCardDeclaration,
-  createOnAction,
   actionTypesToEvents,
 } from "@pihanga2/core"
 
 import { Component } from "./breadcrumbs.component"
-import type { BreadcrumbsProps, SomeEvent } from "@pihanga2/cards/src/breadcrumbs"
+import { BREADCRUMB_ACTION } from "@pihanga2/cards/src/breadcrumbs"
+import type {
+  BreadcrumbsProps,
+  BreadcrumbEvents,
+} from "@pihanga2/cards/src/breadcrumbs"
 
-export const CARD_TYPE = "joy/breadcrumbs"
-export const JyBreadcrumbs = createCardDeclaration<BreadcrumbsProps>(CARD_TYPE)
-
-export const ACTION_TYPES = registerActions(CARD_TYPE, ["link_clicked"])
-
-export const onLinkClicked = createOnAction<SomeEvent>(
-  ACTION_TYPES.LINK_CLICKED,
-)
+export const BREADCRUMB_TYPE = "joy/breadcrumbs"
+export const JyBreadcrumbs = createCardDeclaration<
+  BreadcrumbsProps,
+  BreadcrumbEvents
+>(BREADCRUMB_TYPE)
 
 export function init(register: PiRegister): void {
   register.cardComponent({
-    name: CARD_TYPE,
+    name: BREADCRUMB_TYPE,
     component: Component,
-    events: actionTypesToEvents(ACTION_TYPES),
+    events: actionTypesToEvents(BREADCRUMB_ACTION),
   })
 }

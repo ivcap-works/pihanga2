@@ -7,7 +7,7 @@ import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded"
 
 import {
   BreadCrumb,
-  ComponentEvents,
+  BreadcrumbEvents,
   BreadcrumbsProps,
 } from "@pihanga2/cards/src/breadcrumbs"
 import { SxProps } from "@mui/joy/styles/types"
@@ -26,9 +26,9 @@ export const DEF_ROOT_SX: SxProps = {
 }
 
 export const Component = (
-  props: PiCardProps<ComponentProps, ComponentEvents>,
+  props: PiCardProps<ComponentProps, BreadcrumbEvents>,
 ): React.ReactNode => {
-  const { breadcrumbs, joy, cardName } = props
+  const { breadcrumbs, onSelect, joy, cardName } = props
   const l = breadcrumbs.length
   if (l === 0) return null
   const links = breadcrumbs.slice(0, -1)
@@ -39,9 +39,9 @@ export const Component = (
     return (
       <Link
         component="button"
-        onClick={() => console.log(">>>>> PRESSED", l.id)}
+        onClick={() => onSelect({ id: l.id })}
         // href="#some-link"
-        color={l.color || "neutral"}
+        color={l.color || "primary"}
         fontSize={l.fontSize || 12}
         fontWeight={l.fontWeight || 500}
         underline={l.underline || "hover"}
@@ -57,7 +57,7 @@ export const Component = (
 
   function renderLast(l: BreadCrumb) {
     return (
-      <Typography color={l.color || "primary"} fontWeight={500} fontSize={12}>
+      <Typography color={l.color || "neutral"} fontWeight={500} fontSize={12}>
         {l.label}
       </Typography>
     )

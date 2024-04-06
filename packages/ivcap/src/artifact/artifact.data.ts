@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from "uuid"
 import {
   PiRegister,
   ReduxState,
-  ReduxAction,
+  ReduxAction, RestContentType,
   createOnAction,
   DispatchF,
 } from "@pihanga2/core"
@@ -19,9 +19,11 @@ import {
 } from "../common"
 import { ACTION_TYPES } from "./artifact.actions"
 
+
 export type ArtifactDataEvent = RequestEvent & {
   artifactID: string
-  data: Blob | any
+  dataType: RestContentType
+  data: any
   size: number
   mimeType: string
 }
@@ -65,13 +67,17 @@ export function init(register: PiRegister): void {
       const id = a.id.split(":")[3]
       return { id }
     },
-    reply: (state, content: any, dispatch, { request, contentType }) => {
-      const blob = content as Blob
+    reply: (state, content: any, dispatch, { request, contentType, mimeType, size }) => {
+      var data = content
+      if (contentType === RestContentType.Blob) {
+        data = URL.createObjectURL(content)
+      }
       const evb: ArtifactDataEvent = {
         artifactID: request.id,
-        data: blob,
-        mimeType: contentType,
-        size: blob.size,
+        dataType: contentType,
+        data,
+        mimeType,
+        size,
       }
       dispatchEvent(evb, ACTION_TYPES.DATA, dispatch, request)
       return state

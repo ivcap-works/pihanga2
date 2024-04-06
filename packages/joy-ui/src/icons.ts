@@ -6,6 +6,6 @@ export type SvgIconT = OverridableComponent<SvgIconTypeMap<{}, "svg">> & {
   muiName: string
 }
 
-export function registerMuiIcon(el: SvgIconT, name?: string): IconId {
+export function registerMuiIcon(el: any, name?: string): IconId {
   return registerIcon(el, name)
 }

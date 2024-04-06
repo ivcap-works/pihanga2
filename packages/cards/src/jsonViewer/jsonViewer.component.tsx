@@ -10,9 +10,13 @@ export const ImageViewerComponent = (
     source,
     theme,
     iconStyle,
+    collapsed = 1,
+    enableClipboard = false,
+    removeQuotesOnKeys,
     displayObjectSize = false,
     displayDataTypes = false,
     modifyFn,
+    style = { fontSize: "0.75rem" },
     cardName,
     _cls,
   } = props
@@ -23,13 +27,17 @@ export const ImageViewerComponent = (
     }
   }, [modifyFn, source])
 
-  const p = {
+  const p: ReactJsonViewProps = {
     src: source,
     theme,
     iconStyle,
+    collapsed,
+    enableClipboard,
+    quotesOnKeys: !removeQuotesOnKeys,
     displayObjectSize,
     displayDataTypes,
-  } as ReactJsonViewProps
+    style,
+  }
 
   return (
     <div className={_cls("root")} ref={elRef} data-pihanga={cardName}>

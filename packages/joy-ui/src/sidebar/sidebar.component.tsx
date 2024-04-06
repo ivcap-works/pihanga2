@@ -19,9 +19,7 @@ import SearchRoundedIcon from "@mui/icons-material/SearchRounded"
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded"
 import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded"
 
-// import { Component as ColorSchemeToggle } from "../colorSchemeToggle/colorSchemeToggle.component"
-// import { closeSidebar } from "../../../utils"
-import { ComponentEvents, SidebarProps } from "./sidebar.types"
+import { SidebarEvents, SidebarProps } from "./sidebar.types"
 import { PiCardProps, Card as PiCard } from "@pihanga2/core"
 import { getIcon } from "@pihanga2/cards/src/icons"
 import { JyColorSchemeToggle } from "../colorSchemeToggle"
@@ -81,7 +79,7 @@ function closeSidebar() {
 }
 
 export const Component = (
-  props: PiCardProps<ComponentProps, ComponentEvents>,
+  props: PiCardProps<ComponentProps, SidebarEvents>,
 ): React.ReactNode => {
   const {
     title,
@@ -91,6 +89,7 @@ export const Component = (
     secondaryMenuCard,
     logoIcon,
     withSearch,
+    withColorSchemeToggle,
     onOpenSidebar,
     onCloseSidebar,
     onUserLogout,
@@ -131,13 +130,14 @@ export const Component = (
       <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
         {renderLogo()}
         <Typography level="title-lg">{title}</Typography>
-        <PiCard
-          cardName={JyColorSchemeToggle({
-            joy: { sx: { root: { ml: "auto" } } },
-          })}
-          parentCard={cardName}
-        />
-        {/* <ColorSchemeToggle sx={{ ml: "auto" }} /> */}
+        {withColorSchemeToggle && (
+          <PiCard
+            cardName={JyColorSchemeToggle({
+              joy: { sx: { root: { ml: "auto" } } },
+            })}
+            parentCard={cardName}
+          />
+        )}
       </Box>
     )
   }

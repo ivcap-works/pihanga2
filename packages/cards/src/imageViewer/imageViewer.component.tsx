@@ -9,8 +9,8 @@ export const ImageViewerComponent = (
 ): React.ReactNode => {
   const { imgURL, caption, width, height, onClicked, cardName, _cls } = props
 
-  let w: number | string = width && width > 0 ? width : 1
-  if (w <= 1) {
+  let w: number | string | undefined = width && width > 0 ? width : undefined
+  if (w && w <= 1) {
     w = `${w * 100}%`
   }
   let h: number | string | undefined = height && height > 0 ? height : undefined
