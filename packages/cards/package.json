@@ -1,6 +1,6 @@
 {
   "name": "@pihanga2/cards",
-  "version": "0.1.0",
+  "version": "0.2.1",
   "private": false,
   "type": "module",
   "license": "MIT",
@@ -27,42 +27,43 @@
     "copy-css": "cd src && copyfiles ./**/*.css ../dist"
   },
   "dependencies": {
-    "react-json-view": "^1.21.3",
+    "@react-google-maps/api": "^2.19.2",
+    "katex": "^0.16.11",
     "react-drag-drop-files": "^2.3.9",
+    "react-json-view": "^1.21.3",
+    "react-markdown": "^9.0.0",
     "react-modal": "^3.16.1",
-    "react-markdown": "^8.0.7",
-    "remark-math": "^5.1.1",
-    "rehype-katex": "^6.0.3",
-    "katex": "^0.16.8",
-    "@react-google-maps/api": "^2.19.2"
+    "rehype-katex": "^7.0.0",
+    "remark-gfm": "^4.0.0",
+    "remark-math": "^6.0.0"
   },
   "peerDependencies": {
-    "@pihanga2/core": "^0.1.0",
+    "@pihanga2/core": "^0.2.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@types/googlemaps": "^3.43.3",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
     "@microsoft/tsdoc": "^0.14.1",
+    "@types/googlemaps": "^3.43.3",
+    "@types/luxon": "^2.3.2",
+    "@types/node": "^17.0.35",
+    "c8": "^7.11.3",
+    "copyfiles": "^2.4.1",
     "eslint": "^8.0.0",
     "eslint-config-react-app": "^7.0.1",
     "eslint-plugin-prettier": "^4.2.1",
     "prettier": "^2.7.1",
     "prettier-config-nick": "^1.0.2",
-    "typescript": "^5.0.2",
-    "@types/luxon": "^2.3.2",
-    "@types/node": "^17.0.35",
-    "c8": "^7.11.3",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "rollup-plugin-typescript-paths": "^1.4.0",
     "rollup-plugin-visualizer": "^5.10.0",
     "tslib": "^2.6.2",
     "typedoc": "^0.25.4",
+    "typescript": "^5.0.2",
     "vite": "^5.0.4",
     "vite-plugin-progress": "^0.0.7",
-    "vitest": "^0.34.6",
-    "copyfiles": "^2.4.1"
+    "vitest": "^0.34.6"
   },
   "eslintConfig": {
     "extends": [
