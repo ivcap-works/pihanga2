@@ -2,9 +2,10 @@ import React, { useState } from "react"
 import ReactMarkdown from "react-markdown"
 import { PiCardProps } from "@pihanga2/core"
 import remarkMath from "remark-math"
+import remarkGfm from "remark-gfm"
 import rehypeKatex from "rehype-katex"
 import "katex/dist/katex.min.css" // `rehype-katex` does not import the CSS for you
-import { MarkdownViewerProps } from "./markdownViewer"
+import { MarkdownViewerProps } from "./markdownViewer.types"
 
 export const MarkdownViewerComponent = (
   props: PiCardProps<MarkdownViewerProps>,
@@ -13,11 +14,11 @@ export const MarkdownViewerComponent = (
     source,
     path,
     maxBodyLength = -1,
-    remarkPlugins = [remarkMath],
+    remarkPlugins = [remarkMath, remarkGfm],
     rehypePlugins = [rehypeKatex],
     remarkRehypeOptions,
-    extraClassName,
-    extraStyle = {},
+    className,
+    style = {},
     cardName,
     _cls,
   } = props
@@ -64,15 +65,16 @@ export const MarkdownViewerComponent = (
 
   return (
     <div
-      className={_cls("root", extraClassName)}
-      style={extraStyle}
+      className={_cls("root", className)}
+      style={style}
       data-pihanga={cardName}
     >
       <ReactMarkdown
         children={t2}
         remarkPlugins={remarkPlugins}
-        rehypePlugins={rehypePlugins}
+        rehypePlugins={rehypePlugins as any}
         remarkRehypeOptions={remarkRehypeOptions}
+        className={_cls("inner", className)}
       />
     </div>
   )

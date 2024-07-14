@@ -18,6 +18,7 @@ import {
   getOrderList,
   listInit,
 } from "./order.list"
+import { GetOAuthContext } from "../auth/common"
 
 export {
   dispatchIvcapCreateOrder,
@@ -61,12 +62,15 @@ export interface Order<S extends ReduxState> {
   ) => PromiseT<S, OrderCreatedEvent>
 }
 
-export function orders<S extends ReduxState>(apiURL: URL, register: PiRegister): Order<S> {
-  return {
-    list: getOrderList<S>(apiURL, register),
-    get: getOrderRecord<S>(apiURL, register),
-    create: createOrder<S>(apiURL, register),
-  }
+export function orders<S extends ReduxState>(register: PiRegister): Promise<Order<S>> {
+  return GetOAuthContext().then(({ ivcapURL }) => {
+    const apiURL = new URL(ivcapURL)
+    return {
+      list: getOrderList<S>(apiURL, register),
+      get: getOrderRecord<S>(apiURL, register),
+      create: createOrder<S>(apiURL, register),
+    }
+  })
 }
 
 export function orderInit(register: PiRegister): void {

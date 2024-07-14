@@ -48,14 +48,19 @@ export const AccoridonComponent = (
     size,
     disableDivider,
     variant,
+    className,
+    style,
     onChanged,
-    sx,
     cardName,
     _cls,
   } = props
+  const sx = {
+    ...DEF_SX,
+    ...style?.joy,
+  }
 
   function renderItem(item: AccordionItem, idx: number): React.ReactNode {
-    const p: any = { variant: item.variant, color: item.color }
+    const p: any = { variant: item.variant, color: item.color, sx: sx.root }
     if (item.expanded !== undefined) {
       p.expanded = item.expanded
     }
@@ -65,12 +70,14 @@ export const AccoridonComponent = (
     if (item.defaultExpanded !== undefined) {
       p.defaultExpanded = item.defaultExpanded
     }
-    const isx = sx?.items || {}
+    const isx = sx.items
     const titleSX = isx[item.id]?.title || isx[DEF_ACCORDION_ITEM]?.title
     return (
       <Accordion
         {...p}
-        onChange={(_, expanded) => onChanged({ itemID: item.id, expanded })}
+        onChange={(_, expanded) =>
+          onChanged({ itemID: item.id, expanded, context: item.context })
+        }
         className={_cls(["item", `item-${item.id || idx}`])}
         key={item.id || idx}
       >

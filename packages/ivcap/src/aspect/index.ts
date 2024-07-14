@@ -18,6 +18,7 @@ import {
   getAspectList,
   listInit,
 } from "./aspect.list"
+import { GetOAuthContext } from "../auth/common"
 
 export {
   dispatchIvcapCreateAspect,
@@ -55,12 +56,15 @@ export interface Aspect<S extends ReduxState> {
   ) => PromiseT<S, AspectCreatedEvent>
 }
 
-export function aspects<S extends ReduxState>(apiURL: URL, register: PiRegister): Aspect<S> {
-  return {
-    list: getAspectList<S>(apiURL, register),
-    get: getAspectRecord<S>(apiURL, register),
-    create: createAspect<S>(apiURL, register),
-  }
+export function aspects<S extends ReduxState>(register: PiRegister): Promise<Aspect<S>> {
+  return GetOAuthContext().then(({ ivcapURL }) => {
+    const apiURL = new URL(ivcapURL)
+    return {
+      list: getAspectList<S>(apiURL, register),
+      get: getAspectRecord<S>(apiURL, register),
+      create: createAspect<S>(apiURL, register),
+    }
+  })
 }
 
 export function aspectInit(register: PiRegister): void {

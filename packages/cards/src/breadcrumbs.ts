@@ -13,7 +13,7 @@ export const Breadcrumbs = createCardDeclaration<
 
 export const BREADCRUMB_ACTION = registerActions(BREADCRUMB_TYPE, ["select"])
 
-export const onSelect = createOnAction<BreadcrumbSelectEvent>(
+export const onBreadcrumbSelect = createOnAction<BreadcrumbSelectEvent>(
   BREADCRUMB_ACTION.SELECT,
 )
 

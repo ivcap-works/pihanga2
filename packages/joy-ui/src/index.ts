@@ -22,6 +22,10 @@ import { init as page2Init } from "./pageD2"
 import { init as modalInit } from "./modal"
 import { init as spinnerInit } from "./spinner"
 import { init as loginInit } from "./login"
+import { init as stackInit } from "./stack"
+import { init as windowInit } from "./window"
+import { init as cardInit } from "./card"
+import { init as formInputInit } from "./formInput"
 
 export * from "./icons"
 
@@ -38,6 +42,9 @@ export * from "./dataGrid"
 export * from "./sidebar"
 export * from "./pageD2"
 export * from "./login"
+export * from "./window"
+export * from "./card"
+export * from "./formInput"
 
 export function init(register: PiRegister): void {
   frameworkInit(register)
@@ -60,7 +67,10 @@ export function init(register: PiRegister): void {
   modalInit(register)
   spinnerInit(register)
   loginInit(register)
+  stackInit(register)
+  windowInit(register)
+  cardInit(register)
+  formInputInit(register)
 
   page2Init(register)
-
 }

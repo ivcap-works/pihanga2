@@ -6,7 +6,7 @@ import {
 
 import { LoginComponent, type ComponentProps } from "./login.component"
 import { type ComponentEvents, ACTION_TYPES } from "./login.types"
-import { IconId, getIconId, registerIcon } from "@pihanga2/cards/src"
+import { IconId, getIconId, registerIcon } from "@pihanga2/cards"
 import { GoogleIcon, Auth0Icon } from "./provider.icon"
 import { memo } from "react"
 

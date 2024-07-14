@@ -7,19 +7,17 @@ import {
 import { Component } from "./link.component"
 import {
   type LinkProps,
-  type ComponentEvents,
-  ACTION_TYPES,
+  type LinkEvents,
+  LINK_ACTIONS,
 } from "@pihanga2/cards/src/link"
 
-export const CARD_TYPE = "joy/link"
-export const JyLink = createCardDeclaration<LinkProps, ComponentEvents>(
-  CARD_TYPE,
-)
+export const JY_LINK_CARD = "joy/link"
+export const JyLink = createCardDeclaration<LinkProps, LinkEvents>(JY_LINK_CARD)
 
 export function init(register: PiRegister): void {
   register.cardComponent({
-    name: CARD_TYPE,
+    name: JY_LINK_CARD,
     component: Component,
-    events: actionTypesToEvents(ACTION_TYPES),
+    events: actionTypesToEvents(LINK_ACTIONS),
   })
 }

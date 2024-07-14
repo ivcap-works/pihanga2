@@ -46,6 +46,7 @@ export type {
   StateMapperContext,
   StateMapper,
   PiReducer,
+  PiRegisterMetaCard,
 } from "./types"
 export { registerActions, actionTypesToEvents, createOnAction } from "./redux"
 export { Card, memo, createCardDeclaration, isCardRef } from "./card"

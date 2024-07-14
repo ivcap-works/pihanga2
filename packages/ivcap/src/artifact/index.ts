@@ -24,6 +24,7 @@ import {
   getArtifactList,
   init as listInit,
 } from "./artifact.list"
+import { GetOAuthContext } from "../auth/common"
 
 export {
   dispatchIvcapCreateArtifact,
@@ -66,13 +67,16 @@ export interface Artifact<S extends ReduxState> {
   ) => PromiseT<S, ArtifactCreatedEvent>
 }
 
-export function artifacts<S extends ReduxState>(apiURL: URL, register: PiRegister): Artifact<S> {
-  return {
-    list: getArtifactList<S>(apiURL, register),
-    getRecord: getArtifactRecord<S>(apiURL, register),
-    getData: getArtifactData<S>(apiURL, register),
-    create: createArtifact<S>(apiURL, register),
-  }
+export function artifacts<S extends ReduxState>(register: PiRegister): Promise<Artifact<S>> {
+  return GetOAuthContext().then(({ ivcapURL }) => {
+    const apiURL = new URL(ivcapURL)
+    return {
+      list: getArtifactList<S>(apiURL, register),
+      getRecord: getArtifactRecord<S>(apiURL, register),
+      getData: getArtifactData<S>(apiURL, register),
+      create: createArtifact<S>(apiURL, register),
+    }
+  })
 }
 
 export function artifactInit(register: PiRegister): void {

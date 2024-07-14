@@ -1,6 +1,6 @@
 import React from "react"
 import { Card, PiCardProps } from "@pihanga2/core"
-import { FlexGridProps } from "./flexGrid"
+import { FlexGridProps } from "./flexGrid.types"
 
 export const FlexGridComponent = (
   props: PiCardProps<FlexGridProps>,

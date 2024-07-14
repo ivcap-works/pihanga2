@@ -18,6 +18,7 @@ export type LoginProps = {
   loginProviders?: LoginProvider[]
   withLoginForm?: boolean
   showBackground?: boolean
+  backgroundURL?: string
   footerText?: string
 }
 

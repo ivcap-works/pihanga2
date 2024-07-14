@@ -22,7 +22,10 @@ export type ImageViewerProps = {
   imgURL: string
   caption: string
   width?: number
+  minWidth?: number | string
+  maxWidth?: number | string
   height?: number
+  style?: React.CSSProperties
 }
 
 export type ImageViewerClickedEvent = {}

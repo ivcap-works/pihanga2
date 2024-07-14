@@ -17,15 +17,14 @@ import {
   PropT,
   getPromise,
   CommonProps,
+  PageLinks,
+  getPageLinks,
 } from "../common"
 import { ORDER_ACTION } from "./order.actions"
 
 export type Cursor = string
-export type OrderListEvent = ListEvent & {
+export type OrderListEvent = ListEvent & PageLinks & {
   orders: OrderListItem[]
-  offset: number
-  nextPage?: Cursor
-  prevPage?: Cursor
 }
 
 export type OrderListItem = {
@@ -78,13 +77,9 @@ export function listInit(register: PiRegister): void {
     trigger: ORDER_ACTION.LOAD_LIST,
     reply: (state, content: any, dispatch, { request }) => {
       const orders = (content.items || []).map(toOrderListItem)
-      const offset = getOffsetFromPage(request.page)
-      const nextPage = addOffsetFromPage(offset + orders.length, getNextPage(content.links))
       const ev: OrderListEvent = {
         orders,
-        offset,
-        nextPage,
-        prevPage: request.page,
+        ...getPageLinks(content.links),
       }
       dispatchEvent(ev, ORDER_ACTION.LIST, dispatch, request)
       return state

@@ -5,7 +5,7 @@ import {
   DEF_FILE_DROP_FILE_TYPES,
   FileDropEvents,
   FileDropProps,
-} from "./fileDrop"
+} from "./fileDrop.types"
 import "./fileDrop.css"
 
 export const FileDropComponent = (

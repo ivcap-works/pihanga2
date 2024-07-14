@@ -4,7 +4,7 @@ import {
   createOnAction,
   registerActions,
 } from "@pihanga2/core"
-import { IconId } from "@pihanga2/cards/src/icons"
+import { IconId } from "@pihanga2/cards"
 
 export const SIDEBAR_TYPE = "sidebar"
 export const Sidebar = createCardDeclaration<SidebarProps, SidebarEvents>(

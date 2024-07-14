@@ -12,6 +12,7 @@ import {
   getServiceList,
   listInit,
 } from "./service.list"
+import { GetOAuthContext } from "../auth/common"
 
 export {
   dispatchIvcapGetServiceRecord,
@@ -46,12 +47,15 @@ export interface Service<S extends ReduxState> {
   // ) => PromiseT<S, ServiceCreatedEvent>
 }
 
-export function services<S extends ReduxState>(apiURL: URL, register: PiRegister): Service<S> {
-  return {
-    list: getServiceList<S>(apiURL, register),
-    get: getServiceRecord<S>(apiURL, register),
-    // create: createService<S>(apiURL, register),
-  }
+export function services<S extends ReduxState>(register: PiRegister): Promise<Service<S>> {
+  return GetOAuthContext().then(({ ivcapURL }) => {
+    const apiURL = new URL(ivcapURL)
+    return {
+      list: getServiceList<S>(apiURL, register),
+      get: getServiceRecord<S>(apiURL, register),
+      // create: createService<S>(apiURL, register),
+    }
+  })
 }
 
 export function serviceInit(register: PiRegister): void {

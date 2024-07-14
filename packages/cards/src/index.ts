@@ -8,6 +8,7 @@ import { fileDropInit } from "./fileDrop"
 import { flexGridInit } from "./flexGrid"
 import { googleMapInit } from "./googleMap"
 import { routerInit } from "./router"
+import { formInit } from "./form"
 
 export * from "./imageViewer"
 export * from "./jsonViewer"
@@ -17,6 +18,13 @@ export * from "./accordion"
 export * from "./fileDrop"
 export * from "./flexGrid"
 export * from "./icons"
+export * from "./stack"
+export * from "./typography"
+export * from "./card"
+export * from "./link"
+export * from "./form"
+export * from "./button"
+export * from "./formInput"
 
 export function init(register: PiRegister): void {
   imageViewerInit(register)
@@ -26,4 +34,5 @@ export function init(register: PiRegister): void {
   flexGridInit(register)
   googleMapInit(register)
   routerInit(register)
+  formInit(register)
 }

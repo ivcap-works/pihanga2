@@ -1,4 +1,4 @@
-import { Auth0Client } from '@auth0/auth0-spa-js';
+import { Auth0Client, createAuth0Client } from '@auth0/auth0-spa-js';
 import { PiReducer } from "@pihanga2/core/dist/types"
 import { OAuthProvider, SetOAuthContext } from "./common";
 
@@ -7,7 +7,7 @@ import { IVCAP_AUTH_ACTION, UserInfoEvent, dispatchIvcapAuthError, dispatchIvcap
 export function auth0Init(provider: OAuthProvider, reducer: PiReducer): void {
 
   const redirect = `${window.location.origin}/_auth0`
-  const auth0 = new Auth0Client({
+  const auth0P = createAuth0Client({
     domain: provider.domain,
     clientId: provider.clientID,
     cacheLocation: 'localstorage',
@@ -15,41 +15,48 @@ export function auth0Init(provider: OAuthProvider, reducer: PiReducer): void {
       redirect_uri: redirect,
       audience: provider.audience, // provider.ivcapURL, //"https://api.ivcap.net/",
     }
-  });
-
-  auth0.getTokenSilently().then(token => {
-    processToken(token, auth0, provider, reducer)
-  }).catch(error => {
-    if (error.error !== 'login_required') {
-      dispatchIvcapAuthError(error, "while getting oauth token", reducer.dispatch)
-      return
-    }
   })
 
-  auth0.handleRedirectCallback<string>().then((result) => {
-    if (result.appState) {
-      window.location.assign(result.appState)
-    }
-  }).catch(() => { }) // we don't care about errors
+  auth0P.then((auth0) => {
+    auth0.getTokenSilently().then(token => {
+      processToken(token, auth0, provider, reducer)
+    }).catch(error => {
+      if (error.error !== 'login_required') {
+        dispatchIvcapAuthError(error, "while getting oauth token", reducer.dispatch)
+        return
+      }
+    })
+
+    auth0.handleRedirectCallback<string>().then((result) => {
+      if (result.appState) {
+        window.location.assign(result.appState)
+      }
+    }).catch(() => { }) // we don't care about errors
+  })
 
   onIvcapOAuthLoginRequest(reducer, (state, { providerID }) => {
     if (providerID === "auth0") {
-      auth0.loginWithRedirect({
-        appState: state.route.url
-      }).catch(error => {
-        dispatchIvcapAuthError(error, "while logging in with redirect", reducer.dispatch)
-        return
+      const currentPage = state.route.url
+      auth0P.then((auth0) => {
+        auth0.loginWithRedirect({
+          appState: currentPage
+        }).catch(error => {
+          dispatchIvcapAuthError(error, "while logging in with redirect", reducer.dispatch)
+          return
+        })
       })
     }
     return state
   })
 
   onIvcapLogout(reducer, (state) => {
-    auth0.logout({
-      logoutParams: {
-        returnTo: `${window.location.origin}/logout`,
-      }
-    });
+    auth0P.then((auth0) => {
+      auth0.logout({
+        logoutParams: {
+          returnTo: `${window.location.origin}/logout`,
+        }
+      })
+    })
     return state
   })
 }

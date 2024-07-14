@@ -6,7 +6,7 @@ import {
   createOnAction,
   registerActions,
 } from "@pihanga2/core"
-import { IconId } from "@pihanga2/cards/src/icons"
+import { IconId } from "@pihanga2/cards"
 import {
   CARD_TYPE,
   ItemClickedEvent,

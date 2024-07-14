@@ -49,7 +49,7 @@ export const Component = (
         sx={sx}
         key={l.id}
       >
-        {renderDecorator(l.decorator)}
+        {renderDecorator(l.decorator, cardName)}
         {l.label}
       </Link>
     )

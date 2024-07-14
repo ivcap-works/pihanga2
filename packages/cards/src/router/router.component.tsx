@@ -1,7 +1,7 @@
 import React from "react"
 import { PiCardProps } from "@pihanga2/core"
 import { Card } from "@pihanga2/core"
-import { RouterProps } from "./router"
+import { RouterProps } from "./router.types"
 
 export const RouterComponent = (
   props: PiCardProps<RouterProps>,

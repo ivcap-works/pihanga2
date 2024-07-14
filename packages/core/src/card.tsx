@@ -1,5 +1,6 @@
 import React from 'react'
 import { useDispatch, useSelector } from "react-redux"
+import equal from "deep-equal"
 
 import { getLogger } from "./logger"
 import {
@@ -29,6 +30,7 @@ type Mapping = {
   cardType: string
   props: { [k: string]: unknown }
   eventMappers: { [k: string]: (ev: Action) => Action | null }
+  cardEvents: { [key: string]: string }
 }
 
 type MetaCard = {
@@ -109,10 +111,43 @@ function _registerCard(
     }
   }
 
+  const events = overrideEvents || cardType.events || {}
+  _createCardMapping(name, parameters, registerReducer, events)
+  return name
+  // const props = {} as { [k: string]: unknown }
+  // const eventMappers = {} as { [k: string]: (ev: Action) => Action }
+
+  // const events = overrideEvents || cardType.events || {}
+  // Object.entries(parameters).forEach(([k, v]) => {
+  //   if (k === "cardType") return
+  //   if (typeof v === "object") {
+  //     const cd = v as PiCardDef // speculative
+  //     if (cd.cardType) {
+  //       const cardName = `${name}/${k}`
+  //       v = _registerCard(cardName, cd, registerReducer)
+  //     }
+  //   }
+  //   if (
+  //     k.startsWith("on") &&
+  //     processEventParameter(k, v, events, eventMappers, registerReducer, name)
+  //   ) {
+  //     return
+  //   }
+  //   props[k] = v
+  // })
+  // cardMappings[name] = { cardType: parameters.cardType, props, eventMappers }
+  // return name
+}
+
+function _createCardMapping(
+  name: string,
+  parameters: PiCardDef,
+  registerReducer: PiRegisterReducerF,
+  cardEvents: { [key: string]: string },
+) {
   const props = {} as { [k: string]: unknown }
   const eventMappers = {} as { [k: string]: (ev: Action) => Action }
 
-  const events = overrideEvents || cardType.events || {}
   Object.entries(parameters).forEach(([k, v]) => {
     if (k === "cardType") return
     if (typeof v === "object") {
@@ -124,14 +159,13 @@ function _registerCard(
     }
     if (
       k.startsWith("on") &&
-      processEventParameter(k, v, events, eventMappers, registerReducer, name)
+      processEventParameter(k, v, cardEvents, eventMappers, registerReducer, name)
     ) {
       return
     }
     props[k] = v
   })
-  cardMappings[name] = { cardType: parameters.cardType, props, eventMappers }
-  return name
+  cardMappings[name] = { cardType: parameters.cardType, props, eventMappers, cardEvents }
 }
 
 function _registerMetadataCard(
@@ -219,7 +253,7 @@ export function memo<P, T, S extends ReduxState, C>(
   return (state: S, context: StateMapperContext<C>): T => {
     const k = context.cardKey || "-"
     const fv = filterF(state, context)
-    if (fv === lastFilter[k] && isNotFirst[k]) {
+    if (isNotFirst[k] && equal(fv, lastFilter[k])) {
       // nothing changed
       return lastValue[k]
     }
@@ -288,13 +322,9 @@ function checkForAnonymousCard(props: any, id: number, dispatch: Dispatch<AnyAct
   } else {
     cardName = `${cardName}#${id}`
   }
-  logger.debug("anonymous", cardName)
+  // logger.debug("anonymous", cardName)
 
   const mapping = cardMappings[cardName]
-  if (mapping) {
-    // looks like we already processed it
-    return cardName
-  }
   const parameters = props.cardName as PiCardDef
   const el = dispatch2registerReducer.find(([d, _]) => d === dispatch)
   if (!el) {
@@ -302,7 +332,13 @@ function checkForAnonymousCard(props: any, id: number, dispatch: Dispatch<AnyAct
     return ""
   }
   const regRed = el[1]
-  _registerCard(cardName, parameters, regRed)
+  if (mapping) {
+    // looks like we already processed it
+    // do update props as they may have changed
+    _createCardMapping(cardName, parameters, regRed, mapping.cardEvents)
+  } else {
+    _registerCard(cardName, parameters, regRed)
+  }
   return cardName
 }
 
@@ -315,7 +351,7 @@ function GenericCard(cardName: string, props: CardProp, info: CardInfo, id: numb
 
   const extCardProps = appendEventHandlers(info, cardProps, cardName, dispatch)
   extCardProps._cls = cls_f(cardName, info.mapping.cardType)
-  return React.createElement(info.cardType.component, extCardProps, null)
+  return React.createElement(info.cardType.component, extCardProps, props.children)
 }
 
 const EmptyCompProps = {} as CompProps
@@ -366,7 +402,13 @@ function getCardProps(
     let v = vf
     if (typeof vf === "function") {
       const f = vf as StateMapper<unknown, ReduxState, any>
-      v = f(state, ctxt)
+      try {
+        v = f(state, ctxt)
+      } catch (ex) {
+        logger.error(`while resolving property '${key}'`, ex)
+      }
+    } else if (key in props) {
+      v = props[key]
     }
     p[key] = v
     return p
@@ -397,19 +439,19 @@ function cls_f(
 }
 
 function propEq(oldP: CompProps, newP: CompProps): boolean {
-  let result = true
-  for (const [k, v] of Object.entries(newP)) {
-    const ov = oldP[k]
-    if (ov !== v) {
-      // two empty arrays are considered to be different, but we don't agree :)
-      if (!(Array.isArray(v) && !v.length && Array.isArray(ov) && !ov.length)) {
-        result = false
-        break
-      }
-    }
-  }
-  RegisterCardState.changed(newP.cardName, result, newP)
-  return result
+  let isUnchanged = equal(oldP, newP)
+  // for (const [k, v] of Object.entries(newP)) {
+  //   const ov = oldP[k]
+  //   if (ov !== v) {
+  //     // two empty arrays are considered to be different, but we don't agree :)
+  //     if (!(Array.isArray(v) && !v.length && Array.isArray(ov) && !ov.length)) {
+  //       isUnchanged = false
+  //       break
+  //     }
+  //   }
+  // }
+  RegisterCardState.changed(newP.cardName, isUnchanged, newP)
+  return isUnchanged
 }
 
 function appendEventHandlers(

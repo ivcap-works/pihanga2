@@ -1,9 +1,10 @@
 import React from "react"
 import { Card, PiCardProps } from "@pihanga2/core"
-import { Link, Tooltip } from "@mui/joy"
+import { Link, Tooltip, Typography } from "@mui/joy"
 
-import { ComponentEvents, LinkProps } from "@pihanga2/cards/src/link"
+import { LinkEvents, LinkProps } from "@pihanga2/cards/src/link"
 import { SxProps } from "@mui/joy/styles/types"
+import { renderDecorator } from "../utils"
 
 export type ComponentPropse = LinkProps & {
   joy?: {
@@ -20,22 +21,25 @@ export const DEF_SX: { [k: string]: SxProps } = {
 }
 
 export const Component = (
-  props: PiCardProps<ComponentPropse, ComponentEvents>,
+  props: PiCardProps<ComponentPropse, LinkEvents>,
 ): React.ReactNode => {
   const {
     text,
     href,
     childCard,
     level,
+    overlay,
     underline,
     tooltip,
     isDisabled,
-    size,
     color,
     variant,
     startDecorator,
     endDecorator,
-    actionMapper,
+    noWrap,
+    textColor,
+    fontSize,
+    fontWeight,
     onClicked,
     joy,
     cardName,
@@ -45,13 +49,13 @@ export const Component = (
 
   const p: any = {
     level,
+    overlay,
     underline,
     disable: isDisabled,
-    size,
-    color,
+    // color,
     variant,
-    startDecorator,
-    endDecorator,
+    // startDecorator,
+    // endDecorator,
     sx: joy?.sx?.root || DEF_SX.root,
   }
   if (href) {
@@ -62,11 +66,7 @@ export const Component = (
   }
 
   function onClick() {
-    if (actionMapper) {
-      _dispatch(actionMapper(props))
-    } else {
-      onClicked(href ? { href } : {})
-    }
+    onClicked(href ? { href } : {})
   }
 
   const renderLink = () => (
@@ -84,8 +84,23 @@ export const Component = (
     if (childCard) {
       return <Card cardName={childCard} parentCard={cardName} />
     } else {
-      return text
+      return renderTypography()
     }
+  }
+
+  function renderTypography() {
+    const p = {
+      noWrap,
+      level,
+      color,
+      variant,
+      startDecorator: renderDecorator(startDecorator, cardName),
+      endDecorator: renderDecorator(endDecorator, cardName),
+      textColor,
+      fontSize,
+      fontWeight,
+    }
+    return <Typography {...p}>{text}</Typography>
   }
 
   return (

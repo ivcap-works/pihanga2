@@ -6,7 +6,7 @@ import {
 
 import { Component } from "./button.component"
 import {
-  ACTION_TYPES,
+  BUTTON_ACTION,
   type ButtonProps,
   type ComponentEvents,
 } from "@pihanga2/cards/src/button"
@@ -20,6 +20,6 @@ export function init(register: PiRegister): void {
   register.cardComponent({
     name: CARD_TYPE,
     component: Component,
-    events: actionTypesToEvents(ACTION_TYPES),
+    events: actionTypesToEvents(BUTTON_ACTION),
   })
 }

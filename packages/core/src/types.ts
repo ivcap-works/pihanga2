@@ -32,6 +32,7 @@ export type ReduceF<S extends ReduxState, A extends ReduxAction> = (
   action: A,
   dispatch: DispatchF,
 ) => S
+
 export type ReduceOnceF<S extends ReduxState, A extends ReduxAction> = (
   state: S,
   action: A,
@@ -79,7 +80,7 @@ export type CardProp = {
 // type which needs to be implemented by card components
 export type PiCardProps<P, E = {}> = P & {
   cardName: string
-  children?: React.ReactNode
+  children?: React.ReactNode[]
   _cls: (elName: string | string[], styles?: CSSModuleClasses) => string
   _dispatch: DispatchF
 } & {

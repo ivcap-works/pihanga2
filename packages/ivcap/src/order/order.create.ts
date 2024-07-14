@@ -76,7 +76,7 @@ export function createInit(register: PiRegister): void {
     trigger: ORDER_ACTION.CREATE,
     request: ({ name, serviceID, parameters }) => {
       return {
-        body: { name, "service-id": serviceID, parameters },
+        body: { name, "service": serviceID, parameters },
         contentType: "application/json",
       };
     },

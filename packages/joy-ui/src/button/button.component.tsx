@@ -3,18 +3,9 @@ import { PiCardProps } from "@pihanga2/core"
 import { ComponentEvents, ButtonProps } from "@pihanga2/cards/src/button"
 import { Button, Tooltip } from "@mui/joy"
 import { renderDecorator } from "../utils"
-import { SxProps } from "@mui/material"
-
-export type ComponentProps = ButtonProps & {
-  joy?: {
-    sx?: {
-      root?: SxProps
-    }
-  }
-}
 
 export const Component = (
-  props: PiCardProps<ComponentProps, ComponentEvents>,
+  props: PiCardProps<ButtonProps, ComponentEvents>,
 ): React.ReactNode => {
   const {
     label,
@@ -23,35 +14,43 @@ export const Component = (
     isLoading,
     loadingPosition,
     size,
+    fullWidth,
     color,
     variant,
+    isSubmit,
+    isLink,
     startDecorator,
     endDecorator,
+    style,
+    className,
     onClicked,
-    joy,
     cardName,
     _cls,
   } = props
+
+  const p: any = {
+    color,
+    disabled: isDisabled,
+    loading: isLoading,
+    loadingPosition,
+    variant,
+    startDecorator: renderDecorator(startDecorator, cardName),
+    endDecorator: renderDecorator(endDecorator, cardName),
+    size,
+    fullWidth,
+
+    sx: style?.joy,
+    className: `${_cls("root")} ${className}`,
+  }
+  if (isSubmit) p.type = "submit"
+  if (isLink) p.component = "a"
 
   function onClick() {
     onClicked({})
   }
 
   const renderButton = () => (
-    <Button
-      onClick={onClick}
-      color={color}
-      disabled={isDisabled}
-      loading={isLoading}
-      loadingPosition={loadingPosition}
-      variant={variant}
-      startDecorator={renderDecorator(startDecorator)}
-      endDecorator={renderDecorator(endDecorator)}
-      size={size}
-      data-pihanga={cardName}
-      sx={joy?.sx?.root}
-      className={_cls("root")}
-    >
+    <Button {...p} onClick={onClick} data-pihanga={cardName}>
       {label}
     </Button>
   )

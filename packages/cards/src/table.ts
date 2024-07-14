@@ -9,11 +9,10 @@ import {
 } from "@pihanga2/core"
 import { ColorT, DecoratorT, SizeT, VariantT } from "./common"
 import { TypographyLevelT } from "./common"
-import { DEF_DATE_FORMATTER } from "./dataGrid"
 
 export const CARD_TYPE = "table"
 
-export function Table<T>(): <S extends ReduxState>(
+export function Table<T, S extends ReduxState>(): (
   p: PiMapProps<TableProps<T>, S, TableEvents<T>>,
 ) => PiCardDef {
   return (p) => ({
@@ -29,8 +28,7 @@ export const TABLE_ACTION = registerActions(CARD_TYPE, [
   "column_sort",
   "show_detail",
   "hide_detail",
-  "next_page",
-  "prev_page",
+  "new_page",
   "button_clicked",
   "checkbox_clicked",
 ])
@@ -58,25 +56,26 @@ export const onTableRowsSelected = createOnAction<RowsSelectedEvent>(
 export const onTableAllRowsSelected = createOnAction<AllRowsSelectedEvent>(
   TABLE_ACTION.CHECKBOX_CLICKED,
 )
-export const onTableNextPage = createOnAction<PagingEvent>(
-  TABLE_ACTION.NEXT_PAGE,
-)
-export const onTablePreviousPage = createOnAction<PagingEvent>(
-  TABLE_ACTION.PREV_PAGE,
-)
+export const onTableNewPage = createOnAction<PagingEvent>(TABLE_ACTION.NEW_PAGE)
 
 type DEF_ROW_TYPE = { [k: string]: any }
 
 export type TableProps<D = DEF_ROW_TYPE> = {
   columns: GenericColumn[]
   data: TableRow<D>[]
+  dataOffset?: number // number of preceeding values not shown
+
+  thisCursor?: string | number // when set indicates that table only shows part of a larger set
+  firstCursor?: string | number // when set identifies first "page" of this set
+  nextCursor?: string | number // when set refers to next "page" of data
+  prevCursor?: string | number // when set refers to previous "page" of data
+
+  rowsClickable?: boolean // set to true if clicking on a row leads to some action
   hideColumnHeaders?: boolean
   dataFormatter?: ColumnDict<TableColumnFormatter>
   hasDetails?: boolean // if true rows could show details
   manageDetails?: boolean // when true internally manage which detail card to show
   showLimit?: number // max number of results to show (might be less than data)
-  dataOffset?: number // number of preceeding values not shown
-  hasMore?: boolean // true when there are more entries to display
   recordCount?: number // number of records in dataset -1 .. unknown
   showPageSizeSelector?: boolean
   showSearch?: boolean
@@ -318,7 +317,8 @@ export type ToggleEvent<T = DEF_ROW_TYPE> = ButtonEvent<T> & {
 export type PagingEvent = {
   offset: number
   recordsShowing: number
-  nextPage: boolean // false for previous page
+  cursor: string | number // cursor to "page" to display next
+  thisCursor: string | number // cursor of current page
 }
 
 export type TableEvents<T = DEF_ROW_TYPE> = {
@@ -331,6 +331,5 @@ export type TableEvents<T = DEF_ROW_TYPE> = {
   onButtonClicked: ButtonEvent<T>
   onCheckboxClicked: ToggleEvent<T>
 
-  onNextPage: PagingEvent
-  onPrevPage: PagingEvent
+  onNewPage: PagingEvent
 }

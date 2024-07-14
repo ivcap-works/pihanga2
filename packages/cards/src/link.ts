@@ -1,41 +1,34 @@
 import {
   PiCardRef,
-  ReduxAction,
   createCardDeclaration,
   createOnAction,
   registerActions,
 } from "@pihanga2/core"
-import { ColorT, DecoratorT, SizeT, TypographyLevelT, VariantT } from "./common"
+import { TypographyBase } from "./typography"
 
-export const LINK_TYPE = "link"
-export const Link = createCardDeclaration<LinkProps, ComponentEvents>(LINK_TYPE)
+export const LINK_CARD = "link"
+export const Link = createCardDeclaration<LinkProps, LinkEvents>(LINK_CARD)
 
-export const ACTION_TYPES = registerActions(LINK_TYPE, ["clicked"])
+export const LINK_ACTIONS = registerActions(LINK_CARD, ["clicked"])
 
-export const onClicked = createOnAction<ClickedEvent>(ACTION_TYPES.CLICKED)
+export const onClicked = createOnAction<LinkClickedEvent>(LINK_ACTIONS.CLICKED)
 
 export type LinkProps = {
   text?: string
   href?: string
   childCard?: PiCardRef
-  level?: TypographyLevelT
+  overlay?: boolean // make an entire component clickable as a link
   underline?: Underline
   tooltip?: string
   isDisabled?: boolean
-  size?: SizeT
-  color?: ColorT
-  variant?: VariantT
-  startDecorator?: DecoratorT
-  endDecorator?: DecoratorT
-  actionMapper?: <A extends ReduxAction>(el: LinkProps) => A
-}
+} & TypographyBase
 
 export type Underline = "always" | "hover" | "none"
 
-export type ClickedEvent = {
+export type LinkClickedEvent = {
   href?: string
 }
 
-export type ComponentEvents = {
-  onClicked: ClickedEvent
+export type LinkEvents = {
+  onClicked: LinkClickedEvent
 }

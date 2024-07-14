@@ -124,12 +124,7 @@ export const Component = (
 
   function renderLink(el: LinkEl): React.ReactNode {
     const onClicked = () => {
-      if (el.actionMapper) {
-        const a = el.actionMapper(el)
-        _dispatch(a)
-      } else {
-        onLinkClicked({ linkID: el.id })
-      }
+      onLinkClicked({ linkID: el.id })
     }
     const p = {
       ...el,

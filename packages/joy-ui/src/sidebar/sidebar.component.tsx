@@ -21,7 +21,7 @@ import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded"
 
 import { SidebarEvents, SidebarProps } from "./sidebar.types"
 import { PiCardProps, Card as PiCard } from "@pihanga2/core"
-import { getIcon } from "@pihanga2/cards/src/icons"
+import { getIcon } from "@pihanga2/cards"
 import { JyColorSchemeToggle } from "../colorSchemeToggle"
 
 export type ComponentProps = SidebarProps & {

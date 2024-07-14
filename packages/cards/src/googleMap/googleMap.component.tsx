@@ -13,7 +13,7 @@ import type {
 // import styled from './facetMap.style';
 // import { CardAction, Resources } from '../../../app.type';
 import { PiCardProps } from "@pihanga2/core"
-import { GMapMarkerPropsT, GoogleMapProps, GoogleMapEvents } from "./googleMap"
+import { GMapMarkerPropsT, GoogleMapProps, GoogleMapEvents } from "./googleMap.types"
 
 const center = {
   lat: -25.8080134,

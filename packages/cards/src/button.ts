@@ -1,35 +1,41 @@
 import {
-  ReduxAction,
   createCardDeclaration,
   createOnAction,
   registerActions,
 } from "@pihanga2/core"
-import { ColorT, DecoratorT, SizeT, VariantT } from "./common"
+import { SizeT, ColorT, VariantT, DecoratorT } from "./common"
 
-export const CARD_TYPE = "button"
+export const BUTTON_CARD = "button"
 export const Button = createCardDeclaration<ButtonProps, ComponentEvents>(
-  CARD_TYPE,
+  BUTTON_CARD,
 )
 
-export const ACTION_TYPES = registerActions(CARD_TYPE, ["clicked"])
+export const BUTTON_ACTION = registerActions(BUTTON_CARD, ["clicked"])
 
-export const onClicked = createOnAction<ClickedEvent>(ACTION_TYPES.CLICKED)
+export const onButtonClicked = createOnAction<ButtonClickedEvent>(
+  BUTTON_ACTION.CLICKED,
+)
 
-export type ButtonProps = {
+export type ButtonProps<S = any> = {
   label: string
   tooltip?: string
   isDisabled?: boolean
   isLoading?: boolean
   loadingPosition?: "center" | "start" | "end"
   size?: SizeT
+  fullWidth?: true // If true, the button will take up the full width of its container.
   color?: ColorT
   variant?: VariantT
+  isSubmit?: boolean
+  isLink?: boolean //  true if it triggers action to navigate to a new page
   startDecorator?: DecoratorT
   endDecorator?: DecoratorT
+  style?: S
+  className?: string
 }
 
-export type ClickedEvent = {}
+export type ButtonClickedEvent = {}
 
 export type ComponentEvents = {
-  onClicked: ClickedEvent
+  onClicked: ButtonClickedEvent
 }

@@ -1,13 +1,32 @@
 import React from "react"
+import { SxProps } from "@mui/material"
 import { PiCardProps } from "@pihanga2/core"
 import { ImageViewerEvents, ImageViewerProps } from "./imageViewer"
 
-export type ComponentProps = ImageViewerProps & {}
+export type ComponentProps = ImageViewerProps & {
+  sx?: ImageViewerX
+}
+
+export type ImageViewerX = {}
+
+const DEF_CSS = {
+  maxWidth: "100%",
+}
 
 export const ImageViewerComponent = (
   props: PiCardProps<ComponentProps, ImageViewerEvents>,
 ): React.ReactNode => {
-  const { imgURL, caption, width, height, onClicked, cardName, _cls } = props
+  const {
+    imgURL,
+    caption,
+    width,
+    minWidth,
+    maxWidth,
+    height,
+    onClicked,
+    cardName,
+    _cls,
+  } = props
 
   let w: number | string | undefined = width && width > 0 ? width : undefined
   if (w && w <= 1) {
@@ -18,10 +37,23 @@ export const ImageViewerComponent = (
     h = `${h * 100}%`
   }
 
+  let style: any = {
+    ...DEF_CSS,
+    ...props.style,
+  }
+  if (maxWidth) {
+    style.maxWidth = maxWidth
+  }
+  if (minWidth) {
+    style.minWidth = minWidth
+  }
+
   const ip = {
     src: imgURL,
     height: h,
     width: w,
+    alt: caption,
+    style,
   }
   return (
     <div className={_cls("root")} data-pihanga={cardName}>

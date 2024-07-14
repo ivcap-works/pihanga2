@@ -6,27 +6,24 @@ import {
   createOnAction,
   DispatchF,
 } from "@pihanga2/core"
-import { dispatchIvcapAuthError, getAccessToken } from ".."
 import { createListAction, ListEvent, LoadListEvent } from "../actions"
 import {
-  getNextPage,
   createListUrlBuilder,
-  restErrorHandling,
   dispatchEvent,
   PromiseT,
   PropT,
   getPromise,
   CommonProps,
+  getPageLinks,
+  PageLinks,
 } from "../common"
 import { ACTION_TYPES } from "./artifact.actions"
-import { GetOAuthContext, OAuthContextT } from "../auth/common"
+import { OAuthContextT } from "../auth/common"
 
 export type Cursor = string
-export type ArtifactListEvent = ListEvent & {
+
+export type ArtifactListEvent = ListEvent & PageLinks & {
   artifacts: ArtifactListItem[]
-  offset: number
-  nextPage?: Cursor
-  prevPage?: Cursor
 }
 
 export type ArtifactListItem = {
@@ -76,18 +73,20 @@ export function init(register: PiRegister): void {
   register.GET<ReduxState, ReduxAction & LoadArtifactListEvent, any, OAuthContextT>({
     ...CommonProps("loadArtifactList"),
     url: createListUrlBuilder("artifacts"),
-    request: (a, _) => ({ ...a, page: removePageOffset(a) } as any),
+    request: (a, _) => {
+      const b = { ...a, page: removePageOffset(a) } as any
+      if (b.orderBy === "mimeType") {
+        b.orderBy = "mime-type"
+      }
+      return b
+    },
     trigger: ACTION_TYPES.LOAD_LIST,
     // headers: (_1, _2, ctxt) => ({ Authorization: `Bearer ${ctxt.token}` }),
     reply: (state, content: any, dispatch, { request }) => {
       const artifacts = (content.items || []).map(toArtifactListItem)
-      const offset = getOffsetFromPage(request.page)
-      const nextPage = addOffsetFromPage(offset + artifacts.length, getNextPage(content.links))
       const ev: ArtifactListEvent = {
         artifacts,
-        offset,
-        nextPage,
-        prevPage: request.page,
+        ...getPageLinks(content.links),
       }
       dispatchEvent(ev, ACTION_TYPES.LIST, dispatch, request)
       return state
@@ -104,13 +103,13 @@ function removePageOffset(props: any): string | undefined {
   }
 }
 
-function getOffsetFromPage(page?: string): number {
-  return page ? Number(page.split(":")[1]) : 0
-}
+// function getOffsetFromPage(page?: string): number {
+//   return page ? Number(page.split(":")[1]) : 0
+// }
 
-function addOffsetFromPage(offset: number, page?: string): string | undefined {
-  return page ? `${page}:${offset}` : undefined
-}
+// function addOffsetFromPage(offset: number, page?: string): string | undefined {
+//   return page ? `${page}:${offset}` : undefined
+// }
 
 function toArtifactListItem(els: any): ArtifactListItem {
   // {

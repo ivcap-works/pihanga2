@@ -85,15 +85,39 @@ export function createListUrlBuilder(
   return u
 }
 
-export type Links = {
-  self: string
-  first: string
-  next?: string
+export type Cursor = string
+
+
+export type PageLinks = {
+  firstPage: Cursor
+  thisPage: Cursor
+  nextPage?: Cursor
 }
 
-export function getNextPage(links: Links): string | undefined {
-  if (links.next) {
-    return links.next.split("?page=")[1]
+export function getPageLinks(links: any): PageLinks {
+  return {
+    firstPage: getFirstPage(links),
+    thisPage: getThisPage(links),
+    nextPage: getNextPage(links),
+  }
+}
+
+export function getFirstPage(links: any): Cursor {
+  return _getPage("first", links) || "???"
+}
+
+export function getNextPage(links: any): string | undefined {
+  return _getPage("next", links)
+}
+
+export function getThisPage(links: any): string {
+  return _getPage("self", links) || "???"
+}
+
+function _getPage(name: string, links: any): string | undefined {
+  const l = links.filter((el: { rel: string }) => el.rel === name)
+  if (l[0] && l[0].href) {
+    return l[0].href.split("?page=")[1]
   }
   return undefined
 }

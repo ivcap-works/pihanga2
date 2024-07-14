@@ -34,8 +34,8 @@ export const Component = (
       variant={variant}
       color={color}
       size={size}
-      startDecorator={renderDecorator(startDecorator)}
-      endDecorator={renderDecorator(endDecorator)}
+      startDecorator={renderDecorator(startDecorator, cardName)}
+      endDecorator={renderDecorator(endDecorator, cardName)}
       onClick={() => onSelect({})}
       data-pihanga={cardName}
     >

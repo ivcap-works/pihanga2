@@ -67,7 +67,7 @@ export const Component = (
       <ListItemButton onClick={it.onSelect}>
         {renderStartDecorator(it)}
         {renderContent(it)}
-        {renderDecorator(it.endDecorator)}
+        {renderDecorator(it.endDecorator, cardName)}
       </ListItemButton>
     )
   }
@@ -109,7 +109,7 @@ export const Component = (
 
     return (
       <ListItemDecorator>
-        {renderDecorator(it.startDecorator)}
+        {renderDecorator(it.startDecorator, cardName)}
       </ListItemDecorator>
     )
   }

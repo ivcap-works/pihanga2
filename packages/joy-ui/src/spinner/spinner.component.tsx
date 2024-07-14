@@ -28,7 +28,7 @@ export const SpinnerComponent = (
 ): React.ReactNode => {
   const {
     childCard,
-    height = DEF_SPINNER_HEIGHT,
+    height,
     value,
     thickness,
     color,
@@ -38,7 +38,10 @@ export const SpinnerComponent = (
     _cls,
   } = props
   const sx = joy?.sx || DEF_SX
-  const p: { [k: string]: any } = { color, variant }
+  const p: { [k: string]: any } = {
+    color,
+    variant,
+  }
   if (value) {
     p["value"] = value
     p["determinate"] = true
@@ -46,17 +49,14 @@ export const SpinnerComponent = (
   if (thickness) {
     p["thickness"] = thickness
   }
-  const style = { height }
+  if (height) {
+    p["sx"] = { "--CircularProgress-size": `${height}` }
+  }
   return (
-    <Box
-      sx={sx.root}
-      style={style}
-      data-pihanga={cardName}
-      className={_cls("root")}
-    >
-      <CircularProgress {...p}>
-        {childCard && <Card cardName={childCard} parentCard={cardName} />}
-      </CircularProgress>
-    </Box>
+    // <Box sx={sx.root} data-pihanga={cardName} className={_cls("root")}>
+    <CircularProgress {...p} data-pihanga={cardName} className={_cls("root")}>
+      {childCard && <Card cardName={childCard} parentCard={cardName} />}
+    </CircularProgress>
+    // </Box>
   )
 }

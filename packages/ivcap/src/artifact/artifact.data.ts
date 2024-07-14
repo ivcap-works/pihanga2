@@ -64,7 +64,8 @@ export function init(register: PiRegister): void {
     url: "/1/artifacts/:id/blob",
     trigger: ACTION_TYPES.LOAD_DATA,
     request: (a, _) => {
-      const id = a.id.split(":")[3]
+      const pa = a.id.split(":")
+      const id = pa.length === 4 ? pa[3] : pa[0]
       return { id }
     },
     reply: (state, content: any, dispatch, { request, contentType, mimeType, size }) => {

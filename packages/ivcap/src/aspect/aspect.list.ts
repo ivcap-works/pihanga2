@@ -33,13 +33,14 @@ export type AspectListItem = {
   entity: string
   schema: string
   contentType: string
-  content: object
+  content: any
 }
 
 export type LoadAspectListEvent = LoadListEvent<AspectListEvent> & {
   entity?: URN
   schema?: URN
   contentPath?: string
+  includeContent?: boolean
 }
 
 
@@ -79,7 +80,8 @@ export function listInit(register: PiRegister): void {
   register.GET<ReduxState, ReduxAction & LoadAspectListEvent, any>({
     ...CommonProps("loadAspectList"),
     url: createListUrlBuilder("aspects", {
-      entity: "entity", schema: "schema", "content-path": "contentPath"
+      entity: "entity", schema: "schema", "content-path": "contentPath",
+      "include-content": "includeContent"
     }),
     request: (a, _) => ({ ...a, page: removePageOffset(a) } as any),
     trigger: ASPECT_ACTION.LOAD_LIST,

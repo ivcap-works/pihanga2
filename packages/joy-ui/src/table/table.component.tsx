@@ -8,8 +8,15 @@ import Sheet from "@mui/joy/Sheet"
 import Checkbox from "@mui/joy/Checkbox"
 import IconButton from "@mui/joy/IconButton"
 import Typography from "@mui/joy/Typography"
+import Option from "@mui/joy/Option"
+import FormControl from "@mui/joy/FormControl"
+import FormLabel from "@mui/joy/FormLabel"
+import Select from "@mui/joy/Select"
 
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown"
+import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight"
+import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft"
+import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft"
 
 import { Card, PiCardProps, PiCardRef } from "@pihanga2/core"
 import {
@@ -44,6 +51,7 @@ export type TableSX = {
   table?: SxProps
   colgroup?: SxProps
   thead?: SxProps
+  detailCard?: SxProps
 }
 
 const DEF_SX = {
@@ -62,6 +70,9 @@ const DEF_SX = {
     "--TableCell-paddingY": "4px",
     "--TableCell-paddingX": "8px",
   },
+  detailCard: {
+    padding: "20px",
+  },
 }
 
 export const Component = (
@@ -75,12 +86,18 @@ export const Component = (
     hasDetails,
     manageDetails,
     showLimit = 10,
-    dataOffset = 0,
-    hasMore,
+    dataOffset = -1,
     recordCount = -1,
+    rowsClickable,
+
+    thisCursor, // when set indicates that table only shows part of a larger set
+    firstCursor, // when set identifies first "page" of this set
+    nextCursor, // when set refers to next "page" of data
+    prevCursor, // when set refers to previous "page" of data
+
     showSearch,
     showPageSizeSelector,
-    showFooter = true,
+    showFooter,
     cardOnEmpty,
     onRowClicked,
     onColumnSort,
@@ -91,13 +108,12 @@ export const Component = (
     onRowSelected,
     onAllRowsSelected,
 
-    onNextPage,
-    onPrevPage: onPreviousPage,
+    onNewPage,
 
     borderAxis,
-    hoverRow,
+    hoverRow = true,
     color,
-    noWrap,
+    noWrap = false,
     size,
     stripe,
     variant,
@@ -143,10 +159,10 @@ export const Component = (
   }
 
   function rowClicked(row: TableRow): void {
-    if (hasDetails) {
-      toggleDetails(row)
-    } else {
+    if (rowsClickable) {
       onRowClicked({ row })
+    } else if (hasDetails) {
+      toggleDetails(row)
     }
   }
 
@@ -212,6 +228,82 @@ export const Component = (
     )
   }
 
+  function renderFooter() {
+    if (!showFooter) return null
+
+    return (
+      <tfoot>
+        <tr>
+          <td colSpan={visibleCols.length}>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 2,
+                justifyContent: "flex-end",
+              }}
+            >
+              {showPageSizeSelector && renderPageSizeSelector()}
+              {dataOffset >= 0 && (
+                <Typography textAlign="center" sx={{ minWidth: 80 }}>
+                  {`${dataOffset + 1}–${dataOffset + data.length}`}
+                </Typography>
+              )}
+              {renderNavPage()}
+            </Box>
+          </td>
+        </tr>
+      </tfoot>
+    )
+  }
+
+  function renderNavPage() {
+    if (!thisCursor) return null // no paging
+
+    return (
+      <Box sx={{ display: "flex", gap: 1 }}>
+        {renderNavPageButton(KeyboardDoubleArrowLeftIcon, firstCursor)}
+        {renderNavPageButton(KeyboardArrowLeftIcon, prevCursor)}
+        {renderNavPageButton(KeyboardArrowRightIcon, nextCursor)}
+      </Box>
+    )
+  }
+
+  function renderNavPageButton(icon: any, cursor: any) {
+    return (
+      <IconButton
+        size="sm"
+        color="neutral"
+        variant="outlined"
+        disabled={!cursor || cursor === thisCursor}
+        onClick={() =>
+          onNewPage({
+            offset: dataOffset,
+            recordsShowing: data.length,
+            cursor,
+            thisCursor: thisCursor || "???",
+          })
+        }
+        sx={{ bgcolor: "background.surface" }}
+      >
+        {React.createElement(icon)}
+      </IconButton>
+    )
+  }
+
+  function renderPageSizeSelector() {
+    return (
+      <FormControl orientation="horizontal" size="sm">
+        <FormLabel>Rows per page:</FormLabel>
+        {/* <Select onChange={handleChangeRowsPerPage} value={rowsPerPage}>
+          <Option value={5}>5</Option>
+          <Option value={10}>10</Option>
+          <Option value={25}>25</Option>
+        </Select> */}
+      </FormControl>
+    )
+  }
+
   function renderTable() {
     return (
       <Table
@@ -229,6 +321,7 @@ export const Component = (
       >
         {renderHeader()}
         <tbody className="table-tbody">{renderTableContent()}</tbody>
+        {renderFooter()}
       </Table>
     )
   }
@@ -350,7 +443,7 @@ export const Component = (
           level={"body-xs"}
           style={col.valueStyle}
         >{`${value}`}</Typography>
-      </td >
+      </td>
     )
   }
 
@@ -359,6 +452,12 @@ export const Component = (
     col: StringColumn,
     idx: number,
   ): React.ReactNode {
+    let style: React.CSSProperties = {
+      cursor: rowsClickable ? "pointer" : "default",
+    }
+    if (col.valueStyle) {
+      style = { ...style, ...col.valueStyle }
+    }
     return (
       <td
         key={idx}
@@ -371,7 +470,8 @@ export const Component = (
           textColor={col.textColor}
           fontSize={col.fontSize}
           fontWeight={col.fontWeight}
-          style={col.valueStyle}
+          noWrap
+          style={style}
         >{`${value}`}</Typography>
       </td>
     )
@@ -392,10 +492,10 @@ export const Component = (
       const d = new Date(value)
       const f = col.dateFormatter || ((d) => DEF_DATE_FORMATTER.format(d))
       s = f(d)
-    } else if (value === null) {
+    } else if (!value) {
       s = ""
     } else {
-      s = `unnknown date '${value}'`
+      s = `unknown date '${value}'`
     }
     return renderText(s, col as any as StringColumn, idx)
   }
@@ -475,7 +575,7 @@ export const Component = (
         <Chip
           variant="soft"
           size="sm"
-          startDecorator={renderDecorator(startDecorator)}
+          startDecorator={renderDecorator(startDecorator, cardName)}
           color={col.color ? (col.color[value] as ColorPaletteProp) : undefined}
         >
           {value}
@@ -618,14 +718,16 @@ export const Component = (
         className={`pi-tb-datatable-tr-detail pi-pi-tb-datatable-tr-detail-${row.detailCard}`}
         key={`${row.id || idx}-detail`}
       >
-        <td colSpan={columns.length + 1}>
-          <Card
-            cardName={row.detailCard}
-            cardKey={`detail-${row.id}`}
-            row={row}
-            parentCard={cardName}
-            key={`${cardName}-${row.id || idx}-detail`}
-          />
+        <td colSpan={columns.length + 1} style={{ padding: "0" }}>
+          <Sheet variant="soft" sx={sx?.detailCard || DEF_SX.detailCard}>
+            <Card
+              cardName={row.detailCard}
+              cardKey={`detail-${row.id}`}
+              row={row}
+              parentCard={cardName}
+              key={`${cardName}-${row.id || idx}-detail`}
+            />
+          </Sheet>
         </td>
       </tr>
     )

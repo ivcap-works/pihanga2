@@ -43,6 +43,7 @@ export const LoginComponent = (
     signInHelp,
     loginProviders = [],
     showBackground,
+    backgroundURL,
     sx,
     onWithProvider,
     cardName,
@@ -50,7 +51,13 @@ export const LoginComponent = (
 
   function renderBackground() {
     if (!showBackground) return null
-    return <Box sx={sx?.background || DEF_SX.background} />
+
+    const bsx = sx?.background || DEF_SX.background
+    let style: any = {}
+    if (backgroundURL) {
+      style.backgroundImage = `url(${backgroundURL})`
+    }
+    return <Box sx={bsx} style={style} />
   }
 
   function renderHeader() {
