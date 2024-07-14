@@ -1,6 +1,6 @@
 {
   "name": "@pihanga2/joy-ui",
-  "version": "0.2.0",
+  "version": "0.2.3",
   "private": false,
   "type": "module",
   "license": "MIT",
@@ -26,12 +26,12 @@
     "test:watch": "vitest"
   },
   "dependencies": {
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.15.12",
     "@mui/joy": "^5.0.0-beta.30",
     "@mui/material": "^5.15.12",
     "@mui/styled-engine": "5.15.11",
-    "@emotion/react": "^11.11.4",
-    "@emotion/styled": "^11.11.0",
     "classnames": "^2.5.1",
     "lodash.throttle": "^4.1.1",
     "react": "^18.2.0",
@@ -40,30 +40,30 @@
     "react-modal": "^3.16.1"
   },
   "peerDependencies": {
-    "@pihanga2/core": "^0.2.0",
     "@pihanga2/cards": "^0.2.0",
+    "@pihanga2/core": "^0.2.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@types/react-modal": "^3.16.3",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
     "@microsoft/tsdoc": "^0.14.1",
+    "@types/lodash.throttle": "^4.1.9",
+    "@types/luxon": "^2.3.2",
+    "@types/node": "^17.0.35",
+    "@types/react-modal": "^3.16.3",
+    "c8": "^7.11.3",
     "eslint": "^8.0.0",
     "eslint-config-react-app": "^7.0.1",
     "eslint-plugin-prettier": "^4.2.1",
     "prettier": "^2.7.1",
     "prettier-config-nick": "^1.0.2",
-    "typescript": "^5.0.2",
-    "@types/luxon": "^2.3.2",
-    "@types/node": "^17.0.35",
-    "@types/lodash.throttle": "^4.1.9",
-    "c8": "^7.11.3",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "rollup-plugin-typescript-paths": "^1.4.0",
     "rollup-plugin-visualizer": "^5.10.0",
     "tslib": "^2.6.2",
-    "typedoc": "^0.25.4"
+    "typedoc": "^0.25.4",
+    "typescript": "^5.0.2"
   },
   "eslintConfig": {
     "extends": [
