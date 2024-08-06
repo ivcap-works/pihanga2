@@ -4,7 +4,8 @@ import { PiCardProps } from "@pihanga2/core"
 import remarkMath from "remark-math"
 import remarkGfm from "remark-gfm"
 import rehypeKatex from "rehype-katex"
-import "katex/dist/katex.min.css" // `rehype-katex` does not import the CSS for you
+// import "katex/dist/katex.min.css" // `rehype-katex` does not import the CSS for you
+import "./katex.css"
 import { MarkdownViewerProps } from "./markdownViewer.types"
 
 export const MarkdownViewerComponent = (
