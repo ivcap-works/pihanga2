@@ -113,7 +113,7 @@ develop 'template' cards which can dynamically be adapted to various different u
 
 ## Further Reading
 
-The [examples](./examples) directory contains various examples on how _Pihanga_ can be used to quickly develop useful and scalable web applications. See the _README_ files in the various sub directories for more information.
+The [examples](./examples/) directory contains various examples on how _Pihanga_ can be used to quickly develop useful and scalable web applications. See the _README_ files in the various sub directories for more information.
 
 ## Get Started
 
