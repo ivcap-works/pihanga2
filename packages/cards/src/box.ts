@@ -2,7 +2,7 @@ import { PiCardRef, createCardDeclaration } from "@pihanga2/core"
 import { AlignItemsT, DisplayGridT } from "./common"
 
 export const BOX_CARD = "box"
-export const Card = createCardDeclaration<BoxProps>(BOX_CARD)
+export const Box = createCardDeclaration<BoxProps>(BOX_CARD)
 
 export type BoxProps<S = any> = {
   content?: PiCardRef[]

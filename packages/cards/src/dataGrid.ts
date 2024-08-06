@@ -8,12 +8,11 @@ import {
   registerActions,
 } from "@pihanga2/core"
 import { ColorT } from "./common"
-
 import { ButtonProps } from "./button"
 import { LinkProps } from "./link"
 import { TypographyProps } from "./typography"
 
-const CARD_TYPE = "dataGrid"
+const DATA_GRID_CARD = "dataGrid"
 
 export function DataGrid<T extends { [k: string]: any }>(): <
   S extends ReduxState,
@@ -22,19 +21,19 @@ export function DataGrid<T extends { [k: string]: any }>(): <
 ) => PiCardDef {
   return (p) => ({
     ...p,
-    cardType: CARD_TYPE,
+    cardType: DATA_GRID_CARD,
   })
 }
 
-export const DATA_GRID_ACTION = registerActions(CARD_TYPE, [
+export const DATA_GRID_ACTION = registerActions(DATA_GRID_CARD, [
   "button_clicked",
   "link_clicked",
 ])
 
-export const onDataGridButtonClicked = createOnAction<ButtonClickedEvent>(
+export const onDataGridButtonClicked = createOnAction<DataGridButtonClickedEvent>(
   DATA_GRID_ACTION.BUTTON_CLICKED,
 )
-export const onDataGridLinkClicked = createOnAction<LinkClickedEvent>(
+export const onDataGridLinkClicked = createOnAction<DataGridLinkClickedEvent>(
   DATA_GRID_ACTION.LINK_CLICKED,
 )
 
@@ -136,15 +135,15 @@ export enum DataGridElTypeE {
   Separator = "separator",
 }
 
-export type ButtonClickedEvent = {
+export type DataGridButtonClickedEvent = {
   buttonID: string
 }
 
-export type LinkClickedEvent = {
+export type DataGridLinkClickedEvent = {
   linkID: string
 }
 
 export type DataGridEvents = {
-  onButtonClicked: ButtonClickedEvent
-  onLinkClicked: LinkClickedEvent
+  onButtonClicked: DataGridButtonClickedEvent
+  onLinkClicked: DataGridLinkClickedEvent
 }

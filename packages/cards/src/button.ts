@@ -6,7 +6,7 @@ import {
 import { SizeT, ColorT, VariantT, DecoratorT } from "./common"
 
 export const BUTTON_CARD = "button"
-export const Button = createCardDeclaration<ButtonProps, ComponentEvents>(
+export const Button = createCardDeclaration<ButtonProps, ButtonEvents>(
   BUTTON_CARD,
 )
 
@@ -36,6 +36,6 @@ export type ButtonProps<S = any> = {
 
 export type ButtonClickedEvent = {}
 
-export type ComponentEvents = {
+export type ButtonEvents = {
   onClicked: ButtonClickedEvent
 }

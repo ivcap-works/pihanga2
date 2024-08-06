@@ -6,14 +6,12 @@ import {
 } from "@pihanga2/core"
 
 export const MODAL_TYPE = "modal"
-export const Modal = createCardDeclaration<ModalProps, ComponentEvents>(
-  MODAL_TYPE,
-)
+export const Modal = createCardDeclaration<ModalProps, ModalEvents>(MODAL_TYPE)
 
-export const ACTION_TYPES = registerActions(MODAL_TYPE, ["open", "close"])
+export const MODAL_ACTION = registerActions(MODAL_TYPE, ["open", "close"])
 
-export const onModalOpen = createOnAction<CloseEvent>(ACTION_TYPES.OPEN)
-export const onModalClose = createOnAction<CloseEvent>(ACTION_TYPES.CLOSE)
+export const onModalOpen = createOnAction<CloseEvent>(MODAL_ACTION.OPEN)
+export const onModalClose = createOnAction<CloseEvent>(MODAL_ACTION.CLOSE)
 
 export const MODAL_MAX_WIDTH_DEF = 500
 export const MODAL_MIN_WIDTH_DEF = 300
@@ -30,7 +28,7 @@ export type ModalProps = {
 export type OpenEvent = {}
 export type CloseEvent = {}
 
-export type ComponentEvents = {
+export type ModalEvents = {
   onOpen: OpenEvent
   onClose: CloseEvent
 }

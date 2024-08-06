@@ -7,13 +7,13 @@ import {
 } from "@pihanga2/core"
 import { DecoratorT, TypographyLevelT } from "./common"
 
-export const CARD_TYPE = "list"
-export const List = createCardDeclaration<ListProps, ComponentEvents>(CARD_TYPE)
+export const LIST_CARD = "list"
+export const List = createCardDeclaration<ListProps, ListEvents>(LIST_CARD)
 
-export const ACTION_TYPES = registerActions(CARD_TYPE, ["item_clicked"])
+export const LIST_ACTION = registerActions(LIST_CARD, ["item_clicked"])
 
 export const onItemClicked = createOnAction<ItemClickedEvent>(
-  ACTION_TYPES.ITEM_CLICKED,
+  LIST_ACTION.ITEM_CLICKED,
 )
 
 export type ListProps = {
@@ -52,6 +52,6 @@ export type ItemClickedEvent = {
   itemID: string
 }
 
-export type ComponentEvents = {
+export type ListEvents = {
   onItemClicked: ItemClickedEvent
 }

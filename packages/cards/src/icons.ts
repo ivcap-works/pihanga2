@@ -1,9 +1,25 @@
 import React from "react"
 
+declare global {
+  interface Window {
+    PihangaIcons: G
+  }
+}
+
 export type IconId = number
 
-const icons: any[] = []
-const name2icon: { [name: string]: IconId } = {}
+type G = {
+  icons: any[]
+  name2icon: { [name: string]: IconId }
+}
+
+window.PihangaIcons = window.PihangaIcons || {
+  icons: [],
+  name2icon: {},
+}
+
+const icons = window.PihangaIcons.icons
+const name2icon = window.PihangaIcons.name2icon
 
 export function registerIcon(el: any, name?: string): IconId {
   icons.push(el)
