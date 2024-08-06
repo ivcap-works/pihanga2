@@ -14,6 +14,7 @@ import { RegisterCardState, UPDATE_STATE_ACTION } from "./card"
 import StackTrace from "stacktrace-js"
 import { getLogger } from "./logger"
 import { Dispatch } from "react"
+import { currentRoute } from "./router"
 
 const logger = getLogger("reducer")
 
@@ -21,6 +22,7 @@ type ReducerDef<S extends ReduxState, A extends ReduxAction> = {
   mapperMany?: ReduceF<S, A>
   mapperOnce?: ReduceOnceF<S, A>
   priority?: number
+  key?: string
   definedIn?: StackTrace.StackFrame
 }
 
@@ -40,34 +42,21 @@ export function createReducer(
   ): ReduxState => {
     const s = state || initialState
     const ra = mappings[action.type]
-    if (!ra || ra.length === 0) {
+    const rany = mappings["*"]
+    if ((!ra || ra.length === 0) && (!rany || rany.length === 0)) {
       return s
     }
 
     const nextState = produce<ReduxState, ReduxState>(s, (draft) => {
-      const rout: ReducerDef<ReduxState, Action<any>>[] = []
-      const outDraft = ra.reduce((d, m) => {
-        try {
-          if (m.mapperMany) {
-            const s = m.mapperMany(d, action, delayedDispatcher)
-            rout.push(m)
-            return s
-          } else if (m.mapperOnce) {
-            const [s, flag] = m.mapperOnce(d, action, delayedDispatcher)
-            if (!flag) {
-              rout.push(m)
-            }
-            return s
-          } else {
-            return d
-          }
-        } catch (err: any) {
-          logger.error(err.message, m.definedIn)
-          return d
-        }
-      }, draft)
-      mappings[action.type] = rout
-      return outDraft
+      if (ra) {
+        const rout = _reduce(ra, draft, action, delayedDispatcher)
+        mappings[action.type] = rout
+      }
+      if (rany) {
+        const rout2 = _reduce(rany, draft, action, delayedDispatcher)
+        mappings["*"] = rout2
+      }
+      return
     })
     return nextState
   }
@@ -79,8 +68,9 @@ export function createReducer(
     eventType: string,
     mapper: ReduceF<S, A>,
     priority: number = 0,
+    key: string | undefined = undefined
   ): void => {
-    addReducer(eventType, { mapperMany: mapper, priority })
+    addReducer(eventType, { mapperMany: mapper, priority, key })
   }
 
   const registerOneShot: PiRegisterOneShotReducerF = <
@@ -88,10 +78,11 @@ export function createReducer(
     A extends ReduxAction,
   >(
     eventType: string,
-    mapper: (state: S, action: A, dispatch: DispatchF) => [S, boolean],
+    mapper: (state: S, action: A, dispatch: DispatchF) => boolean,
     priority: number = 0,
+    key: string | undefined = undefined
   ): void => {
-    addReducer(eventType, { mapperOnce: mapper, priority })
+    addReducer(eventType, { mapperOnce: mapper, priority, key })
   }
 
   function addReducer<S extends ReduxState, A extends ReduxAction>(
@@ -99,7 +90,11 @@ export function createReducer(
     reducerDef: ReducerDef<S, A>,
     // mappings: { [k: string]: ReducerDef<ReduxState, Action>[] }
   ) {
-    const m = mappings[eventType] || []
+    let m = mappings[eventType] || []
+    if (reducerDef.key) {
+      // remove reducer with same key - if there is one
+      m = m.filter((r) => r.key !== reducerDef.key)
+    }
     m.push(reducerDef as any as ReducerDef<ReduxState, Action<any>>) // keep typing happy
     m.sort((a, b) => (b.priority || 0) - (a.priority || 0))
     mappings[eventType] = m
@@ -124,4 +119,29 @@ export function createReducer(
   }
 
   return [reducer, piReducer]
+}
+
+function _reduce(
+  ra: ReducerDef<ReduxState, Action>[],
+  draft: ReduxState,
+  action: Action,
+  delayedDispatcher: (a: any) => void,
+): ReducerDef<ReduxState, Action<any>>[] {
+  const rout: ReducerDef<ReduxState, Action<any>>[] = []
+  ra.forEach((m) => {
+    try {
+      if (m.mapperMany) {
+        m.mapperMany(draft, action, delayedDispatcher)
+        rout.push(m)
+      } else if (m.mapperOnce) {
+        const flag = m.mapperOnce(draft, action, delayedDispatcher)
+        if (!flag) {
+          rout.push(m)
+        }
+      }
+    } catch (err: any) {
+      logger.error(err.message, m.definedIn)
+    }
+  })
+  return rout
 }

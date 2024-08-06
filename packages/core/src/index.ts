@@ -1,6 +1,4 @@
-import React from "react"
 import ReactDOM from "react-dom/client"
-import { Provider } from "react-redux"
 import { Dispatch } from "react"
 
 import {
@@ -13,8 +11,11 @@ import {
   RegisterCardF,
   MetaCardMapperF,
   PiRegisterMetaCard,
+  PiMapProps,
+  WindowProps,
+  GenericCardParameterT,
 } from "./types"
-import { Card, registerCard, registerCardComponent, registerMetacard } from "./card"
+import { createCardDeclaration, registerCard, registerCardComponent, registerMetacard, updateOrRegisterCard } from "./register_cards"
 import { createReducer } from "./reducer"
 import { ON_INIT_ACTION, currentRoute, init as routerInit } from "./router"
 
@@ -32,6 +33,7 @@ import {
   registerPOST,
   registerPUT,
 } from "./rest"
+import { RootComponent } from "./root"
 const logger = getLogger("root")
 
 export type {
@@ -47,9 +49,11 @@ export type {
   StateMapper,
   PiReducer,
   PiRegisterMetaCard,
+  WindowProps,
 } from "./types"
 export { registerActions, actionTypesToEvents, createOnAction } from "./redux"
-export { Card, memo, createCardDeclaration, isCardRef } from "./card"
+export { Card } from "./card"
+export { memo, createCardDeclaration, isCardRef } from "./register_cards"
 export { getLogger } from "./logger"
 export type { PiCardProps, PiCardRef } from "./types"
 export type { ErrorAction as RestErrorAction } from "./rest"
@@ -59,7 +63,12 @@ export { showPage, onInit, onShowPage, createShowPageAction, onNavigateToPage } 
 export type { ShowPageEvent, NavigateToPageEvent } from "./router"
 
 export interface PiRegister {
+  //window(parameters: PiCardDef): PiCardRef
+
+  window<S extends ReduxState>(parameters: PiMapProps<WindowProps, S, {}>): PiCardRef
+
   card(name: string, parameters: PiCardDef): PiCardRef
+  updateCard(name: string, parameters: { [key: string]: GenericCardParameterT }): PiCardRef
 
   cardComponent(declaration: PiRegisterComponent): void
 
@@ -160,8 +169,16 @@ export function start<S extends Partial<ReduxState>>(
   dispatchF = store.dispatch
 
   const card = registerCard(piReducer.register, dispatchF)
+  const updateCard = updateOrRegisterCard(piReducer.register, dispatchF)
+  const window = <S extends ReduxState>(p: PiMapProps<WindowProps, S, {}>): PiCardRef => {
+    return card("_window", { cardType: "framework", ...p })
+  }
+
+
   const register: PiRegister = {
+    window,
     card,
+    updateCard,
     cardComponent: registerCardComponent,
     metaCard: registerMetacard(card),
     reducer: piReducer,
@@ -180,14 +197,4 @@ export function start<S extends Partial<ReduxState>>(
   root.render(rootComp)
 
   return register
-}
-
-function RootComponent(store: any) {
-  return (
-    <React.StrictMode>
-      <Provider store={store}>
-        <Card cardName="page" parentCard="" />
-      </Provider>
-    </React.StrictMode>
-  )
 }

@@ -31,13 +31,13 @@ export type ReduceF<S extends ReduxState, A extends ReduxAction> = (
   state: S,
   action: A,
   dispatch: DispatchF,
-) => S
+) => void // S
 
 export type ReduceOnceF<S extends ReduxState, A extends ReduxAction> = (
   state: S,
   action: A,
   dispatch: DispatchF,
-) => [S, boolean]
+) => boolean // [S, boolean]
 
 export type DispatchF = <T extends ReduxAction>(a: T) => void
 
@@ -52,6 +52,7 @@ export type PiRegisterReducerF = <S extends ReduxState, A extends ReduxAction>(
   eventType: string,
   mapper: ReduceF<S, A>, // (state: S, action: A, dispatch: DispatchF) => S,
   priority?: number,
+  key?: string,
 ) => void
 
 export type PiRegisterOneShotReducerF = <
@@ -76,6 +77,12 @@ export type CardProp = {
   parentCard: string
 } & PiDefCtxtProps
 
+// props for the 'root' of all cards
+export type WindowProps = {
+  page: PiCardRef
+  framework?: string // select framework to render window
+  theme?: any // depends on framework
+}
 
 // type which needs to be implemented by card components
 export type PiCardProps<P, E = {}> = P & {
@@ -84,8 +91,8 @@ export type PiCardProps<P, E = {}> = P & {
   _cls: (elName: string | string[], styles?: CSSModuleClasses) => string
   _dispatch: DispatchF
 } & {
-    [Key in keyof E]: (ev: E[Key]) => void
-  }
+  [Key in keyof E]: (ev: E[Key]) => void
+}
 
 export type CSSModuleClasses = { readonly [key: string]: string }
 

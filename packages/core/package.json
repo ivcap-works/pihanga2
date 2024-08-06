@@ -1,6 +1,6 @@
 {
   "name": "@pihanga2/core",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "private": false,
   "type": "module",
   "license": "MIT",
@@ -26,15 +26,19 @@
   },
   "dependencies": {
     "history": "^5.3.0",
-    "deep-equal": "^2.2.3"
+    "deep-equal": "^2.2.3",
+    "stacktrace-js": "^2.0.2",
+    "immer": "^10.1.1",
+    "tslog": "^4.9.3",
+    "@reduxjs/toolkit": "^2.2.6"
   },
   "peerDependencies": {
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-redux": "^9.1.0"
   },
   "devDependencies": {
     "@microsoft/tsdoc": "^0.14.1",
-    "@reduxjs/toolkit": "^1.8.1",
     "@rollup/plugin-typescript": "^11.1.5",
     "@testing-library/dom": "^9.2.0",
     "@testing-library/jest-dom": "^5.11.4",
@@ -60,8 +64,7 @@
     "rollup-plugin-visualizer": "^5.10.0",
     "stacktrace-js": "^2.0.2",
     "tslib": "^2.6.2",
-    "tslog": "^4.9.2",
-    "typedoc": "^0.25.4",
+    "typedoc": "^0.26.4",
     "typescript": "^5.0.2",
     "vite": "^5.0.4",
     "vite-plugin-dts": "^3.6.4",

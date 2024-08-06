@@ -57,7 +57,7 @@ export type RegisterGenericProps<
     reply: R,
     dispatcher: DispatchF,
     result: ResultAction<A>,
-  ) => S
+  ) => void
   error?: (
     state: S,
     error: ErrorAction<A>,

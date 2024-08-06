@@ -5,265 +5,18 @@ import equal from "deep-equal"
 import { getLogger } from "./logger"
 import {
   CSSModuleClasses,
-  CardAction,
   CardProp,
-  DispatchF,
-  MetaCardMapperF,
   PiCardDef,
-  PiCardRef,
-  PiMapProps,
   PiRegisterComponent,
-  PiRegisterMetaCard,
   PiRegisterReducerF,
   ReduxState,
-  RegisterCardF,
   StateMapper,
   StateMapperContext,
 } from "./types"
 import { Action, AnyAction, Dispatch } from "@reduxjs/toolkit"
+import { _createCardMapping, _updateCardMapping, _registerCard, cardMappings, cardTypes, dispatch2registerReducer, framework, Mapping } from './register_cards'
 
-export function isCardRef(p: any): boolean {
-  return (typeof p === "object" && p.cardType !== undefined)
-}
-
-type Mapping = {
-  cardType: string
-  props: { [k: string]: unknown }
-  eventMappers: { [k: string]: (ev: Action) => Action | null }
-  cardEvents: { [key: string]: string }
-}
-
-type MetaCard = {
-  type: string
-  registerCard: RegisterCardF
-  mapper: MetaCardMapperF
-  events?: { [key: string]: string }
-}
-
-const cardTypes: { [k: string]: PiRegisterComponent } = {}
-const metacardTypes: { [k: string]: MetaCard } = {}
-
-let framework: string // name of active UI framework
-const cardMappings: { [k: string]: Mapping } = {}
-const dispatch2registerReducer: [React.Dispatch<any>, PiRegisterReducerF][] = []
 const logger = getLogger("card")
-
-export function registerCardComponent(card: PiRegisterComponent): void {
-  if (cardTypes[card.name]) {
-    logger.warn(`Overwriting definition for card type "${card.name}"`)
-  }
-  logger.info(`Register card type "${card.name}"`)
-  if (!framework) {
-    // set default framework
-    const na = card.name.split("/")
-    if (na.length >= 2) {
-      framework = na[0]
-      logger.info(`Setting UI framework to "${framework}"`)
-    }
-  }
-  cardTypes[card.name] = card
-}
-
-export function registerMetacard(registerCard: RegisterCardF) {
-  function f<C>(declaration: PiRegisterMetaCard) {
-    const { type, mapper, events } = declaration
-    if (metacardTypes[type]) {
-      logger.warn(`Overwriting definition for meta card type "${type}"`)
-    }
-    logger.info(`Register meta card type "${type}"`)
-    metacardTypes[type] = { type, registerCard, mapper, events }
-  }
-  return f
-}
-
-export function registerCard(
-  registerReducer: PiRegisterReducerF,
-  dispatchF: React.Dispatch<any>,
-) {
-  // to be used by dynamically registered cards
-  dispatch2registerReducer.push([dispatchF, registerReducer])
-  return (name: string, parameters: PiCardDef): PiCardRef => {
-    return _registerCard(name, parameters, registerReducer)
-  }
-}
-
-function _registerCard(
-  name: string,
-  parameters: PiCardDef,
-  registerReducer: PiRegisterReducerF,
-  overrideEvents?: { [key: string]: string },
-): PiCardRef {
-  if (cardMappings[name]) {
-    logger.warn(`Overwriting definition for card "${name}"`)
-  }
-  let cardType = cardTypes[parameters.cardType]
-  if (!cardType) {
-    if (framework) {
-      cardType = cardTypes[`${framework}/${parameters.cardType}`]
-    }
-    if (!cardType) {
-      // maybe it's a metadata card
-      if (_registerMetadataCard(name, parameters, registerReducer)) {
-        return name
-      }
-      logger.warn("unknown card type", parameters.cardType)
-      return name
-    }
-  }
-
-  const events = overrideEvents || cardType.events || {}
-  _createCardMapping(name, parameters, registerReducer, events)
-  return name
-  // const props = {} as { [k: string]: unknown }
-  // const eventMappers = {} as { [k: string]: (ev: Action) => Action }
-
-  // const events = overrideEvents || cardType.events || {}
-  // Object.entries(parameters).forEach(([k, v]) => {
-  //   if (k === "cardType") return
-  //   if (typeof v === "object") {
-  //     const cd = v as PiCardDef // speculative
-  //     if (cd.cardType) {
-  //       const cardName = `${name}/${k}`
-  //       v = _registerCard(cardName, cd, registerReducer)
-  //     }
-  //   }
-  //   if (
-  //     k.startsWith("on") &&
-  //     processEventParameter(k, v, events, eventMappers, registerReducer, name)
-  //   ) {
-  //     return
-  //   }
-  //   props[k] = v
-  // })
-  // cardMappings[name] = { cardType: parameters.cardType, props, eventMappers }
-  // return name
-}
-
-function _createCardMapping(
-  name: string,
-  parameters: PiCardDef,
-  registerReducer: PiRegisterReducerF,
-  cardEvents: { [key: string]: string },
-) {
-  const props = {} as { [k: string]: unknown }
-  const eventMappers = {} as { [k: string]: (ev: Action) => Action }
-
-  Object.entries(parameters).forEach(([k, v]) => {
-    if (k === "cardType") return
-    if (typeof v === "object") {
-      const cd = v as PiCardDef // speculative
-      if (cd.cardType) {
-        const cardName = `${name}/${k}`
-        v = _registerCard(cardName, cd, registerReducer)
-      }
-    }
-    if (
-      k.startsWith("on") &&
-      processEventParameter(k, v, cardEvents, eventMappers, registerReducer, name)
-    ) {
-      return
-    }
-    props[k] = v
-  })
-  cardMappings[name] = { cardType: parameters.cardType, props, eventMappers, cardEvents }
-}
-
-function _registerMetadataCard(
-  metaName: string,
-  parameters: PiCardDef,
-  registerReducer: PiRegisterReducerF,
-): boolean {
-  let mc = metacardTypes[parameters.cardType]
-  if (!mc) {
-    if (framework) {
-      mc = metacardTypes[`${framework}/${parameters.cardType}`]
-    }
-    if (!mc) {
-      return false
-    }
-  }
-  function registerCard(name: string, parameters: PiCardDef): PiCardRef {
-    const n = `${metaName}/${name}`
-    return mc.registerCard(n, parameters)
-  }
-  const top = mc.mapper(metaName, parameters, registerCard)
-  _registerCard(metaName, top, registerReducer, mc.events)
-  return true
-}
-
-export function createCardDeclaration<Props = {}, Events = {}>(
-  cardType: string,
-): <S extends ReduxState>(p: PiMapProps<Props, S, Events>) => PiCardDef {
-  return (p) => ({
-    ...p,
-    cardType,
-  })
-}
-
-function processEventParameter(
-  propName: string,
-  value: unknown,
-  events: { [key: string]: string },
-  eventMappers: { [k: string]: (ev: Action) => Action },
-  registerReducer: PiRegisterReducerF,
-  cardName: string,
-): boolean {
-  const eva = Object.entries(events).filter((e) => propName.startsWith(e[0]))
-  if (eva.length === 0) {
-    logger.warn(
-      `encountered property '${propName}' for card '${cardName}' which looks like an even but is not defined`,
-    )
-    return false
-  }
-  // eva could actually return more than one hit if we have similar named events
-  let handled = false
-  for (const [evName, actionType] of eva) {
-    if (propName === evName) {
-      const r = value as (state: ReduxState, action: CardAction, dispatch: DispatchF) => ReduxState
-      registerReducer(actionType, (s, a, d) => {
-        const ca = a as CardAction
-        if (ca.cardID === cardName) {
-          s = r(s, ca, d)
-        }
-        return s
-      })
-      handled = true
-      break
-    }
-    if (propName === `${evName}Mapper`) {
-      logger.debug("processEventParameter", cardName)
-
-      const m = value as (ev: Action) => Action
-      eventMappers[evName] = m
-      handled = true
-      break
-    }
-  }
-  return handled
-}
-
-export function memo<P, T, S extends ReduxState, C>(
-  filterF: (state: S, context: StateMapperContext<C>) => P,
-  mapperF: (partial: P, context: StateMapperContext<C>, state: S) => T,
-): (state: S, context: StateMapperContext<C>) => T {
-  const lastFilter: { [k: string]: P } = {}
-  const lastValue: { [k: string]: T } = {}
-  const isNotFirst: { [k: string]: boolean } = {}
-
-  return (state: S, context: StateMapperContext<C>): T => {
-    const k = context.cardKey || "-"
-    const fv = filterF(state, context)
-    if (isNotFirst[k] && equal(fv, lastFilter[k])) {
-      // nothing changed
-      return lastValue[k]
-    }
-    lastFilter[k] = fv
-    const v = mapperF(fv, context, state)
-    lastValue[k] = v
-    isNotFirst[k] = true
-    return v
-  }
-}
 
 // export type CardProp = {
 //   cardName: PiCardRef
@@ -303,9 +56,6 @@ export function Card(props: CardProp): JSX.Element {
 }
 
 function checkForAnonymousCard(props: any, id: number, dispatch: Dispatch<AnyAction>): string {
-  // const [id, _] = React.useState<number>(Math.floor(Math.random() * 10000))
-  // const dispatch = useDispatch() // never change the order of hooks called
-
   const cardType = props.cardName?.cardType
   if (!cardType) {
     return "" // not sure what that is
@@ -322,7 +72,6 @@ function checkForAnonymousCard(props: any, id: number, dispatch: Dispatch<AnyAct
   } else {
     cardName = `${cardName}#${id}`
   }
-  // logger.debug("anonymous", cardName)
 
   const mapping = cardMappings[cardName]
   const parameters = props.cardName as PiCardDef
@@ -335,7 +84,7 @@ function checkForAnonymousCard(props: any, id: number, dispatch: Dispatch<AnyAct
   if (mapping) {
     // looks like we already processed it
     // do update props as they may have changed
-    _createCardMapping(cardName, parameters, regRed, mapping.cardEvents)
+    _updateCardMapping(cardName, parameters, regRed, mapping)
   } else {
     _registerCard(cardName, parameters, regRed)
   }
@@ -344,7 +93,7 @@ function checkForAnonymousCard(props: any, id: number, dispatch: Dispatch<AnyAct
 
 function GenericCard(cardName: string, props: CardProp, info: CardInfo, id: number) {
   const cardProps = useSelector<ReduxState, CompProps>(
-    (s) => getCardProps(cardName, s, props, info?.mapping),
+    (s) => getCardProps(cardName, s, props),
     propEq,
   )
   const dispatch = useDispatch()
@@ -387,8 +136,8 @@ function getCardProps(
   cardName: string,
   state: ReduxState,
   props: CardProp,
-  mapping: Mapping,
 ): CompProps {
+  const mapping = cardMappings[cardName]
   const ctxt: StateMapperContext<unknown> = {
     cardName,
     cardKey: props.cardKey,
