@@ -1,11 +1,11 @@
 import React from "react"
 import { PiCardProps } from "@pihanga2/core"
-import { ComponentEvents, ButtonProps } from "@pihanga2/cards/src/button"
+import { ButtonEvents, ButtonProps } from "@pihanga2/cards"
 import { Button, Tooltip } from "@mui/joy"
 import { renderDecorator } from "../utils"
 
 export const Component = (
-  props: PiCardProps<ButtonProps, ComponentEvents>,
+  props: PiCardProps<ButtonProps, ButtonEvents>,
 ): React.ReactNode => {
   const {
     label,

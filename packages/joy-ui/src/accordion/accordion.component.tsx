@@ -1,10 +1,6 @@
 import React from "react"
 import { Card, PiCardProps, PiCardRef, isCardRef } from "@pihanga2/core"
-import {
-  AccordionEvents,
-  AccordionProps,
-  AccordionItem,
-} from "@pihanga2/cards/src"
+import { AccordionEvents, AccordionProps, AccordionItem } from "@pihanga2/cards"
 import {
   Accordion,
   AccordionDetails,

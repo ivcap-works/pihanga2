@@ -1,11 +1,11 @@
 import React from "react"
 import { Card, PiCardProps } from "@pihanga2/core"
 import {
-  ComponentEvents,
+  ModalEvents,
   MODAL_MAX_WIDTH_DEF,
   MODAL_MIN_WIDTH_DEF,
   ModalProps,
-} from "@pihanga2/cards/src/modal"
+} from "@pihanga2/cards"
 import { SxProps } from "@mui/joy/styles/types"
 import { Modal, Sheet, ModalClose, Typography } from "@mui/joy"
 
@@ -31,7 +31,7 @@ const DEF_SX = {
 }
 
 export const ModalComponent = (
-  props: PiCardProps<ComponentProps, ComponentEvents>,
+  props: PiCardProps<ComponentProps, ModalEvents>,
 ): React.ReactNode => {
   const [isOpen, setOpen] = React.useState<boolean>(false)
   const {

@@ -15,12 +15,11 @@ import {
   TextEl,
   TitledDataGridEl,
   DEF_DATE_FORMATTER,
-} from "@pihanga2/cards/src/dataGrid"
+} from "@pihanga2/cards"
 import { Box, Divider, Typography, styled } from "@mui/joy"
 import { Component as ButtonComponent } from "../button/button.component"
 import { Component as LinkComponent } from "../link/link.component"
 import { TypographyComponent } from "../typography/typography.component"
-import { ButtonProps } from "@pihanga2/cards/src/button"
 
 type ComponentProps = DataGridProps & {
   joy?: {

@@ -4,6 +4,7 @@ import {
   ReduxState,
   PiMapProps,
   PiCardDef,
+  createCardDeclaration,
 } from "@pihanga2/core"
 
 import { Component } from "./table.component"
@@ -11,10 +12,9 @@ import {
   type TableEvents,
   type TableProps,
   TABLE_ACTION,
-} from "@pihanga2/cards/src/table"
+} from "@pihanga2/cards"
 
 // not a type, need to export it as a non-type as well
-export { TableColumnTypeE, chipColumnF } from "@pihanga2/cards/src/table"
 export type { TableSX } from "./table.component"
 const CARD_TYPE = "joy/table"
 

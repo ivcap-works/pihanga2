@@ -3,7 +3,7 @@ import {
   createOnAction,
   registerActions,
 } from "@pihanga2/core"
-import { ColorT, SizeT, VariantT } from "@pihanga2/cards/src/common"
+import { ColorT, SizeT, VariantT } from "@pihanga2/cards"
 import { IconId } from "@pihanga2/cards"
 
 export const CARD_TYPE = "icon_button"

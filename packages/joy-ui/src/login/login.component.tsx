@@ -16,7 +16,7 @@ import {
 } from "@mui/joy"
 
 import { LoginSX, DEF_SX } from "./login.sx"
-import { getIcon } from "@pihanga2/cards/src"
+import { getIcon } from "@pihanga2/cards"
 
 export type ComponentProps = LoginProps & {
   sx?: LoginSX

@@ -1,10 +1,6 @@
 import React from "react"
 import { PiCardProps } from "@pihanga2/core"
-import {
-  ComponentEvents,
-  Item,
-  ListProps,
-} from "@pihanga2/cards/src/list"
+import { ListEvents, Item, ListProps } from "@pihanga2/cards"
 import {
   List,
   ListItem,
@@ -18,7 +14,7 @@ import { Toggler } from "./toggler.component"
 import { registerMuiIcon } from "../icons"
 import { renderDecorator } from "../utils"
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown"
-import { DecoratorE, IconDecoratorT } from "@pihanga2/cards/src"
+import { DecoratorE, IconDecoratorT } from "@pihanga2/cards"
 import { SxProps } from "@mui/joy/styles/types"
 
 export const NESTED_ICON_NAME = registerMuiIcon(KeyboardArrowDownIcon)
@@ -42,7 +38,7 @@ export const DEF_ROOT_SX: SxProps = {
 }
 
 export const Component = (
-  props: PiCardProps<ComponentProps, ComponentEvents>,
+  props: PiCardProps<ComponentProps, ListEvents>,
 ): React.ReactNode => {
   const { items, marker, size, onItemClicked, joy, cardName } = props
 
@@ -57,7 +53,7 @@ export const Component = (
   function renderSingleItem(item: Item, idx: number): React.ReactNode {
     const it = {
       ...item,
-      onSelect: () => onItemClicked({ itemID: item.id })
+      onSelect: () => onItemClicked({ itemID: item.id }),
     }
     return <ListItem key={it.id || idx}>{renderItemButton(it)}</ListItem>
   }

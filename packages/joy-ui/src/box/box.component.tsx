@@ -2,7 +2,7 @@ import * as React from "react"
 import Box from "@mui/joy/Box"
 
 import { Card, PiCardProps } from "@pihanga2/core"
-import { BoxProps } from "@pihanga2/cards/src/box"
+import { BoxProps } from "@pihanga2/cards"
 
 export const BoxComponent = (props: PiCardProps<BoxProps>): React.ReactNode => {
   const { component, content, className, style, cardName } = props

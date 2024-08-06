@@ -1,6 +1,6 @@
 import * as React from "react"
 import Stack from "@mui/joy/Stack"
-import { StackProps } from "@pihanga2/cards/src/stack"
+import { StackProps } from "@pihanga2/cards"
 
 import { Card, PiCardProps } from "@pihanga2/core"
 

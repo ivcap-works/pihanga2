@@ -9,7 +9,7 @@ import {
   type AccordionProps,
   type ImageViewerEvents,
   ACCORDION_ACTION,
-} from "@pihanga2/cards/src"
+} from "@pihanga2/cards"
 
 export type { AccordionSX } from "./accordion.component"
 export { DEF_ACCORDION_ITEM } from "./accordion.component"

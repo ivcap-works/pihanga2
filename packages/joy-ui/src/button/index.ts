@@ -8,11 +8,11 @@ import { Component } from "./button.component"
 import {
   BUTTON_ACTION,
   type ButtonProps,
-  type ComponentEvents,
-} from "@pihanga2/cards/src/button"
+  type ButtonEvents,
+} from "@pihanga2/cards"
 
 const CARD_TYPE = "joy/button"
-export const JyButton = createCardDeclaration<ButtonProps, ComponentEvents>(
+export const JyButton = createCardDeclaration<ButtonProps, ButtonEvents>(
   CARD_TYPE,
 )
 

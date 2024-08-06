@@ -5,11 +5,7 @@ import { renderDecorator } from "../utils"
 
 import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded"
 
-import {
-  BreadCrumb,
-  BreadcrumbEvents,
-  BreadcrumbsProps,
-} from "@pihanga2/cards/src/breadcrumbs"
+import { BreadCrumb, BreadcrumbEvents, BreadcrumbsProps } from "@pihanga2/cards"
 import { SxProps } from "@mui/joy/styles/types"
 
 export type ComponentProps = BreadcrumbsProps & {

@@ -2,7 +2,7 @@ import React from "react"
 import { Card, PiCardProps } from "@pihanga2/core"
 import { Link, Tooltip, Typography } from "@mui/joy"
 
-import { LinkEvents, LinkProps } from "@pihanga2/cards/src/link"
+import { LinkEvents, LinkProps } from "@pihanga2/cards"
 import { SxProps } from "@mui/joy/styles/types"
 import { renderDecorator } from "../utils"
 

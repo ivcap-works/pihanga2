@@ -35,25 +35,28 @@ export const Component = (
     cardName,
   } = props
 
-  const renderButton = () => (
-    <IconButton
-      aria-label={ariaLabel}
-      onClick={() => onClicked({})}
-      color={color}
-      disabled={isDisabled}
-      variant={variant}
-      size={size}
-      data-pihanga={cardName}
-      sx={joy?.sx?.root || DEF_SX.root}
-    >
-      {iconID ? getIcon(iconID) : null}
-    </IconButton>
-  )
+  function renderButton() {
+    const icon = iconID ? getIcon(iconID) : undefined
+    return (
+      <IconButton
+        aria-label={ariaLabel}
+        onClick={() => onClicked({})}
+        color={color}
+        disabled={isDisabled}
+        variant={variant}
+        size={size}
+        data-pihanga={cardName}
+        sx={joy?.sx?.root || DEF_SX.root}
+      >
+        {icon}
+      </IconButton>
+    )
+  }
 
   return (
     <>
       {tooltip && (
-        <Tooltip arrow title={tooltip}>
+        <Tooltip arrow title={tooltip} data-pihanga={cardName}>
           {renderButton()}
         </Tooltip>
       )}

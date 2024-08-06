@@ -1,4 +1,4 @@
-import { IconId } from "@pihanga2/cards/src"
+import { IconId } from "@pihanga2/cards"
 import { PiCardRef, createOnAction, registerActions } from "@pihanga2/core"
 
 export const CARD_TYPE = "login"

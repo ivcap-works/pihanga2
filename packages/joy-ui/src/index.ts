@@ -4,7 +4,6 @@ import { PiRegister } from "@pihanga2/core"
 import { init as frameworkInit } from "./framework"
 import { init as boxInit } from "./box"
 import { init as headerInit } from "./header"
-import { init as page1Init } from "./pageD1"
 import { init as sidebarInit } from "./sidebar"
 import { init as chipInit } from "./chip"
 import { init as listInit } from "./list"
@@ -18,6 +17,7 @@ import { init as dataGridInit } from "./dataGrid"
 import { init as typographyInit } from "./typography"
 import { init as accoridionInit } from "./accordion"
 import { init as colorSchemeToggleInit } from "./colorSchemeToggle"
+import { init as page1Init } from "./pageD1"
 import { init as page2Init } from "./pageD2"
 import { init as modalInit } from "./modal"
 import { init as spinnerInit } from "./spinner"
@@ -26,13 +26,13 @@ import { init as stackInit } from "./stack"
 import { init as windowInit } from "./window"
 import { init as cardInit } from "./card"
 import { init as formInputInit } from "./formInput"
+import { chatInit } from "./chat"
 
 export * from "./icons"
 
 export * from "./framework"
 export * from "./table"
 // export type * from "@pihanga2/cards/src/table"
-
 
 export * from "./accordion"
 export * from "./button"
@@ -41,16 +41,19 @@ export * from "./buttonGroup"
 export * from "./dataGrid"
 export * from "./sidebar"
 export * from "./pageD2"
+export * from "./pageD1"
 export * from "./login"
 export * from "./window"
 export * from "./card"
 export * from "./formInput"
+export * from "./chat"
 
 export function init(register: PiRegister): void {
   frameworkInit(register)
   boxInit(register)
   headerInit(register)
   page1Init(register)
+  page2Init(register)
   sidebarInit(register)
   chipInit(register)
   listInit(register)
@@ -71,6 +74,5 @@ export function init(register: PiRegister): void {
   windowInit(register)
   cardInit(register)
   formInputInit(register)
-
-  page2Init(register)
+  chatInit(register)
 }

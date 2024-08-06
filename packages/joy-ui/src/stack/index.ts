@@ -1,5 +1,5 @@
 import { PiRegister, createCardDeclaration } from "@pihanga2/core"
-import { StackProps } from "@pihanga2/cards/src/stack"
+import { StackProps } from "@pihanga2/cards"
 
 import { Component } from "./stack.component"
 

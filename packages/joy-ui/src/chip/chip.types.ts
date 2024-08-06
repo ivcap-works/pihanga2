@@ -1,5 +1,5 @@
 import { SxProps } from "@mui/material"
-import { ColorT, DecoratorT, SizeT, VariantT } from "@pihanga2/cards/src/common"
+import { ColorT, DecoratorT, SizeT, VariantT } from "@pihanga2/cards"
 
 export type ChipProps = {
   label: string

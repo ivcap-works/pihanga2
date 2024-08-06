@@ -11,10 +11,10 @@ import {
   type DataGridProps,
   type DataGridEvents,
   DATA_GRID_ACTION,
-} from "@pihanga2/cards/src/dataGrid"
+} from "@pihanga2/cards"
 
 // is not a type, need to additionally export it as a non-type
-export { DataGridElTypeE } from "@pihanga2/cards/src/dataGrid"
+export { DataGridElTypeE } from "@pihanga2/cards"
 
 const CARD_TYPE = "joy/dataGrid"
 

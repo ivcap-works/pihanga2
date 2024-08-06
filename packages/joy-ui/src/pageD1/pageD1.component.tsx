@@ -1,70 +1,67 @@
 import * as React from "react"
 import Box from "@mui/joy/Box"
-import Typography from "@mui/joy/Typography"
+import { PiCardProps, Card, PiCardRef } from "@pihanga2/core"
+import { CssBaseline, CssVarsProvider } from "@mui/joy"
+import { PageD1Props } from "@pihanga2/cards"
+import { SxProps } from "@mui/material"
+import { JyColorSchemeToggle } from "../colorSchemeToggle"
 
-// import OrderList from "../../../components/OrderList"
-import { Card, PiCardProps } from "@pihanga2/core"
-import { ComponentProps, DEF_ROOT_SX } from "./pageD1.types"
+type Style = {
+  joy: {
+    outer: SxProps
+    inner: SxProps
+  }
+}
+
+type ComponentProps = PageD1Props<Style>
 
 export const Component = (
   props: PiCardProps<ComponentProps>,
 ): React.ReactNode => {
   const {
-    pageTitle,
-    headerCard,
-    sidebarCard,
-    breadcrumbsCard,
-    actionCard,
-    contentCard,
-    modalCard,
-    joy,
+    contentCards = [],
+    hideColorSchemeToggle,
+    className,
+    style,
+    theme,
     cardName,
   } = props
+
+  const sx: SxProps = {
+    height: "100vh",
+    overflowY: "scroll",
+    scrollSnapType: "y mandatory",
+    "& > div": {
+      scrollSnapAlign: "start",
+    },
+    ...style?.joy?.inner,
+  }
+
+  function renderContent(cardRef: PiCardRef, idx: number) {
+    return (
+      <Card
+        cardName={cardRef}
+        parentCard={cardName}
+        key={getCardKey(cardRef, idx)}
+      />
+    )
+  }
+
+  function getCardKey(cardRef: PiCardRef, idx: number) {
+    const ref = cardRef as any
+    const key = ref instanceof String ? ref : ref.id ?? `k${idx}`
+    return key
+  }
+
+  function renderColorSchemeToggle() {
+    if (hideColorSchemeToggle) return null
+    return <Card cardName={JyColorSchemeToggle({})} parentCard={cardName} />
+  }
+
   return (
-    <Box sx={joy?.sx?.root || DEF_ROOT_SX} data-pihanga={cardName}>
-      {modalCard && <Card cardName={modalCard} parentCard={cardName} />}
-      <Card cardName={headerCard} parentCard={cardName} />
-      <Card cardName={sidebarCard} parentCard={cardName} />
-      <Box
-        component="main"
-        className="MainContent"
-        sx={{
-          px: { xs: 2, md: 6 },
-          pt: {
-            xs: "calc(12px + var(--Header-height))",
-            sm: "calc(12px + var(--Header-height))",
-            md: 3,
-          },
-          pb: { xs: 2, sm: 2, md: 3 },
-          flex: 1,
-          display: "flex",
-          flexDirection: "column",
-          minWidth: 0,
-          height: "100dvh",
-          gap: 1,
-        }}
-      >
-        <Card cardName={breadcrumbsCard} parentCard={cardName} />
-        <Box
-          sx={{
-            display: "flex",
-            mb: 1,
-            gap: 1,
-            flexDirection: { xs: "column", sm: "row" },
-            alignItems: { xs: "start", sm: "center" },
-            flexWrap: "wrap",
-            justifyContent: "space-between",
-          }}
-        >
-          <Typography level="h2" component="h1">
-            {pageTitle}
-          </Typography>
-          {actionCard && <Card cardName={actionCard} parentCard={cardName} />}
-        </Box>
-        <Card cardName={contentCard} parentCard={cardName} />
-        {/* <OrderTable /> */}
-        {/* <OrderList /> */}
-      </Box>
+    <Box sx={style?.joy?.outer} data-pihanga={cardName}>
+      {renderColorSchemeToggle()}
+      <Box sx={sx}>{contentCards.map(renderContent)}</Box>
     </Box>
   )
 }

@@ -1,7 +1,7 @@
 import { PiRegister, createCardDeclaration } from "@pihanga2/core"
 
 import { BoxComponent } from "./box.component"
-import { BoxProps } from "@pihanga2/cards/src/box"
+import { BoxProps } from "@pihanga2/cards"
 
 export const BOX_CARD = "joy/box"
 export const JyBox = createCardDeclaration<BoxProps>(BOX_CARD)

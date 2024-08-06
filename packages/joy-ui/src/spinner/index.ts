@@ -1,5 +1,5 @@
 import { PiRegister, createCardDeclaration } from "@pihanga2/core"
-import { SpinnerProps } from "@pihanga2/cards/src/spinner"
+import { SpinnerProps } from "@pihanga2/cards"
 import { SpinnerComponent } from "./spinner.component"
 
 export const SPINNER_TYPE = "joy/spinner"

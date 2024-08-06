@@ -1,7 +1,7 @@
 import * as React from "react"
 import JoyCard from "@mui/joy/Card"
 import CardContent from "@mui/joy/CardContent"
-import { CardContentT, CardProps } from "@pihanga2/cards/src/card"
+import { CardContentT, CardProps } from "@pihanga2/cards"
 
 import { Card, PiCardProps, PiCardRef } from "@pihanga2/core"
 import { SxProps } from "@mui/material"

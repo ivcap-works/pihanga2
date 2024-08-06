@@ -5,11 +5,8 @@ import {
 } from "@pihanga2/core"
 
 import { Component } from "./breadcrumbs.component"
-import { BREADCRUMB_ACTION } from "@pihanga2/cards/src/breadcrumbs"
-import type {
-  BreadcrumbsProps,
-  BreadcrumbEvents,
-} from "@pihanga2/cards/src/breadcrumbs"
+import { BREADCRUMB_ACTION } from "@pihanga2/cards"
+import type { BreadcrumbsProps, BreadcrumbEvents } from "@pihanga2/cards"
 
 export const BREADCRUMB_TYPE = "joy/breadcrumbs"
 export const JyBreadcrumbs = createCardDeclaration<

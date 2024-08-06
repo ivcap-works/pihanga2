@@ -1,7 +1,7 @@
 import React from "react"
 import { Avatar, Chip } from "@mui/joy"
 import { getIcon } from "@pihanga2/cards"
-import { DecoratorT, DecoratorE } from "@pihanga2/cards/src"
+import { DecoratorT, DecoratorE } from "@pihanga2/cards"
 import { Card } from "@pihanga2/core"
 
 export function renderDecorator(

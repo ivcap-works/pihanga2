@@ -40,26 +40,8 @@ export const Component = (
   }, [setMode])
   // console.log(">>> IS MOUNTED", mounted)
   if (!mounted) {
-    const p = JyIconButton({
-      ariaLabel: "color schema toggle is disabled",
-      isDisabled: true,
-      size: "sm",
-      variant: "outlined",
-      color: "neutral",
-    })
-    return <Card cardName={p} parentCard={cardName} key={"disable"} />
+    return null
   }
-  // console.log(">>> ACTIVE SCHEME BUTTON")
-  //   //   < IconButton
-  //   // size = "sm"
-  //   // variant = "outlined"
-  //   // color = "neutral"
-  //   // {...other }
-  //   // sx = { sx }
-  //   // disabled
-  //   //   />
-  //   // )
-  // }
 
   const iconID =
     mode === "light" ? lightIcon ?? LIGHT_ICON_NAME : darkIcon ?? DARK_ICON_NAME

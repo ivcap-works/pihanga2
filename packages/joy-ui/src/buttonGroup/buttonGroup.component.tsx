@@ -1,6 +1,6 @@
 import React from "react"
 import { Card, PiCardProps } from "@pihanga2/core"
-import { ButtonGroupProps } from "@pihanga2/cards/src/buttonGroup"
+import { ButtonGroupProps } from "@pihanga2/cards"
 import { ButtonGroup } from "@mui/joy"
 import { SxProps } from "@mui/joy/styles/types"
 

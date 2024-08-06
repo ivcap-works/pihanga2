@@ -5,11 +5,7 @@ import {
 } from "@pihanga2/core"
 
 import { Component } from "./link.component"
-import {
-  type LinkProps,
-  type LinkEvents,
-  LINK_ACTIONS,
-} from "@pihanga2/cards/src/link"
+import { type LinkProps, type LinkEvents, LINK_ACTIONS } from "@pihanga2/cards"
 
 export const JY_LINK_CARD = "joy/link"
 export const JyLink = createCardDeclaration<LinkProps, LinkEvents>(JY_LINK_CARD)
