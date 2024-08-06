@@ -1,6 +1,6 @@
 {
   "name": "@pihanga2/cards",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "private": false,
   "type": "module",
   "license": "MIT",
@@ -38,7 +38,7 @@
     "remark-math": "^6.0.0"
   },
   "peerDependencies": {
-    "@pihanga2/core": "^0.2.0",
+    "@pihanga2/core": "^0.2.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
