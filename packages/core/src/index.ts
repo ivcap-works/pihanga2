@@ -52,7 +52,7 @@ export type {
   WindowProps,
 } from "./types"
 export { registerActions, actionTypesToEvents, createOnAction } from "./redux"
-export { Card } from "./card"
+export { Card, usePiReducer } from "./card"
 export { memo, createCardDeclaration, isCardRef } from "./register_cards"
 export { getLogger } from "./logger"
 export type { PiCardProps, PiCardRef } from "./types"
@@ -166,6 +166,10 @@ export function start<S extends Partial<ReduxState>>(
         }
       })
   })
+  // make pihanga's reducer interface available to cards
+  const anyStore: any = store
+  anyStore.piReducer = piReducer
+
   dispatchF = store.dispatch
 
   const card = registerCard(piReducer.register, dispatchF)

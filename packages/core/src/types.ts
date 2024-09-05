@@ -53,7 +53,9 @@ export type PiRegisterReducerF = <S extends ReduxState, A extends ReduxAction>(
   mapper: ReduceF<S, A>, // (state: S, action: A, dispatch: DispatchF) => S,
   priority?: number,
   key?: string,
-) => void
+) => PiReducerCancelF
+
+export type PiReducerCancelF = () => void
 
 export type PiRegisterOneShotReducerF = <
   S extends ReduxState,

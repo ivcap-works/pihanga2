@@ -2,6 +2,7 @@ import { Action, Reducer } from "@reduxjs/toolkit"
 import {
   DispatchF,
   PiReducer,
+  PiReducerCancelF,
   PiRegisterOneShotReducerF,
   PiRegisterReducerF,
   ReduceF,
@@ -69,8 +70,8 @@ export function createReducer(
     mapper: ReduceF<S, A>,
     priority: number = 0,
     key: string | undefined = undefined
-  ): void => {
-    addReducer(eventType, { mapperMany: mapper, priority, key })
+  ): PiReducerCancelF => {
+    return addReducer(eventType, { mapperMany: mapper, priority, key })
   }
 
   const registerOneShot: PiRegisterOneShotReducerF = <
@@ -81,20 +82,19 @@ export function createReducer(
     mapper: (state: S, action: A, dispatch: DispatchF) => boolean,
     priority: number = 0,
     key: string | undefined = undefined
-  ): void => {
-    addReducer(eventType, { mapperOnce: mapper, priority, key })
+  ): PiReducerCancelF => {
+    return addReducer(eventType, { mapperOnce: mapper, priority, key })
   }
+
+  const nonCancelF = () => {}
 
   function addReducer<S extends ReduxState, A extends ReduxAction>(
     eventType: string,
     reducerDef: ReducerDef<S, A>,
-    // mappings: { [k: string]: ReducerDef<ReduxState, Action>[] }
-  ) {
+  ): PiReducerCancelF {
     let m = mappings[eventType] || []
-    if (reducerDef.key) {
-      // remove reducer with same key - if there is one
-      m = m.filter((r) => r.key !== reducerDef.key)
-    }
+    const key = reducerDef.key
+    m = removeReducer(key, m)
     m.push(reducerDef as any as ReducerDef<ReduxState, Action<any>>) // keep typing happy
     m.sort((a, b) => (b.priority || 0) - (a.priority || 0))
     mappings[eventType] = m
@@ -109,6 +109,10 @@ export function createReducer(
       logger.warn(err.message)
     }
     StackTrace.get().then(callback).catch(errback)
+    return key ? () => {
+      let m = mappings[eventType] || []
+      mappings[eventType] = removeReducer(key, m)
+    } : nonCancelF
   }
 
   const piReducer: PiReducer = {
@@ -119,6 +123,17 @@ export function createReducer(
   }
 
   return [reducer, piReducer]
+}
+
+function removeReducer(
+  key: string | undefined,
+  m: ReducerDef<ReduxState, Action>[]
+) {
+  if (key) {
+    return m.filter((r) => r.key !== key)
+  } else {
+    return m
+  }
 }
 
 function _reduce(
