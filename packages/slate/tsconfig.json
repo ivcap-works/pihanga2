@@ -1,0 +1,21 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "lib": [
+      "DOM",
+      "DOM.Iterable",
+      "ESNext"
+    ],
+    "outDir": "./dist"
+  },
+  "include": [
+    "./src",
+    // "../cards/src/types/table.ts",
+    // "../cards/src/types/buttonGroup.ts",
+    // "../cards/src/types/dataGrid.ts",
+    // "../cards/src/types/link.ts",
+    // "../cards/src/types/typography.ts",
+    // "../cards/src/types/modal.ts",
+    // "../cards/src/spinner.ts"
+  ],
+}
