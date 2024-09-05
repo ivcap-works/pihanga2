@@ -8,6 +8,17 @@ import {
 } from "./fileDrop.types"
 import "./fileDrop.css"
 
+let last_dropped: { name: string; file: File } | undefined
+
+export function get_last_dropped(name: string): File | null {
+  if (last_dropped?.name === name) {
+    const file = last_dropped.file
+    last_dropped = undefined
+    return file
+  }
+  return null
+}
+
 export const FileDropComponent = (
   props: PiCardProps<FileDropProps, FileDropEvents>,
 ): React.ReactNode => {
@@ -18,6 +29,7 @@ export const FileDropComponent = (
     showProgress = false,
     progress = 0,
     progressStyle = {},
+    dropStyle = {},
     onFileDropped,
     cardName,
     _cls,
@@ -25,7 +37,9 @@ export const FileDropComponent = (
 
   function handleChange(file: File): void {
     console.log(">>>> FILE", file)
-    onFileDropped({ file })
+    const { name, size, type } = file
+    last_dropped = { name, file }
+    onFileDropped({ name, size, type })
   }
 
   function handleTypeError(err: any): void {
@@ -67,7 +81,7 @@ export const FileDropComponent = (
   function renderDropZone(): React.ReactNode {
     //return null;
     return (
-      <div className="dropzone-msg">
+      <div className="dropzone-msg" style={dropStyle}>
         {title && <h3 className="dropzone-msg-title">{title}</h3>}
         {description && (
           <span className="dropzone-msg-desc">{description}</span>

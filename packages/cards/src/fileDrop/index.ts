@@ -4,6 +4,7 @@ import { FileDropComponent } from "./fileDrop.component"
 import { FILE_DROP_ACTION, FILE_DROP_CARD } from "./fileDrop.types"
 
 export * from "./fileDrop.types"
+export { get_last_dropped } from "./fileDrop.component"
 
 export function fileDropInit(register: PiRegister): void {
   register.cardComponent({

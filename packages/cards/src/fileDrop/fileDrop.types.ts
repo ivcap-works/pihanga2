@@ -9,10 +9,17 @@ export const FileDrop = createCardDeclaration<FileDropProps, FileDropEvents>(
   FILE_DROP_CARD,
 )
 
-export const FILE_DROP_ACTION = registerActions(FILE_DROP_CARD, ["clicked"])
+export const FILE_DROP_ACTION = registerActions(FILE_DROP_CARD, [
+  "clicked",
+  "file_dropped",
+])
 
 export const onFileDropClicked = createOnAction<CloseEvent>(
   FILE_DROP_ACTION.CLICKED,
+)
+
+export const onFileDropped = createOnAction<FileDroppedEvent>(
+  FILE_DROP_ACTION.FILE_DROPPED,
 )
 
 export type FileDropProps<S = any> = {
@@ -20,6 +27,7 @@ export type FileDropProps<S = any> = {
   title?: string
   description?: string
   showProgress?: boolean
+  dropStyle?: { [k: string]: any }
   progressStyle?: { [k: string]: any }
   progress?: number
 
@@ -30,7 +38,9 @@ export type FileDropProps<S = any> = {
 export const DEF_FILE_DROP_FILE_TYPES = ["JPG", "PNG", "GIF"]
 
 export type FileDroppedEvent = {
-  file: File
+  name: string
+  size: number
+  type: string
 }
 
 export type FileDropEvents = {

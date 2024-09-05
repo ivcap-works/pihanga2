@@ -1,5 +1,5 @@
 import React from "react"
-import { Card, PiCardProps } from "@pihanga2/core"
+import { Card, PiCardProps, PiCardRef } from "@pihanga2/core"
 import { FlexGridProps } from "./flexGrid.types"
 
 export const FlexGridComponent = (
@@ -7,17 +7,15 @@ export const FlexGridComponent = (
 ): React.ReactNode => {
   const {
     cardName,
-    cards = [],
+    cards = {},
     template,
     height = "auto", //'100vh',
     margin = 0,
     overflow = "hidden", // 'scroll',
+    _cls,
   } = props
 
-  const areaRows = template.area.map((rn) => {
-    const r = rn.map((c) => `a${c}`)
-    return `"${r.join(",")}"`
-  })
+  const areaRows = template.area.map((rn) => `"${rn.join(" ")}"`)
   const area = areaRows.join(" ")
   // console.log("AREA", area)
   const style = {
@@ -29,28 +27,24 @@ export const FlexGridComponent = (
     height,
     margin,
     width: "100%",
-  } // having type issues with gridTemplateXXX
-  // console.log("STYLE", style)
+  }
 
-  function renderGridCard(name: string, idx: number): JSX.Element {
+  function renderGridCard(v: [string, PiCardRef]): JSX.Element {
+    const [name, gridCard] = v
     const style = {
-      gridArea: `a${idx}`, // c2n[name],
+      gridArea: name,
       overflow,
     }
     return (
-      <div style={style} key={idx}>
-        <Card cardName={name} parentCard={cardName} />
+      <div style={style} key={name}>
+        <Card cardName={gridCard} parentCard={cardName} />
       </div>
     )
   }
 
-  function _cls(arg0: string): string | undefined {
-    throw new Error("Function not implemented.")
-  }
-
   return (
     <div style={style} className={_cls("root")} data-pihanga={cardName}>
-      {cards.map(renderGridCard)}
+      {Object.entries(cards).map(renderGridCard)}
     </div>
   )
 }

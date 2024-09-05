@@ -1,10 +1,10 @@
-import { createCardDeclaration } from "@pihanga2/core"
+import { createCardDeclaration, PiCardRef } from "@pihanga2/core"
 
 export const FLEX_GRID_CARD = "flex_grid"
 export const FlexGrid = createCardDeclaration<FlexGridProps>(FLEX_GRID_CARD)
 
 export type FlexGridProps = {
-  cards: string[]
+  cards: { [name: string]: PiCardRef }
   template: TemplateT
   height?: string
   margin?: string
@@ -24,9 +24,10 @@ export type FlexGridProps = {
 //   margin: 0;
 //   }
 
+// https://css-tricks.com/snippets/css/complete-guide-grid/
 export type TemplateT = {
-  area: number[][] // index into cards[]
-  rows: string[]
-  columns: string[]
+  area: string[][] // name of card dict
+  rows: string[] // grid-template-rows (e.g ["min-content", "1fr",  "min-content"])
+  columns: string[] // grid-template-cols (e.g. ["1fr", "50px", "1fr", "1fr"])
   gap?: string
 }
