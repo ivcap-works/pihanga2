@@ -5,7 +5,7 @@ import {
 } from "@pihanga2/core"
 import { ColorT, DecoratorT, VariantT } from "./common"
 
-export const BREADCRUMB_TYPE = "breadcrumb"
+export const BREADCRUMB_TYPE = "breadcrumbs"
 export const Breadcrumbs = createCardDeclaration<
   BreadcrumbsProps,
   BreadcrumbEvents
