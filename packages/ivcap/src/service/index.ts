@@ -1,5 +1,5 @@
-import { PropT, PromiseT } from "../common"
-import { ReduxState, PiRegister } from "@pihanga2/core"
+import { PropT } from "../common"
+import { ReduxState, PiRegister, ReduxAction, ReduceF } from "@pihanga2/core"
 import {
   ServiceRecordEvent,
   LoadServiceRecordEvent,
@@ -12,7 +12,6 @@ import {
   getServiceList,
   listInit,
 } from "./service.list"
-import { GetOAuthContext } from "../auth/common"
 
 export {
   dispatchIvcapGetServiceRecord,
@@ -38,24 +37,23 @@ export type {
 export interface Service<S extends ReduxState> {
   list: (
     props: PropT<LoadServiceListEvent>,
-  ) => PromiseT<S, ServiceListEvent>
+    reducerF: ReduceF<S, ReduxAction & ServiceListEvent>,
+  ) => void
   get: (
     props: PropT<LoadServiceRecordEvent>,
-  ) => PromiseT<S, ServiceRecordEvent>
+    reducerF: ReduceF<S, ReduxAction & ServiceRecordEvent>,
+  ) => void
   // create: (
   //   props: PropT<CreateServiceEvent>,
   // ) => PromiseT<S, ServiceCreatedEvent>
 }
 
-export function services<S extends ReduxState>(register: PiRegister): Promise<Service<S>> {
-  return GetOAuthContext().then(({ ivcapURL }) => {
-    const apiURL = new URL(ivcapURL)
-    return {
-      list: getServiceList<S>(apiURL, register),
-      get: getServiceRecord<S>(apiURL, register),
-      // create: createService<S>(apiURL, register),
-    }
-  })
+export function services<S extends ReduxState>(register: PiRegister): Service<S> {
+  return {
+    list: getServiceList<S>(register),
+    get: getServiceRecord<S>(register),
+    // create: createService<S>(apiURL, register),
+  }
 }
 
 export function serviceInit(register: PiRegister): void {

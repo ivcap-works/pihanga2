@@ -1,5 +1,5 @@
-import { PropT, PromiseT } from "../common"
-import { ReduxState, PiRegister } from "@pihanga2/core"
+import { PropT } from "../common"
+import { ReduxState, PiRegister, ReduceF, ReduxAction } from "@pihanga2/core"
 import {
   CreateOrderEvent,
   OrderCreatedEvent,
@@ -53,24 +53,24 @@ export type {
 export interface Order<S extends ReduxState> {
   list: (
     props: PropT<LoadOrderListEvent>,
-  ) => PromiseT<S, OrderListEvent>
+    reducerF: ReduceF<S, ReduxAction & OrderListEvent>,
+  ) => void
   get: (
     props: PropT<LoadOrderRecordEvent>,
-  ) => PromiseT<S, OrderRecordEvent>
+    reducerF: ReduceF<S, ReduxAction & OrderRecordEvent>,
+  ) => void
   create: (
     props: PropT<CreateOrderEvent>,
-  ) => PromiseT<S, OrderCreatedEvent>
+    reducerF: ReduceF<S, ReduxAction & OrderCreatedEvent>,
+  ) => void
 }
 
-export function orders<S extends ReduxState>(register: PiRegister): Promise<Order<S>> {
-  return GetOAuthContext().then(({ ivcapURL }) => {
-    const apiURL = new URL(ivcapURL)
-    return {
-      list: getOrderList<S>(apiURL, register),
-      get: getOrderRecord<S>(apiURL, register),
-      create: createOrder<S>(apiURL, register),
-    }
-  })
+export function orders<S extends ReduxState>(register: PiRegister): Order<S> {
+  return {
+    list: getOrderList<S>(register),
+    get: getOrderRecord<S>(register),
+    create: createOrder<S>(register),
+  }
 }
 
 export function orderInit(register: PiRegister): void {

@@ -1,21 +1,19 @@
-import { v4 as uuidv4 } from "uuid"
 import {
   PiRegister,
   ReduxState,
   ReduxAction,
   createOnAction,
   DispatchF,
+  ReduceF,
 } from "@pihanga2/core"
-import { URN, getAccessToken } from ".."
+import { URN } from ".."
 import { createReadAction, LoadRecordEvent } from "../actions"
 import {
-  restErrorHandling,
   dispatchEvent,
-  PromiseT,
   PropT,
-  getPromise,
   RequestEvent,
   CommonProps,
+  makeAPI,
 } from "../common"
 import { SERVICE_ACTION } from "./service.actions"
 
@@ -73,21 +71,23 @@ export const onServiceRecord = createOnAction<ServiceRecordEvent>(
 )
 
 export function getServiceRecord<S extends ReduxState>(
-  apiURL: URL,
   register: PiRegister,
-): (props: PropT<LoadServiceRecordEvent>) => PromiseT<S, ServiceRecordEvent> {
-  return (props: PropT<LoadServiceRecordEvent>) => {
-    const reqID = uuidv4()
-    dispatchIvcapGetServiceRecord(
-      { apiURL: apiURL.toString(), reqID, ...props },
-      register.reducer.dispatchFromReducer,
-    )
-    return getPromise<S, ServiceRecordEvent>(
-      SERVICE_ACTION.RECORD,
-      register,
-      reqID,
-    )
-  }
+): (props: PropT<LoadServiceRecordEvent>, reducerF: ReduceF<S, ReduxAction & ServiceRecordEvent>) => void {
+  return makeAPI<S, LoadServiceRecordEvent, ServiceRecordEvent>(
+    register, SERVICE_ACTION.RECORD, dispatchIvcapGetServiceRecord
+  )
+  // return (props: PropT<LoadServiceRecordEvent>) => {
+  //   const reqID = uuidv4()
+  //   dispatchIvcapGetServiceRecord(
+  //     { apiURL: apiURL.toString(), reqID, ...props },
+  //     register.reducer.dispatchFromReducer,
+  //   )
+  //   return getPromise<S, ServiceRecordEvent>(
+  //     SERVICE_ACTION.RECORD,
+  //     register,
+  //     reqID,
+  //   )
+  // }
 }
 
 //====== API HANDLER

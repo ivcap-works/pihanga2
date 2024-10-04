@@ -1,21 +1,20 @@
-import { v4 as uuidv4 } from "uuid"
 import {
   PiRegister,
   ReduxState,
   ReduxAction,
   createOnAction,
   DispatchF,
+  ReduceF,
 } from "@pihanga2/core"
 import { createListAction, ListEvent, LoadListEvent } from "../actions"
 import {
   createListUrlBuilder,
   dispatchEvent,
-  PromiseT,
   PropT,
-  getPromise,
   CommonProps,
   getPageLinks,
   PageLinks,
+  makeAPI,
 } from "../common"
 import { ACTION_TYPES } from "./artifact.actions"
 import { OAuthContextT } from "../auth/common"
@@ -49,18 +48,38 @@ export const onArtifactList = createOnAction<ArtifactListEvent>(
   ACTION_TYPES.LIST,
 )
 
+// export function getArtifactList<S extends ReduxState>(
+//   apiURL: URL,
+//   register: PiRegister,
+// ): (props: PropT<LoadArtifactListEvent>) => PromiseT<S, ArtifactListEvent> {
+//   return (props: PropT<LoadArtifactListEvent>) => {
+//     const reqID = uuidv4()
+//     dispatchIvcapGetArtifactList(
+//       { apiURL: apiURL.toString(), reqID, ...props },
+//       register.reducer.dispatchFromReducer,
+//     )
+//     return getPromise<S, ArtifactListEvent>(ACTION_TYPES.LIST, register, reqID)
+//   }
+// }
+
 export function getArtifactList<S extends ReduxState>(
-  apiURL: URL,
   register: PiRegister,
-): (props: PropT<LoadArtifactListEvent>) => PromiseT<S, ArtifactListEvent> {
-  return (props: PropT<LoadArtifactListEvent>) => {
-    const reqID = uuidv4()
-    dispatchIvcapGetArtifactList(
-      { apiURL: apiURL.toString(), reqID, ...props },
-      register.reducer.dispatchFromReducer,
-    )
-    return getPromise<S, ArtifactListEvent>(ACTION_TYPES.LIST, register, reqID)
-  }
+): (props: PropT<LoadArtifactListEvent>, reducerF: ReduceF<S, ReduxAction & ArtifactListEvent>) => void {
+  return makeAPI<S, LoadArtifactListEvent, ArtifactListEvent>(
+    register, ACTION_TYPES.LIST, dispatchIvcapGetArtifactList
+  )
+
+  // return (props: PropT<LoadArtifactListEvent>, reducerF: ReduceF<S, ReduxAction & ArtifactListEvent>) => {
+  //   GetOAuthContext().then(({ ivcapURL }) => {
+  //     const apiURL = new URL(ivcapURL)
+  //     const reqID = uuidv4()
+  //     dispatchIvcapGetArtifactList(
+  //       { apiURL: apiURL.toString(), reqID, ...props },
+  //       register.reducer.dispatchFromReducer,
+  //     )
+  //     resultHandler<S, ArtifactListEvent>(ACTION_TYPES.LIST, register, reqID, reducerF)
+  //   })
+  // }
 }
 
 

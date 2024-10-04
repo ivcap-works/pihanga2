@@ -1,20 +1,18 @@
-import { v4 as uuidv4 } from "uuid"
 import {
   PiRegister,
   ReduxState,
   ReduxAction,
   createOnAction,
   DispatchF,
+  ReduceF,
 } from "@pihanga2/core"
-import { getAccessToken } from ".."
 import { createReadAction, LoadRecordEvent } from "../actions"
 import {
-  restErrorHandling,
   dispatchEvent,
-  PromiseT, PropT,
-  getPromise,
+  PropT,
   RequestEvent,
   CommonProps,
+  makeAPI,
 } from "../common"
 import { ASPECT_ACTION } from "./aspect.actions"
 
@@ -62,21 +60,23 @@ export const onAspectRecord = createOnAction<AspectRecordEvent>(
 )
 
 export function getAspectRecord<S extends ReduxState>(
-  apiURL: URL,
   register: PiRegister,
-): (props: PropT<LoadAspectRecordEvent>) => PromiseT<S, AspectRecordEvent> {
-  return (props: PropT<LoadAspectRecordEvent>) => {
-    const reqID = uuidv4()
-    dispatchIvcapGetAspectRecord(
-      { apiURL: apiURL.toString(), reqID, ...props },
-      register.reducer.dispatchFromReducer,
-    )
-    return getPromise<S, AspectRecordEvent>(
-      ASPECT_ACTION.RECORD,
-      register,
-      reqID,
-    )
-  }
+): (props: PropT<LoadAspectRecordEvent>, reducerF: ReduceF<S, ReduxAction & AspectRecordEvent>) => void {
+  return makeAPI<S, LoadAspectRecordEvent, AspectRecordEvent>(
+    register, ASPECT_ACTION.RECORD, dispatchIvcapGetAspectRecord
+  )
+  // return (props: PropT<LoadAspectRecordEvent>) => {
+  //   const reqID = uuidv4()
+  //   dispatchIvcapGetAspectRecord(
+  //     { apiURL: apiURL.toString(), reqID, ...props },
+  //     register.reducer.dispatchFromReducer,
+  //   )
+  //   return getPromise<S, AspectRecordEvent>(
+  //     ASPECT_ACTION.RECORD,
+  //     register,
+  //     reqID,
+  //   )
+  // }
 }
 
 //====== API HANDLER

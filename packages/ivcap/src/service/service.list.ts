@@ -1,22 +1,19 @@
-import { v4 as uuidv4 } from "uuid"
 import {
   PiRegister,
   ReduxState,
   ReduxAction,
   createOnAction,
   DispatchF,
+  ReduceF,
 } from "@pihanga2/core"
-import { getAccessToken } from ".."
 import { createListAction, ListEvent, LoadListEvent } from "../actions"
 import {
   getNextPage,
   createListUrlBuilder,
-  restErrorHandling,
   dispatchEvent,
-  PromiseT,
   PropT,
-  getPromise,
   CommonProps,
+  makeAPI,
 } from "../common"
 import { SERVICE_ACTION } from "./service.actions"
 
@@ -51,17 +48,19 @@ export const onServiceList = createOnAction<ServiceListEvent>(
 )
 
 export function getServiceList<S extends ReduxState>(
-  apiURL: URL,
   register: PiRegister,
-): (props: PropT<LoadServiceListEvent>) => PromiseT<S, ServiceListEvent> {
-  return (props: PropT<LoadServiceListEvent>) => {
-    const reqID = uuidv4()
-    dispatchIvcapGetServiceList(
-      { apiURL: apiURL.toString(), reqID, ...props },
-      register.reducer.dispatchFromReducer,
-    )
-    return getPromise<S, ServiceListEvent>(SERVICE_ACTION.LIST, register, reqID)
-  }
+): (props: PropT<LoadServiceListEvent>, reducerF: ReduceF<S, ReduxAction & ServiceListEvent>) => void {
+  return makeAPI<S, LoadServiceListEvent, ServiceListEvent>(
+    register, SERVICE_ACTION.LIST, dispatchIvcapGetServiceList
+  )
+  // return (props: PropT<LoadServiceListEvent>) => {
+  //   const reqID = uuidv4()
+  //   dispatchIvcapGetServiceList(
+  //     { apiURL: apiURL.toString(), reqID, ...props },
+  //     register.reducer.dispatchFromReducer,
+  //   )
+  //   return getPromise<S, ServiceListEvent>(SERVICE_ACTION.LIST, register, reqID)
+  // }
 }
 
 //====== API HANDLER

@@ -1,21 +1,18 @@
-import { v4 as uuidv4 } from "uuid"
 import {
   PiRegister,
   ReduxState,
   ReduxAction, RestContentType,
   createOnAction,
   DispatchF,
+  ReduceF,
 } from "@pihanga2/core"
-import { getAccessToken } from ".."
 import { BaseEvent, createReadAction } from "../actions"
 import {
-  restErrorHandling,
   dispatchEvent,
-  PromiseT,
   PropT,
-  getPromise,
   RequestEvent,
   CommonProps,
+  makeAPI,
 } from "../common"
 import { ACTION_TYPES } from "./artifact.actions"
 
@@ -45,17 +42,11 @@ export const onArtifactData = createOnAction<ArtifactDataEvent>(
 )
 
 export function getArtifactData<S extends ReduxState>(
-  apiURL: URL,
   register: PiRegister,
-): (props: PropT<LoadArtifactDataEvent>) => PromiseT<S, ArtifactDataEvent> {
-  return (props: PropT<LoadArtifactDataEvent>) => {
-    const reqID = uuidv4()
-    dispatchIvcapGetArtifactData(
-      { apiURL: apiURL.toString(), reqID, ...props },
-      register.reducer.dispatchFromReducer,
-    )
-    return getPromise<S, ArtifactDataEvent>(ACTION_TYPES.DATA, register, reqID)
-  }
+): (props: PropT<LoadArtifactDataEvent>, reducerF: ReduceF<S, ReduxAction & ArtifactDataEvent>) => void {
+  return makeAPI<S, LoadArtifactDataEvent, ArtifactDataEvent>(
+    register, ACTION_TYPES.DATA, dispatchIvcapGetArtifactData
+  )
 }
 
 export function init(register: PiRegister): void {

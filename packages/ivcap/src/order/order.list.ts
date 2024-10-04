@@ -1,24 +1,20 @@
-import { v4 as uuidv4 } from "uuid"
 import {
   PiRegister,
   ReduxState,
   ReduxAction,
   createOnAction,
   DispatchF,
+  ReduceF,
 } from "@pihanga2/core"
-import { getAccessToken } from ".."
 import { createListAction, ListEvent, LoadListEvent } from "../actions"
 import {
-  getNextPage,
   createListUrlBuilder,
-  restErrorHandling,
   dispatchEvent,
-  PromiseT,
   PropT,
-  getPromise,
   CommonProps,
   PageLinks,
   getPageLinks,
+  makeAPI,
 } from "../common"
 import { ORDER_ACTION } from "./order.actions"
 
@@ -54,17 +50,19 @@ export const onOrderList = createOnAction<OrderListEvent>(
 )
 
 export function getOrderList<S extends ReduxState>(
-  apiURL: URL,
   register: PiRegister,
-): (props: PropT<LoadOrderListEvent>) => PromiseT<S, OrderListEvent> {
-  return (props: PropT<LoadOrderListEvent>) => {
-    const reqID = uuidv4()
-    dispatchIvcapGetOrderList(
-      { apiURL: apiURL.toString(), reqID, ...props },
-      register.reducer.dispatchFromReducer,
-    )
-    return getPromise<S, OrderListEvent>(ORDER_ACTION.LIST, register, reqID)
-  }
+): (props: PropT<LoadOrderListEvent>, reducerF: ReduceF<S, ReduxAction & OrderListEvent>) => void {
+  return makeAPI<S, LoadOrderListEvent, OrderListEvent>(
+    register, ORDER_ACTION.LIST, dispatchIvcapGetOrderList
+  )
+  // return (props: PropT<LoadOrderListEvent>) => {
+  //   const reqID = uuidv4()
+  //   dispatchIvcapGetOrderList(
+  //     { apiURL: apiURL.toString(), reqID, ...props },
+  //     register.reducer.dispatchFromReducer,
+  //   )
+  //   return getPromise<S, OrderListEvent>(ORDER_ACTION.LIST, register, reqID)
+  // }
 }
 
 //====== API HANDLER

@@ -1,21 +1,20 @@
-import { v4 as uuidv4 } from "uuid"
 import {
   PiRegister,
   ReduxState,
   ReduxAction,
   createOnAction,
   DispatchF,
+  ReduceF,
 } from "@pihanga2/core"
-import { URN, getAccessToken } from ".."
+import { URN } from ".."
 import { BaseEvent } from "../actions"
 import {
   restErrorHandling,
   dispatchEvent,
-  PromiseT,
   PropT,
-  getPromise,
   RequestEvent,
   CommonProps,
+  makeAPI,
 } from "../common"
 import { ACTION_TYPES } from "./artifact.actions"
 import { OAuthContextT } from "../auth/common"
@@ -48,22 +47,13 @@ export const onArtifactUploaded = createOnAction<ArtifactCreatedEvent>(
 )
 
 export function createArtifact<S extends ReduxState>(
-  apiURL: URL,
   register: PiRegister,
-): (props: PropT<CreateArtifactEvent>) => PromiseT<S, ArtifactCreatedEvent> {
-  return (props: PropT<CreateArtifactEvent>) => {
-    const reqID = uuidv4()
-    dispatchIvcapCreateArtifact(
-      { apiURL: apiURL.toString(), reqID, ...props },
-      register.reducer.dispatchFromReducer,
-    )
-    return getPromise<S, ArtifactCreatedEvent>(
-      ACTION_TYPES.UPLOADED_RECORD,
-      register,
-      reqID,
-    )
-  }
+): (props: PropT<CreateArtifactEvent>, reducerF: ReduceF<S, ReduxAction & ArtifactCreatedEvent>) => void {
+  return makeAPI<S, CreateArtifactEvent, ArtifactCreatedEvent>(
+    register, ACTION_TYPES.UPLOADED_RECORD, dispatchIvcapCreateArtifact
+  )
 }
+
 
 // PARTIAL
 

@@ -1,9 +1,11 @@
 import type {
   DispatchF,
   PiRegister,
+  ReduceF,
   ReduxAction,
   ReduxState,
 } from "@pihanga2/core"
+import { v4 as uuidv4 } from "uuid"
 import type { RestErrorAction } from "@pihanga2/core"
 import { ACTION_TYPES, BaseEvent, ErrorAction } from "./actions"
 import { GetOAuthContext, OAuthContextT } from "./auth/common"
@@ -125,60 +127,121 @@ function _getPage(name: string, links: any): string | undefined {
 // PROMISE API
 
 export type RequestEvent = { reqID?: string }
-
-export type ReduceF<S extends ReduxState, E extends RequestEvent> = (
-  state: S,
-  event: E,
-  dispatch: DispatchF,
-) => S
-export type ThenF<E extends RequestEvent> = (event: E) => void
-
-export type ThenP<S extends ReduxState, E extends RequestEvent> = (
-  f: ThenF<E>,
-) => PromiseT<S, E>
-
-export type ReduceP<S extends ReduxState, E extends RequestEvent> = (
-  r: ReduceF<S, E>,
-) => PromiseT<S, E>
-
-export type PromiseT<S extends ReduxState, E extends { reqID?: string }> = {
-  reduce: ReduceP<S, E>
-  then: ThenP<S, E>
-}
-
 export type PropT<P> = Omit<P, keyof BaseEvent>
 
-export function getPromise<S extends ReduxState, E extends { reqID?: string }>(
+// export type ReduceF2<S extends ReduxState, E extends RequestEvent> = (
+//   state: S,
+//   event: E,
+//   dispatch: DispatchF,
+// ) => S
+// export type ThenF<E extends RequestEvent> = (event: E) => void
+
+// export type ThenP<S extends ReduxState, E extends RequestEvent> = (
+//   f: ThenF<E>,
+// ) => PromiseT<S, E>
+
+// export type ReduceP<S extends ReduxState, E extends RequestEvent> = (
+//   r: ReduceF2<S, E>,
+// ) => PromiseT<S, E>
+
+// export type PromiseT<S extends ReduxState, E extends { reqID?: string }> = {
+//   reduce: ReduceP<S, E>
+//   then: ThenP<S, E>
+// }
+
+// export type PropT<P> = Omit<P, keyof BaseEvent>
+
+// export function getPromise<S extends ReduxState, E extends { reqID?: string }>(
+//   resultAction: string,
+//   register: PiRegister,
+//   reqID: string,
+// ): PromiseT<S, E> {
+//   let thenF: ThenF<E> | undefined
+//   let reduceF: ReduceF2<S, E> | undefined
+
+//   register.reducer.registerOneShot<S, ReduxAction & E>(
+//     resultAction,
+//     (s, a, d) => {
+//       if (a.reqID !== reqID) return false
+
+//       if (reduceF) {
+//         reduceF(s, a, d)
+//       }
+//       if (thenF) {
+//         thenF(a)
+//       }
+//       return true
+//     },
+//   )
+//   const res: PromiseT<S, E> = {
+//     then: (f) => {
+//       thenF = f
+//       return res
+//     },
+//     reduce: (f) => {
+//       reduceF = f
+//       return res
+//     },
+//   }
+//   return res
+// }
+
+// export type ThenT<S extends ReduxState, E> = {state: S, event: E, dispatchF: DispatchF}
+
+// export function getPromise2<S extends ReduxState, E extends { reqID?: string }>(
+//   resultAction: string,
+//   register: PiRegister,
+//   reqID: string,
+// ): Promise<ThenT<S, E>> {
+//   return new Promise<ThenT<S, E>>((resolve) => {
+//     register.reducer.registerOneShot<S, ReduxAction & E>(
+//       resultAction,
+//       (s, a, d) => {
+//         if (a.reqID !== reqID) return false
+
+//         resolve({state: s, event: a, dispatchF: d})
+//         return true
+//       },
+//     )
+//   })
+// }
+
+export function resultHandler<S extends ReduxState, E extends { reqID?: string }>(
   resultAction: string,
   register: PiRegister,
   reqID: string,
-): PromiseT<S, E> {
-  let thenF: ThenF<E> | undefined
-  let reduceF: ReduceF<S, E> | undefined
-
+  reducerF: ReduceF<S, ReduxAction & E>
+) {
   register.reducer.registerOneShot<S, ReduxAction & E>(
     resultAction,
     (s, a, d) => {
-      if (a.reqID !== reqID) return [s, false]
+      if (a.reqID !== reqID) return false
 
-      if (reduceF) {
-        return [reduceF(s, a, d), true]
-      }
-      if (thenF) {
-        thenF(a)
-      }
-      return [s, false]
+      reducerF(s, a, d)
+      return true
     },
   )
-  const res: PromiseT<S, E> = {
-    then: (f) => {
-      thenF = f
-      return res
-    },
-    reduce: (f) => {
-      reduceF = f
-      return res
-    },
+}
+
+export function makeAPI<S extends ReduxState, Q, R extends RequestEvent>(
+  register: PiRegister,
+  action: string,
+  dispatchF: (ev: Q, dispatch: DispatchF) => void,
+): (props: PropT<Q>, reducerF: ReduceF<S, ReduxAction & R>) => void {
+  return (props: PropT<Q>, reducerF: ReduceF<S, ReduxAction & R>) => {
+    GetOAuthContext().then(({ ivcapURL }) => {
+      const apiURL = new URL(ivcapURL)
+      const reqID = uuidv4()
+      dispatchF(
+        { apiURL: apiURL.toString(), reqID, ...props } as Q,
+        register.reducer.dispatchFromReducer,
+      )
+      resultHandler<S, ReduxAction & R>(
+        action,
+        register,
+        reqID,
+        reducerF,
+      )
+    })
   }
-  return res
 }

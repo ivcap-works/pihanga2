@@ -1,21 +1,18 @@
-import { v4 as uuidv4 } from "uuid"
 import {
   PiRegister,
   ReduxState,
   ReduxAction,
   createOnAction,
   DispatchF,
+  ReduceF,
 } from "@pihanga2/core"
-import { URN, getAccessToken } from ".."
 import { BaseEvent } from "../actions"
 import {
-  restErrorHandling,
   dispatchEvent,
-  PromiseT,
   PropT,
-  getPromise,
   RequestEvent,
   CommonProps,
+  makeAPI,
 } from "../common"
 import { ORDER_ACTION } from "./order.actions"
 import { OrderRecord, toOrderRecord } from "./order.get"
@@ -50,21 +47,23 @@ export const onOrderCreated = createOnAction<OrderCreatedEvent>(
 )
 
 export function createOrder<S extends ReduxState>(
-  apiURL: URL,
   register: PiRegister,
-): (props: PropT<CreateOrderEvent>) => PromiseT<S, OrderCreatedEvent> {
-  return (props: PropT<CreateOrderEvent>) => {
-    const reqID = uuidv4()
-    dispatchIvcapCreateOrder(
-      { apiURL: apiURL.toString(), reqID, ...props },
-      register.reducer.dispatchFromReducer,
-    )
-    return getPromise<S, OrderCreatedEvent>(
-      ORDER_ACTION.CREATED,
-      register,
-      reqID,
-    )
-  }
+): (props: PropT<CreateOrderEvent>, reducerF: ReduceF<S, ReduxAction & OrderCreatedEvent>) => void {
+  return makeAPI<S, CreateOrderEvent, OrderCreatedEvent>(
+    register, ORDER_ACTION.CREATED, dispatchIvcapCreateOrder
+  )
+  // return (props: PropT<CreateOrderEvent>) => {
+  //   const reqID = uuidv4()
+  //   dispatchIvcapCreateOrder(
+  //     { apiURL: apiURL.toString(), reqID, ...props },
+  //     register.reducer.dispatchFromReducer,
+  //   )
+  //   return getPromise<S, OrderCreatedEvent>(
+  //     ORDER_ACTION.CREATED,
+  //     register,
+  //     reqID,
+  //   )
+  // }
 }
 
 //====== API HANDLER

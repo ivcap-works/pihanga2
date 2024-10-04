@@ -1,5 +1,5 @@
-import { PropT, PromiseT } from "../common"
-import { ReduxState, PiRegister } from "@pihanga2/core"
+import { PropT } from "../common"
+import { ReduxState, PiRegister, ReduceF, ReduxAction } from "@pihanga2/core"
 import {
   CreateAspectEvent,
   AspectCreatedEvent,
@@ -18,7 +18,6 @@ import {
   getAspectList,
   listInit,
 } from "./aspect.list"
-import { GetOAuthContext } from "../auth/common"
 
 export {
   dispatchIvcapCreateAspect,
@@ -47,24 +46,24 @@ export type {
 export interface Aspect<S extends ReduxState> {
   list: (
     props: PropT<LoadAspectListEvent>,
-  ) => PromiseT<S, AspectListEvent>
+    reducerF: ReduceF<S, ReduxAction & AspectListEvent>,
+  ) => void
   get: (
     props: PropT<LoadAspectRecordEvent>,
-  ) => PromiseT<S, AspectRecordEvent>
+    reducerF: ReduceF<S, ReduxAction & AspectRecordEvent>,
+  ) => void
   create: (
     props: PropT<CreateAspectEvent>,
-  ) => PromiseT<S, AspectCreatedEvent>
+    reducerF: ReduceF<S, ReduxAction & AspectCreatedEvent>,
+  ) => void
 }
 
-export function aspects<S extends ReduxState>(register: PiRegister): Promise<Aspect<S>> {
-  return GetOAuthContext().then(({ ivcapURL }) => {
-    const apiURL = new URL(ivcapURL)
-    return {
-      list: getAspectList<S>(apiURL, register),
-      get: getAspectRecord<S>(apiURL, register),
-      create: createAspect<S>(apiURL, register),
-    }
-  })
+export function aspects<S extends ReduxState>(register: PiRegister): Aspect<S> {
+  return {
+    list: getAspectList<S>(register),
+    get: getAspectRecord<S>(register),
+    create: createAspect<S>(register),
+  }
 }
 
 export function aspectInit(register: PiRegister): void {

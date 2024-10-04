@@ -1,24 +1,20 @@
-import { v4 as uuidv4 } from "uuid"
 import {
   PiRegister,
   ReduxState,
   ReduxAction,
   createOnAction,
   DispatchF,
+  ReduceF,
 } from "@pihanga2/core"
-import { dispatchIvcapAuthError, getAccessToken } from ".."
 import { createReadAction, LoadRecordEvent } from "../actions"
 import {
-  restErrorHandling,
   dispatchEvent,
-  PromiseT,
   PropT,
-  getPromise,
   RequestEvent,
   CommonProps,
+  makeAPI,
 } from "../common"
 import { ACTION_TYPES } from "./artifact.actions"
-import { GetOAuthContext } from "../auth/common"
 
 export type ArtifactRecordEvent = RequestEvent & {
   artifact: ArtifactRecord
@@ -64,21 +60,24 @@ export const onArtifactRecord = createOnAction<ArtifactRecordEvent>(
 )
 
 export function getArtifactRecord<S extends ReduxState>(
-  apiURL: URL,
   register: PiRegister,
-): (props: PropT<LoadArtifactRecordEvent>) => PromiseT<S, ArtifactRecordEvent> {
-  return (props: PropT<LoadArtifactRecordEvent>) => {
-    const reqID = uuidv4()
-    dispatchIvcapGetArtifactRecord(
-      { apiURL: apiURL.toString(), reqID, ...props },
-      register.reducer.dispatchFromReducer,
-    )
-    return getPromise<S, ArtifactRecordEvent>(
-      ACTION_TYPES.RECORD,
-      register,
-      reqID,
-    )
-  }
+): (props: PropT<LoadArtifactRecordEvent>, reducerF: ReduceF<S, ReduxAction & ArtifactRecordEvent>) => void {
+  return makeAPI<S, LoadArtifactRecordEvent, ArtifactRecordEvent>(
+    register, ACTION_TYPES.RECORD, dispatchIvcapGetArtifactRecord
+  )
+
+  // return (props: PropT<LoadArtifactRecordEvent>) => {
+  //   const reqID = uuidv4()
+  //   dispatchIvcapGetArtifactRecord(
+  //     { apiURL: apiURL.toString(), reqID, ...props },
+  //     register.reducer.dispatchFromReducer,
+  //   )
+  //   return getPromise<S, ArtifactRecordEvent>(
+  //     ACTION_TYPES.RECORD,
+  //     register,
+  //     reqID,
+  //   )
+  // }
 }
 
 //====== API HANDLER
