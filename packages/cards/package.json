@@ -17,7 +17,7 @@
   ],
   "scripts": {
     "docs": "yarn typedoc",
-    "build": "tsc --build && yarn copy-css && q",
+    "build": "tsc --build && yarn copy-css && typedoc",
     "build:watch": "tsc --build --watch && typedoc",
     "prettier": "prettier --write .",
     "preview": "vite preview",

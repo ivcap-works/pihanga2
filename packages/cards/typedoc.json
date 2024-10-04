@@ -1,7 +1,11 @@
 {
+  "$schema": "https://typedoc.org/schema.json",
   "entryPoints": [
     "src/**/*.ts"
   ],
   "out": "docs",
-  "includeVersion": true
+  "includeVersion": true,
+  "sort": [
+    "alphabetical"
+  ]
 }
