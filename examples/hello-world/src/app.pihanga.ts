@@ -1,6 +1,6 @@
 import { type PiRegister } from "@pihanga2/core"
 
-import { AppCard, AppState } from "./app.types"
+import { AppCard, AppState, BUILD_INFO } from "./app.types"
 import { Button, PageD1, Stack, Typography } from "@pihanga2/cards"
 
 export function init(register: PiRegister): void {
@@ -29,6 +29,10 @@ export function init(register: PiRegister): void {
                 s.count += 1
               },
             }),
+            Typography({
+              text: `${BUILD_INFO.version}|${BUILD_INFO.commit}`,
+              fontSize: "12px",
+            })
           ],
           spacing: 2,
         }),
