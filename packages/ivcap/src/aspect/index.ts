@@ -19,18 +19,9 @@ import {
   listInit,
 } from "./aspect.list"
 
-export {
-  dispatchIvcapCreateAspect,
-  onAspectUploaded,
-} from "./aspect.create"
-export type {
-  CreateAspectEvent,
-  AspectCreatedEvent,
-} from "./aspect.create"
-export {
-  dispatchIvcapGetAspectRecord,
-  onAspectRecord,
-} from "./aspect.get"
+export { dispatchIvcapCreateAspect, onAspectUploaded } from "./aspect.create"
+export type { CreateAspectEvent, AspectCreatedEvent } from "./aspect.create"
+export { dispatchIvcapGetAspectRecord, onAspectRecord } from "./aspect.get"
 export type {
   AspectRecordEvent,
   AspectRecord,
@@ -43,7 +34,7 @@ export type {
   LoadAspectListEvent,
 } from "./aspect.list"
 
-export interface Aspect<S extends ReduxState> {
+export interface Aspect<S extends ReduxState, C = any> {
   list: (
     props: PropT<LoadAspectListEvent>,
     reducerF: ReduceF<S, ReduxAction & AspectListEvent>,
@@ -53,12 +44,14 @@ export interface Aspect<S extends ReduxState> {
     reducerF: ReduceF<S, ReduxAction & AspectRecordEvent>,
   ) => void
   create: (
-    props: PropT<CreateAspectEvent>,
-    reducerF: ReduceF<S, ReduxAction & AspectCreatedEvent>,
+    props: PropT<CreateAspectEvent<C>>,
+    reducerF: ReduceF<S, ReduxAction & AspectCreatedEvent> | null,
   ) => void
 }
 
-export function aspects<S extends ReduxState>(register: PiRegister): Aspect<S> {
+export function aspects<S extends ReduxState, C = any>(
+  register: PiRegister,
+): Aspect<S, C> {
   return {
     list: getAspectList<S>(register),
     get: getAspectRecord<S>(register),

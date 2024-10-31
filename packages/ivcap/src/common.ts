@@ -4,11 +4,11 @@ import type {
   ReduceF,
   ReduxAction,
   ReduxState,
-} from "@pihanga2/core"
-import { v4 as uuidv4 } from "uuid"
-import type { RestErrorAction } from "@pihanga2/core"
-import { ACTION_TYPES, BaseEvent, ErrorAction } from "./actions"
-import { GetOAuthContext, OAuthContextT } from "./auth/common"
+} from "@pihanga2/core";
+import { v4 as uuidv4 } from "uuid";
+import type { RestErrorAction } from "@pihanga2/core";
+import { ACTION_TYPES, BaseEvent, ErrorAction } from "./actions";
+import { GetOAuthContext, OAuthContextT } from "./auth/common";
 
 // export type Deployment = {
 //   url: URL,
@@ -20,22 +20,24 @@ export const CommonProps = (name: string) => ({
   name,
   context: () => GetOAuthContext(),
   origin: (_1: any, _2: any, ctxt: OAuthContextT) => ctxt.ivcapURL,
-  headers: (_1: any, _2: any, ctxt: OAuthContextT) => ({ Authorization: `Bearer ${ctxt.token}` }),
+  headers: (_1: any, _2: any, ctxt: OAuthContextT) => ({
+    Authorization: `Bearer ${ctxt.token}`,
+  }),
   error: restErrorHandling(`ivcap-api:${name}`),
-})
+});
 
 export function dispatchEvent<T, R extends BaseEvent<any>>(
   ev: T,
   type: string,
   dispatch: DispatchF,
-  request: R,
+  request: R
 ): void {
-  const a = request.mapper ? request.mapper(ev) : { type, ...ev }
+  const a = request.mapper ? request.mapper(ev) : { type, ...ev };
   if (request.reqID && !("reqID" in a)) {
     // eslint-disable-next-line prettier/prettier
-    (a as any).reqID = request.reqID // forcing reqID onto action
+    (a as any).reqID = request.reqID; // forcing reqID onto action
   }
-  dispatch(a)
+  dispatch(a);
 }
 
 export function restErrorHandling<A>(source: string) {
@@ -43,9 +45,9 @@ export function restErrorHandling<A>(source: string) {
     state: ReduxState,
     action: RestErrorAction<A>,
     requestAction: A,
-    dispatch: DispatchF,
+    dispatch: DispatchF
   ): ReduxState => {
-    const code = action.statusCode
+    const code = action.statusCode;
     if (code === 401) {
       dispatch({
         type: ACTION_TYPES.NOT_AUTHORIZED,
@@ -53,7 +55,7 @@ export function restErrorHandling<A>(source: string) {
         source,
         cause: action,
         requestAction,
-      } as ErrorAction)
+      } as ErrorAction);
     } else {
       dispatch({
         type: ACTION_TYPES.ERROR,
@@ -61,15 +63,15 @@ export function restErrorHandling<A>(source: string) {
         source,
         cause: action,
         requestAction,
-      } as ErrorAction)
+      } as ErrorAction);
     }
-    return state
-  }
+    return state;
+  };
 }
 
 export function createListUrlBuilder(
   service: string,
-  extend?: { [k: string]: string },
+  extend?: { [k: string]: string }
 ): string {
   let q = Object.entries({
     limit: "limit",
@@ -78,56 +80,55 @@ export function createListUrlBuilder(
     "order-by": "orderBy",
     "order-desc": "orderDesc",
     "at-time": "atTime",
-  }).map(([k, v]) => `${k}=?${v}`)
+  }).map(([k, v]) => `${k}=?${v}`);
   if (extend) {
-    const q2 = Object.entries(extend).map(([k, v]) => `${k}=?${v}`)
-    q = q.concat(q2)
+    const q2 = Object.entries(extend).map(([k, v]) => `${k}=?${v}`);
+    q = q.concat(q2);
   }
-  const u = `/1/${service}?${q.join("&")}`
-  return u
+  const u = `/1/${service}?${q.join("&")}`;
+  return u;
 }
 
-export type Cursor = string
-
+export type Cursor = string;
 
 export type PageLinks = {
-  firstPage: Cursor
-  thisPage: Cursor
-  nextPage?: Cursor
-}
+  firstPage: Cursor;
+  thisPage: Cursor;
+  nextPage?: Cursor;
+};
 
 export function getPageLinks(links: any): PageLinks {
   return {
     firstPage: getFirstPage(links),
     thisPage: getThisPage(links),
     nextPage: getNextPage(links),
-  }
+  };
 }
 
 export function getFirstPage(links: any): Cursor {
-  return _getPage("first", links) || "???"
+  return _getPage("first", links) || "???";
 }
 
 export function getNextPage(links: any): string | undefined {
-  return _getPage("next", links)
+  return _getPage("next", links);
 }
 
 export function getThisPage(links: any): string {
-  return _getPage("self", links) || "???"
+  return _getPage("self", links) || "???";
 }
 
 function _getPage(name: string, links: any): string | undefined {
-  const l = links.filter((el: { rel: string }) => el.rel === name)
+  const l = links.filter((el: { rel: string }) => el.rel === name);
   if (l[0] && l[0].href) {
-    return l[0].href.split("?page=")[1]
+    return l[0].href.split("?page=")[1];
   }
-  return undefined
+  return undefined;
 }
 
 // PROMISE API
 
-export type RequestEvent = { reqID?: string }
-export type PropT<P> = Omit<P, keyof BaseEvent>
+export type RequestEvent = { reqID?: string };
+export type PropT<P> = Omit<P, keyof BaseEvent>;
 
 // export type ReduceF2<S extends ReduxState, E extends RequestEvent> = (
 //   state: S,
@@ -206,7 +207,10 @@ export type PropT<P> = Omit<P, keyof BaseEvent>
 //   })
 // }
 
-export function resultHandler<S extends ReduxState, E extends { reqID?: string }>(
+export function resultHandler<
+  S extends ReduxState,
+  E extends { reqID?: string }
+>(
   resultAction: string,
   register: PiRegister,
   reqID: string,
@@ -215,33 +219,30 @@ export function resultHandler<S extends ReduxState, E extends { reqID?: string }
   register.reducer.registerOneShot<S, ReduxAction & E>(
     resultAction,
     (s, a, d) => {
-      if (a.reqID !== reqID) return false
+      if (a.reqID !== reqID) return false;
 
-      reducerF(s, a, d)
-      return true
-    },
-  )
+      reducerF(s, a, d);
+      return true;
+    }
+  );
 }
 
 export function makeAPI<S extends ReduxState, Q, R extends RequestEvent>(
   register: PiRegister,
   action: string,
-  dispatchF: (ev: Q, dispatch: DispatchF) => void,
-): (props: PropT<Q>, reducerF: ReduceF<S, ReduxAction & R>) => void {
-  return (props: PropT<Q>, reducerF: ReduceF<S, ReduxAction & R>) => {
+  dispatchF: (ev: Q, dispatch: DispatchF) => void
+): (props: PropT<Q>, reducerF: ReduceF<S, ReduxAction & R> | null) => void {
+  return (props: PropT<Q>, reducerF: ReduceF<S, ReduxAction & R> | null) => {
     GetOAuthContext().then(({ ivcapURL }) => {
-      const apiURL = new URL(ivcapURL)
-      const reqID = uuidv4()
+      const apiURL = new URL(ivcapURL);
+      const reqID = uuidv4();
       dispatchF(
         { apiURL: apiURL.toString(), reqID, ...props } as Q,
-        register.reducer.dispatchFromReducer,
-      )
-      resultHandler<S, ReduxAction & R>(
-        action,
-        register,
-        reqID,
-        reducerF,
-      )
-    })
-  }
+        register.reducer.dispatchFromReducer
+      );
+      if (reducerF) {
+        resultHandler<S, ReduxAction & R>(action, register, reqID, reducerF);
+      }
+    });
+  };
 }

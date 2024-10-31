@@ -39,9 +39,9 @@ export type LoadAspectListEvent = LoadListEvent<AspectListEvent> & {
   entity?: URN
   schema?: URN
   contentPath?: string
+  filter?: string
   includeContent?: boolean
 }
-
 
 export function dispatchIvcapGetAspectList(
   ev: LoadAspectListEvent,
@@ -51,26 +51,20 @@ export function dispatchIvcapGetAspectList(
   dispatch(a)
 }
 
-export const onAspectList = createOnAction<AspectListEvent>(
-  ASPECT_ACTION.LIST,
-)
+export const onAspectList = createOnAction<AspectListEvent>(ASPECT_ACTION.LIST)
 
 export function getAspectList<S extends ReduxState>(
   register: PiRegister,
-): (props: PropT<LoadAspectListEvent>, reducerF: ReduceF<S, ReduxAction & AspectListEvent>) => void {
+): (
+  props: PropT<LoadAspectListEvent>,
+  reducerF: ReduceF<S, ReduxAction & AspectListEvent>,
+) => void {
   return makeAPI<S, LoadAspectListEvent, AspectListEvent>(
-    register, ASPECT_ACTION.LIST, dispatchIvcapGetAspectList
+    register,
+    ASPECT_ACTION.LIST,
+    dispatchIvcapGetAspectList,
   )
-  // return (props: PropT<LoadAspectListEvent>) => {
-  //   const reqID = uuidv4()
-  //   dispatchIvcapGetAspectList(
-  //     { apiURL: apiURL.toString(), reqID, ...props },
-  //     register.reducer.dispatchFromReducer,
-  //   )
-  //   return getPromise<S, AspectListEvent>(ASPECT_ACTION.LIST, register, reqID)
-  // }
 }
-
 
 //type History = Cursor[]
 // const Page2Prev: { [k: Cursor]: Cursor } = {}
@@ -81,15 +75,21 @@ export function listInit(register: PiRegister): void {
   register.GET<ReduxState, ReduxAction & LoadAspectListEvent, any>({
     ...CommonProps("loadAspectList"),
     url: createListUrlBuilder("aspects", {
-      entity: "entity", schema: "schema", "content-path": "contentPath",
-      "include-content": "includeContent"
+      entity: "entity",
+      schema: "schema",
+      "content-path": "contentPath",
+      "include-content": "includeContent",
+      filter: "filter",
     }),
     request: (a, _) => ({ ...a, page: removePageOffset(a) } as any),
     trigger: ASPECT_ACTION.LOAD_LIST,
     reply: (state, content: any, dispatch, { request }) => {
       const aspects = (content.items || []).map(toAspectListItem)
       const offset = getOffsetFromPage(request.page)
-      const nextPage = addOffsetFromPage(offset + aspects.length, getNextPage(content.links))
+      const nextPage = addOffsetFromPage(
+        offset + aspects.length,
+        getNextPage(content.links),
+      )
       const ev: AspectListEvent = {
         aspects,
         offset,
