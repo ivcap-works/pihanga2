@@ -396,7 +396,7 @@ export const Component = (
     idx: number,
   ): React.ReactNode {
     if (col.type === TableColumnTypeE._Detail) {
-      return renderDetailsIcon(row, idx)
+      return renderDetailsIconColumn(row, idx)
     }
     const f = col.type ? dataFormatter[col.type] : undefined
     if (f) {
@@ -498,25 +498,29 @@ export const Component = (
     return renderText(s, col as any as StringColumn, idx)
   }
 
-  function renderDetailsIcon(row: TableRow, idx: number): React.ReactNode {
-    const isShowing = isDetailShowing(row) // ? <IconCaretDown /> : <IconCaretRight />
+  function renderDetailsIconColumn(
+    row: TableRow,
+    idx: number,
+  ): React.ReactNode {
     return (
       <td key={idx} className={`pi-th pi-td-details-caret`}>
-        {row.detailCard && (
-          <IconButton
-            variant="plain"
-            onClick={(ev): void => detailsIconClicked(row, ev)}
-          >
-            <ArrowDropDownIcon
-              sx={{
-                "&": {
-                  transform: isShowing ? "rotate(0deg)" : "rotate(270deg)",
-                },
-              }}
-            />
-          </IconButton>
-        )}
+        {row.detailCard && renderDetailsIcon(row)}
       </td>
+    )
+  }
+
+  function renderDetailsIcon(row: TableRow): React.ReactNode {
+    const isShowing = isDetailShowing(row)
+    return (
+      <IconButton variant="plain" onClick={(ev) => detailsIconClicked(row, ev)}>
+        <ArrowDropDownIcon
+          sx={{
+            "&": {
+              transform: isShowing ? "rotate(0deg)" : "rotate(270deg)",
+            },
+          }}
+        />
+      </IconButton>
     )
   }
 
