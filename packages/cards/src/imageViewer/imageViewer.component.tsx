@@ -1,7 +1,8 @@
 import React from "react"
 import { SxProps } from "@mui/material"
-import { PiCardProps } from "@pihanga2/core"
+import { Card, PiCardProps } from "@pihanga2/core"
 import { ImageViewerEvents, ImageViewerProps } from "./imageViewer"
+import { Spinner } from "../spinner"
 
 export type ComponentProps = ImageViewerProps & {
   sx?: ImageViewerX
@@ -19,6 +20,7 @@ export const ImageViewerComponent = (
   const {
     imgURL,
     caption,
+    emptyCard,
     width,
     minWidth,
     maxWidth,
@@ -61,7 +63,8 @@ export const ImageViewerComponent = (
   }
 
   function renderSpinner() {
-    return null
+    const cn = emptyCard ? emptyCard : Spinner({})
+    return <Card cardName={cn} parentCard={cardName} />
   }
 
   return (

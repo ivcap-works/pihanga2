@@ -1,6 +1,7 @@
 import {
   createCardDeclaration,
   createOnAction,
+  PiCardRef,
   registerActions,
 } from "@pihanga2/core"
 
@@ -21,6 +22,7 @@ export const onImageViewerClicked = createOnAction<CloseEvent>(
 export type ImageViewerProps = {
   imgURL?: string
   caption: string
+  emptyCard?: PiCardRef
   width?: number
   minWidth?: number | string
   maxWidth?: number | string
