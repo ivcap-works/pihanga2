@@ -511,15 +511,14 @@ export const Component = (
 
   function renderDetailsIcon(row: TableRow): React.ReactNode {
     const isShowing = isDetailShowing(row)
+    const sx = {
+      "&": {
+        transform: isShowing ? "rotate(0deg)" : "rotate(270deg)",
+      },
+    }
     return (
       <IconButton variant="plain" onClick={(ev) => detailsIconClicked(row, ev)}>
-        <ArrowDropDownIcon
-          sx={{
-            "&": {
-              transform: isShowing ? "rotate(0deg)" : "rotate(270deg)",
-            },
-          }}
-        />
+        <ArrowDropDownIcon sx={sx} />
       </IconButton>
     )
   }
