@@ -29,7 +29,7 @@
   "dependencies": {
     "@react-google-maps/api": "^2.19.2",
     "katex": "^0.16.11",
-    "react-drag-drop-files": "^2.3.9",
+    "react-drag-drop-files": "^2.4.0",
     "react-json-view": "^1.21.3",
     "react-markdown": "^9.0.0",
     "react-modal": "^3.16.1",
