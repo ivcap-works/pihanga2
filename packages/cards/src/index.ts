@@ -37,6 +37,7 @@ export * from "./dataGrid"
 export * from "./spinner"
 export * from "./table"
 export * from "./chat"
+export * from "./input"
 
 export function init(register: PiRegister): void {
   imageViewerInit(register)

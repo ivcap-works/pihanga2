@@ -55,9 +55,18 @@ export const ImageViewerComponent = (
     alt: caption,
     style,
   }
+
+  function renderImg() {
+    return <img {...ip} alt={caption} onClick={() => onClicked({})} />
+  }
+
+  function renderSpinner() {
+    return null
+  }
+
   return (
     <div className={_cls("root")} data-pihanga={cardName}>
-      <img {...ip} alt={caption} onClick={() => onClicked({})} />
+      {imgURL ? renderImg() : renderSpinner()}
     </div>
   )
 }

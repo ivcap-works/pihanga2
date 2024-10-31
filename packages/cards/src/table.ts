@@ -253,8 +253,9 @@ export type StatusColumn = TableColumn & {
   //status: Status;
 }
 
-export type HiddenColumn = TableColumn & {
+export type HiddenColumn = {
   type: TableColumnTypeE.Hidden
+  label: string
 }
 
 export type GenericColumn =

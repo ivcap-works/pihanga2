@@ -16,12 +16,14 @@ export const onItemClicked = createOnAction<ItemClickedEvent>(
   LIST_ACTION.ITEM_CLICKED,
 )
 
-export type ListProps = {
+export type ListProps<S = any> = {
   items: Item[]
   size?: "sm" | "md" | "lg"
-  component?: string // control which HTML tag is rendered
   // role="menubar" orientation="horizontal"
   marker?: MarkerT
+  component?: string // control which HTML tag is rendered
+  className?: string
+  style?: S
 }
 
 export type MarkerT =

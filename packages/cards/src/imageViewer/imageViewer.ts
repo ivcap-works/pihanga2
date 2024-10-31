@@ -19,7 +19,7 @@ export const onImageViewerClicked = createOnAction<CloseEvent>(
 )
 
 export type ImageViewerProps = {
-  imgURL: string
+  imgURL?: string
   caption: string
   width?: number
   minWidth?: number | string
