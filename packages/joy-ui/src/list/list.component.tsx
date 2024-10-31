@@ -19,13 +19,11 @@ import { SxProps } from "@mui/joy/styles/types"
 
 export const NESTED_ICON_NAME = registerMuiIcon(KeyboardArrowDownIcon)
 
-export type ComponentProps = ListProps & {
+export type ComponentProps = ListProps<{
   joy?: {
-    sx?: {
-      root?: SxProps
-    }
+    root?: SxProps
   }
-}
+}>
 
 type SelectableItem = Item & {
   onSelect: () => void
@@ -40,7 +38,12 @@ export const DEF_ROOT_SX: SxProps = {
 export const Component = (
   props: PiCardProps<ComponentProps, ListEvents>,
 ): React.ReactNode => {
-  const { items, marker, size, onItemClicked, joy, cardName } = props
+  const { items, marker, size, onItemClicked, style, className, cardName } =
+    props
+  const sx = {
+    root: DEF_ROOT_SX,
+    ...style?.joy,
+  }
 
   function renderItem(it: Item, idx: number): React.ReactNode {
     if (it.nested) {
@@ -129,7 +132,8 @@ export const Component = (
       size={size || "sm"}
       //component={component}
       marker={marker}
-      sx={joy?.sx?.root || DEF_ROOT_SX}
+      sx={sx.root}
+      className={className}
       data-pihanga={cardName}
     >
       {items.map(renderItem)}

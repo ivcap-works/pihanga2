@@ -121,7 +121,7 @@ export enum TableColumnTypeE {
   Toggle = "toggle",
   Icon = "icon",
   Status = "status",
-  Hidden = "hidden",
+  // Hidden = "hidden",
   _Detail = "detail", // internal use only
 }
 
@@ -137,7 +137,7 @@ type ColumnDict<T> = {
   toggle?: T
   icon?: T
   status?: T
-  hidden?: T
+  // hidden?: T
 }
 
 export type TableRow<T = DEF_ROW_TYPE> = {
@@ -253,10 +253,10 @@ export type StatusColumn = TableColumn & {
   //status: Status;
 }
 
-export type HiddenColumn = {
-  type: TableColumnTypeE.Hidden
-  label: string
-}
+// export type HiddenColumn = {
+//   type: TableColumnTypeE.Hidden
+//   label: string
+// }
 
 export type GenericColumn =
   | StringColumn
@@ -269,7 +269,7 @@ export type GenericColumn =
   | ToggleColumn
   | IconColumn
   | StatusColumn
-  | HiddenColumn
+// | HiddenColumn
 
 export type BorderAxisT =
   // The axis to display a border on the table cell.

@@ -5,15 +5,25 @@ import {
 } from "@pihanga2/core"
 
 import { FooComponent } from "./foo.component"
-import { type FooProps, type ComponentEvents, ACTION_TYPES } from "./foo.types"
+import {
+  type FooProps,
+  type ComponentEvents,
+  FOO_ACTION,
+  FOO_CARD,
+} from "./foo.types"
 
-export const CARD_TYPE = "joy/foo"
-export const JyFoo = createCardDeclaration<FooProps, ComponentEvents>(CARD_TYPE)
+export * from "./foo.types"
+export type { FooSX } from "./foo.sx"
 
-export function init(register: PiRegister): void {
+const JY_FOO_CARD = "joy/" + FOO_CARD
+export const JyFoo = createCardDeclaration<FooProps, ComponentEvents>(
+  JY_FOO_CARD,
+)
+
+export function fooInit(register: PiRegister): void {
   register.cardComponent({
-    name: CARD_TYPE,
+    name: JY_FOO_CARD,
     component: FooComponent,
-    events: actionTypesToEvents(ACTION_TYPES),
+    events: actionTypesToEvents(FOO_ACTION),
   })
 }

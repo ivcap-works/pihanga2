@@ -27,6 +27,7 @@ import { init as windowInit } from "./window"
 import { init as cardInit } from "./card"
 import { init as formInputInit } from "./formInput"
 import { chatInit } from "./chat"
+import { inputInit } from "./input"
 
 export * from "./icons"
 
@@ -47,6 +48,7 @@ export * from "./window"
 export * from "./card"
 export * from "./formInput"
 export * from "./chat"
+export * from "./input"
 
 export function init(register: PiRegister): void {
   frameworkInit(register)
@@ -75,4 +77,5 @@ export function init(register: PiRegister): void {
   cardInit(register)
   formInputInit(register)
   chatInit(register)
+  inputInit(register)
 }

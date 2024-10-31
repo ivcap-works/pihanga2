@@ -28,6 +28,10 @@ export const Component = (
     _cls,
   } = props
 
+  let sx = style?.joy || {}
+  if (!fullWidth && !sx.width) {
+    sx.width = "fit-content"
+  }
   const p: any = {
     color,
     disabled: isDisabled,
@@ -39,7 +43,7 @@ export const Component = (
     size,
     fullWidth,
 
-    sx: style?.joy,
+    sx,
     className: `${_cls("root")} ${className}`,
   }
   if (isSubmit) p.type = "submit"

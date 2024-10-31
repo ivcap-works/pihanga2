@@ -65,10 +65,12 @@ export const Component = (
   return (
     <Box sx={rootSx} data-pihanga={cardName}>
       {modalCard && <Card cardName={modalCard} parentCard={cardName} />}
-      <Card cardName={headerCard} parentCard={cardName} />
+      {headerCard && <Card cardName={headerCard} parentCard={cardName} />}
       <Card cardName={sidebarCard} parentCard={cardName} />
       <Box component="main" className="MainContent" sx={mainSx}>
-        <Card cardName={breadcrumbsCard} parentCard={cardName} />
+        {breadcrumbsCard && (
+          <Card cardName={breadcrumbsCard} parentCard={cardName} />
+        )}
         <Box sx={headerSx}>
           <Typography level="h2" component="h1">
             {pageTitle}

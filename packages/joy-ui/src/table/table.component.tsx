@@ -31,7 +31,7 @@ import {
   ToggleColumn,
   StringColumn,
   DateColumn,
-  DEF_DATE_FORMATTER
+  DEF_DATE_FORMATTER,
 } from "@pihanga2/cards"
 import { SxProps } from "@mui/material"
 import { renderDecorator } from "../utils"
@@ -133,7 +133,7 @@ export const Component = (
   const [open, setOpen] = React.useState(false)
 
   const cols: ExtColumnT[] = hasDetails ? [DetailColumn, ...columns] : columns
-  const visibleCols = cols.filter((c) => c.type !== TableColumnTypeE.Hidden)
+  const visibleCols = cols // .filter((c) => c.type !== TableColumnTypeE.Hidden)
 
   // check if there is a sorting column. but none is defined - pick one
   if (!sortingColumn) {

@@ -18,12 +18,14 @@ export type SidebarProps = {
   secondaryMenuCard?: PiCardRef
   logoIcon?: IconId
   withSearch?: boolean
-  user?: {
-    name: string
-    email?: string
-    avatarSrc?: string
-  }
+  user?: UserProps
   withColorSchemeToggle?: boolean
+}
+
+export type UserProps = {
+  name: string
+  email?: string
+  avatarSrc?: string
 }
 
 export const SIDEBAR_ACTION = registerActions(SIDEBAR_TYPE, [
