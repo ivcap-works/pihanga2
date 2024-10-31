@@ -129,8 +129,8 @@ export const Component = (
 
   const [order, setOrder] = React.useState<Order>("desc")
   const [sortingColumn, setSortingColumn] = React.useState<string | null>(null)
-  const [selected, setSelected] = React.useState<readonly string[]>([])
-  const [open, setOpen] = React.useState(false)
+  // const [selected, setSelected] = React.useState<readonly string[]>([])
+  // const [open, setOpen] = React.useState(false)
 
   const cols: ExtColumnT[] = hasDetails ? [DetailColumn, ...columns] : columns
   const visibleCols = cols // .filter((c) => c.type !== TableColumnTypeE.Hidden)
@@ -139,7 +139,7 @@ export const Component = (
   if (!sortingColumn) {
     const sc = visibleCols.find((c) => c.sortable)
     if (sc) {
-      onSortOrder(sc)
+      setTimeout(() => onSortOrder(sc), 0) // avoid calling a useState
     }
   }
 
