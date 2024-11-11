@@ -1,6 +1,6 @@
 {
   "name": "@pihanga2/cards",
-  "version": "0.3.5",
+  "version": "0.3.7",
   "private": false,
   "type": "module",
   "license": "MIT",
@@ -28,6 +28,7 @@
   },
   "dependencies": {
     "@react-google-maps/api": "^2.19.2",
+    "clsx": "^2.1.1",
     "katex": "^0.16.11",
     "react-drag-drop-files": "^2.4.0",
     "react-json-view": "^1.21.3",
