@@ -1,0 +1,83 @@
+{
+  "name": "@pihanga2/plate",
+  "version": "0.1.2",
+  "private": false,
+  "type": "module",
+  "license": "MIT",
+  "author": "max.ott@data61.csiro.au",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "main": "./dist/index.js",
+  "keywords": [
+    "pihanga",
+    "module",
+    "library"
+  ],
+  "scripts": {
+    "docs": "yarn typedoc",
+    "build": "tsc --build && typedoc",
+    "build:watch": "tsc --build --watch && typedoc",
+    "prettier": "prettier --write .",
+    "preview": "vite preview",
+    "test:coverage": "vitest run --coverage",
+    "test:run": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@udecode/cn": "^39.0.0",
+    "@udecode/plate-autoformat": "^40.0.0",
+    "@udecode/plate-basic-elements": "^40.0.2",
+    "@udecode/plate-basic-marks": "^40.0.0",
+    "@udecode/plate-common": "^40.0.3",
+    "@udecode/plate-highlight": "^40.0.0",
+    "@udecode/plate-horizontal-rule": "^40.0.0",
+    "@udecode/plate-indent": "^40.0.0",
+    "@udecode/plate-indent-list": "^40.0.0",
+    "@udecode/plate-mention": "40.0.0",
+    "@udecode/plate-toggle": "^40.0.0",
+    "slate": "^0.110.2",
+    "slate-dom": "^0.111.0",
+    "slate-history": "^0.110.3",
+    "slate-hyperscript": "^0.100.0",
+    "slate-react": "^0.111.0"
+  },
+  "peerDependencies": {
+    "@pihanga2/cards": "^0.3.0",
+    "@pihanga2/core": "^0.3.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@microsoft/tsdoc": "^0.14.1",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@typescript-eslint/eslint-plugin": "^7.15.0",
+    "@typescript-eslint/parser": "^7.15.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "eslint": "^8.57.0",
+    "eslint-config-react-app": "^7.0.1",
+    "eslint-plugin-prettier": "^5.2.1",
+    "eslint-plugin-react-hooks": "^4.6.2",
+    "eslint-plugin-react-refresh": "^0.4.7",
+    "prettier": "^3.3.3",
+    "prettier-config-nick": "^1.0.8",
+    "typescript": "^5.5.4",
+    "vite": "^5.3.4"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ],
+    "plugins": [
+      "prettier"
+    ],
+    "rules": {
+      "prettier/prettier": "error",
+      "react/jsx-no-target-blank": "off"
+    }
+  },
+  "prettier": "prettier-config-nick"
+}
