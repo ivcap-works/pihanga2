@@ -28,6 +28,9 @@ import { init as cardInit } from "./card"
 import { init as formInputInit } from "./formInput"
 import { chatInit } from "./chat"
 import { inputInit } from "./input"
+import { tabsInit } from "./tabs"
+import { selectInit } from "./select"
+import { initClickedAwayListener } from "./clickAwayListener"
 
 export * from "./icons"
 
@@ -49,6 +52,9 @@ export * from "./card"
 export * from "./formInput"
 export * from "./chat"
 export * from "./input"
+export * from "./tabs"
+export * from "./select"
+export * from "./clickAwayListener"
 
 export function init(register: PiRegister): void {
   frameworkInit(register)
@@ -78,4 +84,7 @@ export function init(register: PiRegister): void {
   formInputInit(register)
   chatInit(register)
   inputInit(register)
+  tabsInit(register)
+  selectInit(register)
+  initClickedAwayListener(register)
 }

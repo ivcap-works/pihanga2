@@ -1,11 +1,11 @@
 import React from "react"
 import { PiCardProps } from "@pihanga2/core"
-import { ComponentEvents, ComponentProps } from "./chip.types"
+import { ChipEvents, ChipProps } from "@pihanga2/cards"
 import { Chip } from "@mui/joy"
 import { renderDecorator } from "../utils"
 
 export const Component = (
-  props: PiCardProps<ComponentProps, ComponentEvents>,
+  props: PiCardProps<ChipProps, ChipEvents>,
 ): React.ReactNode => {
   const {
     label,
@@ -16,9 +16,11 @@ export const Component = (
     endDecorator,
     onSelect,
     onDelete,
-    joy,
+    style,
     cardName,
   } = props
+
+  let sx = style?.joy || {}
 
   // function renderDelete() {
   //   return (
@@ -27,7 +29,6 @@ export const Component = (
   //     </ChipDelete>
   //   )
   // }
-
 
   return (
     <Chip

@@ -121,7 +121,7 @@ export const Component = (
     if (isCardRef(help)) {
       return <Card cardName={help} parentCard={cardName} />
     } else {
-      return <>{helperText}</>
+      return <div>{helperText as string}</div>
     }
   }
 

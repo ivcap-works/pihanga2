@@ -1,26 +1,19 @@
 import {
-  registerActions,
   PiRegister,
   createCardDeclaration,
-  createOnAction,
   actionTypesToEvents,
 } from "@pihanga2/core"
 
 import { Component } from "./chip.component"
-import type { ComponentProps, SelectEvent, DeleteEvent } from "./chip.types"
+import { type ChipProps, CHIP_ACTION } from "@pihanga2/cards"
 
-export const CARD_TYPE = "joy/chip"
-export const JyChip = createCardDeclaration<ComponentProps>(CARD_TYPE)
-
-export const ACTION_TYPES = registerActions(CARD_TYPE, ["select", "delete"])
-
-export const onSelect = createOnAction<SelectEvent>(ACTION_TYPES.SELECT)
-export const onDelete = createOnAction<DeleteEvent>(ACTION_TYPES.DELETE)
+const CARD_TYPE = "joy/chip"
+export const JyChip = createCardDeclaration<ChipProps>(CARD_TYPE)
 
 export function init(register: PiRegister): void {
   register.cardComponent({
     name: CARD_TYPE,
     component: Component,
-    events: actionTypesToEvents(ACTION_TYPES),
+    events: actionTypesToEvents(CHIP_ACTION),
   })
 }

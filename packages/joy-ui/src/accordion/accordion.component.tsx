@@ -95,6 +95,7 @@ export const AccoridonComponent = (
 
   function renderContent(
     el: string | PiCardRef | PiCardRef[],
+    idx: number = 0,
   ): React.ReactNode {
     if (typeof el === "string") {
       return el
@@ -102,7 +103,7 @@ export const AccoridonComponent = (
       return <>{el.map(renderContent)}</>
     } else if (typeof el === "object") {
       if (isCardRef(el)) {
-        return <Card cardName={el} parentCard={cardName} />
+        return <Card cardName={el} parentCard={cardName} key={idx} />
       }
     } else {
       return (
