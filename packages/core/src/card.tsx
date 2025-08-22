@@ -1,8 +1,8 @@
-import React, { useEffect, useId } from "react";
-import { useDispatch, useSelector, useStore } from "react-redux";
+import React, {useEffect, useId} from "react";
+import {useDispatch, useSelector, useStore} from "react-redux";
 import equal from "deep-equal";
 
-import { getLogger } from "./logger";
+import {getLogger} from "./logger";
 import {
   CSSModuleClasses,
   CardProp,
@@ -16,7 +16,7 @@ import {
   StateMapper,
   StateMapperContext,
 } from "./types";
-import { Action, AnyAction, Dispatch } from "@reduxjs/toolkit";
+import {Action, AnyAction, Dispatch} from "@reduxjs/toolkit";
 import {
   _createCardMapping,
   _updateCardMapping,
@@ -34,7 +34,7 @@ const logger = getLogger("card");
 //   cardName: PiCardRef
 // } & { [k: string]: any }
 
-type CompProps = { [k: string]: any };
+type CompProps = {[k: string]: any};
 type CardInfo = {
   mapping: Mapping;
   cardType: PiRegisterComponent;
@@ -133,7 +133,13 @@ function GenericCard(
   );
   const dispatch = useDispatch();
 
-  const extCardProps = appendEventHandlers(info, cardProps, cardName, dispatch);
+  const extCardProps = appendEventHandlers(
+    info,
+    cardProps,
+    cardName,
+    props,
+    dispatch
+  );
   extCardProps._cls = cls_f(cardName, info.mapping.cardType);
   return React.createElement(
     info.cardType.component,
@@ -168,7 +174,7 @@ function getCardInfo(cardName: string): [CardInfo?, JSX.Element?] {
       return [undefined, renderUnknownCardType(mapping.cardType)];
     }
   }
-  const info = { mapping, cardType };
+  const info = {mapping, cardType};
   return [info, undefined];
 }
 
@@ -205,20 +211,20 @@ function getCardProps(
   return cprops;
 }
 
-function cls_f(
+export function cls_f(
   cardName: string,
   cardComp: string,
   prefix: string = "pi"
-): (nodeName: string | string[], styles?: CSSModuleClasses) => string {
+): (nodeName: string | string[], className?: string) => string {
   const cn = cardName.replaceAll(/[/:]/g, "_");
   const cp = cardComp.replaceAll(/[/:]/g, "_");
-  return (nodeName: string | string[], styles?: CSSModuleClasses): string => {
+  return (nodeName: string | string[], className?: string): string => {
     const na: string[] = typeof nodeName === "string" ? [nodeName] : nodeName;
     const ca = [] as string[];
+    if (className) {
+      ca.push(className);
+    }
     na.forEach((n) => {
-      const s = styles?.[n];
-      if (s) ca.push(s);
-
       const nn = n.replaceAll(/[/:]/g, "_");
       ca.push(`${prefix}-${cn}-${nn}`);
       ca.push(`${prefix}-${cp}-${nn}`);
@@ -247,6 +253,7 @@ function appendEventHandlers(
   info: CardInfo,
   cardProps: CompProps,
   cardName: string,
+  ctxtProps: CardProp,
   dispatch: Dispatch<Action>
 ): CompProps {
   RegisterCardState.props(cardName, cardProps, dispatch);
@@ -266,7 +273,7 @@ function appendEventHandlers(
       logger.debug("setup mapper", cardName);
       cp[name] = (a: AnyAction) => {
         a.cardID = cardName;
-        const a2 = m(a);
+        const a2 = m(a, ctxtProps);
         if (a2) dispatch(a2);
       };
     } else {
@@ -310,7 +317,7 @@ function createCardState(): CardState {
     changedAt: number;
     reportedAt: number;
   };
-  const s: { [name: string]: S } = {};
+  const s: {[name: string]: S} = {};
   let dispatch: Dispatch<Action>;
   let timer: number;
   let lastReport = 0;
@@ -342,7 +349,7 @@ function createCardState(): CardState {
         );
         if (changed.length > 0) {
           clearTimeout(timer); // just in case
-          dispatch({ type: UPDATE_STATE_ACTION });
+          dispatch({type: UPDATE_STATE_ACTION});
         }
       }
     }, 1000);
@@ -384,12 +391,12 @@ function createCardState(): CardState {
         delete props._cls;
         p[name] = props;
         return p;
-      }, {} as { [k: string]: any });
+      }, {} as {[k: string]: any});
     state.pihanga = pi;
     lastReport = Date.now();
     return state;
   };
-  return { props, changed, reducer };
+  return {props, changed, reducer};
 }
 
 function copySafeProps(props: CompProps): CompProps {
@@ -421,7 +428,7 @@ function makeSafe(v: any): any {
     return Object.entries(v).reduce((p, [k, v]) => {
       p[k] = makeSafe(v);
       return p;
-    }, {} as { [k: string]: any });
+    }, {} as {[k: string]: any});
   }
   logger.warn(">>> reject", v, typeof v);
   return "...";

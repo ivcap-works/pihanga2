@@ -1,155 +1,161 @@
 export type ReduxState = {
-  route: Route
+  route: Route;
 
-  pihanga?: { [key: string]: any }
-}
+  pihanga?: { [key: string]: any };
+};
 
 export type Route = {
-  path: string[]
-  query: PathQuery
-  url: string
-  fromBrowser?: boolean
-}
-export type PathQuery = { [k: string]: string | number | boolean }
+  path: string[];
+  query: PathQuery;
+  url: string;
+  fromBrowser?: boolean;
+};
+export type PathQuery = { [k: string]: string | number | boolean };
 
 export type ReduxAction = {
-  type: string
-}
+  type: string;
+};
 
 export type CardAction = ReduxAction & {
-  cardID: string
-}
+  cardID: string;
+};
 
 export type PiRegisterComponent = {
-  name: string
-  component: any // ReactComponent
-  events?: { [key: string]: string }
+  name: string;
+  component: any; // ReactComponent
+  events?: { [key: string]: string };
   // defaults?: { [key: string]: any }
-}
+};
 
 export type ReduceF<S extends ReduxState, A extends ReduxAction> = (
   state: S,
   action: A,
-  dispatch: DispatchF,
-) => void // S
+  dispatch: DispatchF
+) => void; // S
 
 export type ReduceOnceF<S extends ReduxState, A extends ReduxAction> = (
   state: S,
   action: A,
-  dispatch: DispatchF,
-) => boolean // [S, boolean]
+  dispatch: DispatchF
+) => boolean; // [S, boolean]
 
-export type DispatchF = <T extends ReduxAction>(a: T) => void
+export type DispatchF = <T extends ReduxAction>(a: T) => void;
 
 export interface PiReducer {
-  register: PiRegisterReducerF
-  registerOneShot: PiRegisterOneShotReducerF
-  dispatch: DispatchF
-  dispatchFromReducer: DispatchF
+  register: PiRegisterReducerF;
+  registerOneShot: PiRegisterOneShotReducerF;
+  dispatch: DispatchF;
+  dispatchFromReducer: DispatchF;
 }
 
 export type PiRegisterReducerF = <S extends ReduxState, A extends ReduxAction>(
   eventType: string,
   mapper: ReduceF<S, A>, // (state: S, action: A, dispatch: DispatchF) => S,
   priority?: number,
-  key?: string,
-) => PiReducerCancelF
+  key?: string
+) => PiReducerCancelF;
 
-export type PiReducerCancelF = () => void
+export type PiReducerCancelF = () => void;
 
 export type PiRegisterOneShotReducerF = <
   S extends ReduxState,
-  A extends ReduxAction,
+  A extends ReduxAction
 >(
   eventType: string,
   mapper: ReduceOnceF<S, A>,
-  priority?: number,
-) => void
-
+  priority?: number
+) => void;
 
 // CARDS
 
 // context props given to <Card> in parent card
-export type PiDefCtxtProps = { [k: string]: any }
+export type PiDefCtxtProps = { [k: string]: any };
 
 // type for <Card .../>
 export type CardProp = {
-  cardName: PiCardRef
-  cardKey?: string
-  parentCard: string
-} & PiDefCtxtProps
+  cardName: PiCardRef;
+  cardKey?: string;
+  parentCard: string;
+} & PiDefCtxtProps;
 
 // props for the 'root' of all cards
 export type WindowProps = {
-  page: PiCardRef
-  framework?: string // select framework to render window
-  theme?: any // depends on framework
-}
+  page: PiCardRef;
+  framework?: string; // select framework to render window
+  theme?: any; // depends on framework
+};
 
 // type which needs to be implemented by card components
 export type PiCardProps<P, E = {}> = P & {
-  cardName: string
-  children?: React.ReactNode[]
-  _cls: (elName: string | string[], styles?: CSSModuleClasses) => string
-  _dispatch: DispatchF
+  cardName: string;
+  children?: React.ReactNode[];
+  _cls: (elName: string | string[], className?: string) => string;
+  _dispatch: DispatchF;
 } & {
-  [Key in keyof E]: (ev: E[Key]) => void
-}
+  [Key in keyof E]: (ev: E[Key]) => void;
+};
 
-export type CSSModuleClasses = { readonly [key: string]: string }
+export type CSSModuleClasses = { readonly [key: string]: string };
 
-export type PiCardRef = string | PiCardDef
+export type PiCardRef = string | PiCardDef;
 
-export type RefF = any
+export type RefF = any;
 export type StateMapper<T, S extends ReduxState, C = PiDefCtxtProps> = (
   state: S,
-  context: StateMapperContext<C>,
-) => T
+  context: StateMapperContext<C>
+) => T;
 
 export type StateMapperContext<C> = {
-  cardName: string
-  cardKey?: string
-  ctxtProps: C
-  ref?: RefF
-}
+  cardName: string;
+  cardKey?: string;
+  ctxtProps: C;
+  ref?: RefF;
+};
 
 export type PiMapProps<
   CType,
   S extends ReduxState,
   EType = {},
-  C = PiDefCtxtProps,
+  C = PiDefCtxtProps
 > = {
   [Property in keyof CType]:
-  | CType[Property]
-  | StateMapper<CType[Property], S, C>
+    | CType[Property]
+    | StateMapper<CType[Property], S, C>;
 } & EventHandler<EType, S> &
-  EventMapper<EType>
+  EventMapper<EType, C>;
 
 export type EventHandler<T, S extends ReduxState> = {
-  [Key in keyof T]?: ReduceF<S, T[Key] & ReduxAction>
-}
+  [Key in keyof T]?: ReduceF<S, T[Key] & ReduxAction>;
+};
 
-export type EventMapper<T> = {
-  [Key in keyof T as `${Key & string}Mapper`]?: (ev: T[Key]) => ReduxAction | null
-}
+export type EventMapper<T, C = PiDefCtxtProps> = {
+  [Key in keyof T as `${Key & string}Mapper`]?: (
+    ev: T[Key],
+    ctxt: C
+  ) => ReduxAction | null;
+};
 
 export type GenericCardParameterT =
   | unknown
-  | StateMapper<unknown, ReduxState, unknown>
+  | StateMapper<unknown, ReduxState, unknown>;
 
 export type PiCardDef = {
-  cardType: string
+  cardType: string;
 } & {
-  [k: string]: GenericCardParameterT
-}
+  [k: string]: GenericCardParameterT;
+};
 
 // METACARD
 
 export type PiRegisterMetaCard = {
-  type: string,
-  mapper: MetaCardMapperF
-  events?: { [key: string]: string }
-}
+  type: string;
+  mapper: MetaCardMapperF;
+  events?: { [key: string]: string };
+};
 
-export type RegisterCardF = (name: string, parameters: PiCardDef) => PiCardRef
-export type MetaCardMapperF = (name: string, props: any, registerCard: RegisterCardF) => PiCardDef
+export type RegisterCardF = (name: string, parameters: PiCardDef) => PiCardRef;
+export type MetaCardMapperF = (
+  name: string,
+  props: any,
+  registerCard: RegisterCardF
+) => PiCardDef;
