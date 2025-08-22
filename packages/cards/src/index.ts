@@ -38,6 +38,11 @@ export * from "./spinner"
 export * from "./table"
 export * from "./chat"
 export * from "./input"
+export * from "./chip"
+export * from "./tabs"
+export * from "./select"
+export * from "./clickAwayListener"
+export * from "./badge"
 
 export function init(register: PiRegister): void {
   imageViewerInit(register)

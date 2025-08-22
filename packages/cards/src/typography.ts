@@ -1,5 +1,12 @@
 import { PiCardRef, createCardDeclaration } from "@pihanga2/core"
-import { ColorT, VariantT, DecoratorT, SizeT, TypographyLevelT, AlignTextT } from "./common"
+import {
+  ColorT,
+  VariantT,
+  DecoratorT,
+  SizeT,
+  TypographyLevelT,
+  AlignTextT,
+} from "./common"
 
 export const TYPOGRAPHY_CARD = "typography"
 export const Typography =
@@ -26,6 +33,7 @@ export type TypographyBase = {
   textAlign?: AlignTextT
   fontSize?: SizeT | string
   fontWeight?: SizeT | string
+  className?: string
 }
 
 export type TextT = string | TypographyProps

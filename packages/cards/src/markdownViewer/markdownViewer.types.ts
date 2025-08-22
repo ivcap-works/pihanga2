@@ -17,6 +17,6 @@ export type MarkdownViewerProps<S = any> = {
   rehypePlugins?: PluggableList
   remarkRehypeOptions?: Object
 
-  className?: CSSModuleClasses // to be added to outer div
+  className?: string // to be added to outer div
   style?: S
 }

@@ -1,11 +1,17 @@
 import { PiCardRef } from "@pihanga2/core"
 import { IconId } from "./icons"
 
-export type ColorT = "danger" | "neutral" | "primary" | "success" | "warning"
+export type ColorT =
+  | "danger"
+  | "neutral"
+  | "primary"
+  | "secondary"
+  | "success"
+  | "warning"
 
-export type SizeT = "lg" | "md" | "sm"
+export type SizeT = "lg" | "md" | "sm" | "icon"
 
-export type VariantT = "outlined" | "plain" | "soft" | "solid"
+export type VariantT = "outlined" | "plain" | "soft" | "solid" | "ghost"
 
 export type TypographyLevelT =
   | "h1"
@@ -30,17 +36,21 @@ export type IconDecoratorT = {
   icon: IconId
   fontSize?: SizeT
   color?: ColorT
+  className?: string
 }
 
 export type AvatarDecoratorT = {
   type: DecoratorE.Avatar
   src: string
+  fallback?: string // text if loading 'src' fails
   size: SizeT
+  className?: string
 }
 
 export type ChipDecoratorT = {
   type: DecoratorE.Chip
   text: string
+  className?: string
 }
 
 export type CardDecoratorT = {

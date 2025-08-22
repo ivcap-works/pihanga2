@@ -75,7 +75,7 @@ export const MarkdownViewerComponent = (
         remarkPlugins={remarkPlugins}
         rehypePlugins={rehypePlugins as any}
         remarkRehypeOptions={remarkRehypeOptions}
-        className={_cls("inner", className)}
+        className={_cls("inner")}
       />
     </div>
   )

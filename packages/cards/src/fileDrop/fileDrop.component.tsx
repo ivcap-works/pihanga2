@@ -13,7 +13,6 @@ let last_dropped: { name: string; file: File } | undefined
 export function get_last_dropped(name: string): File | null {
   if (last_dropped?.name === name) {
     const file = last_dropped.file
-    last_dropped = undefined
     return file
   }
   return null
@@ -31,7 +30,9 @@ export const FileDropComponent = (
     progressStyle = {},
     dropStyle = {},
     onFileDropped,
+    onError,
     cardName,
+    className,
     _cls,
   } = props
 
@@ -40,10 +41,12 @@ export const FileDropComponent = (
     const { name, size, type } = file
     last_dropped = { name, file }
     onFileDropped({ name, size, type })
+    // clean up reference to File in a few sec to avoid dangling reference
+    setTimeout(() => (last_dropped = undefined), 2000)
   }
 
   function handleTypeError(err: any): void {
-    console.log(">>>> TYPE ERROR", err)
+    onError({ error: String(err) })
   }
 
   function renderProgress(): React.ReactNode {
@@ -90,11 +93,10 @@ export const FileDropComponent = (
     )
   }
 
+  // const cn = `pi-file-drop pi-file-drop-${cardName}`
+  const cn = _cls("root", className)
   return (
-    <div
-      className={`pi-file-drop pi-file-drop-${cardName}`}
-      data-pihanga={cardName}
-    >
+    <div className={cn} data-pihanga={cardName}>
       {showProgress ? renderProgress() : renderFileUploader()}
     </div>
   )

@@ -9,6 +9,12 @@ export type FlexGridProps = {
   height?: string
   margin?: string
   overflow?: string
+
+  style?: {
+    root?: React.CSSProperties
+    item?: React.CSSProperties
+  }
+  className?: string
 }
 
 // body {

@@ -12,6 +12,7 @@ export const FileDrop = createCardDeclaration<FileDropProps, FileDropEvents>(
 export const FILE_DROP_ACTION = registerActions(FILE_DROP_CARD, [
   "clicked",
   "file_dropped",
+  "error",
 ])
 
 export const onFileDropClicked = createOnAction<CloseEvent>(
@@ -20,6 +21,10 @@ export const onFileDropClicked = createOnAction<CloseEvent>(
 
 export const onFileDropped = createOnAction<FileDroppedEvent>(
   FILE_DROP_ACTION.FILE_DROPPED,
+)
+
+export const onError = createOnAction<FileDropErrorEvent>(
+  FILE_DROP_ACTION.ERROR,
 )
 
 export type FileDropProps<S = any> = {
@@ -43,6 +48,11 @@ export type FileDroppedEvent = {
   type: string
 }
 
+export type FileDropErrorEvent = {
+  error: string
+}
+
 export type FileDropEvents = {
   onFileDropped: FileDroppedEvent
+  onError: FileDropErrorEvent
 }

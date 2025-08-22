@@ -1,4 +1,4 @@
-.pi-file-drop label {
+.pi-file-drop-root label {
   /* background-color: yellow; */
   max-width: 100%;
   border: dashed 2px #999;
@@ -11,7 +11,7 @@
   flex-grow: 1;
 }
 
-.pi-file-drop .dropzone-msg {
+.pi-file-drop-root .dropzone-msg {
   cursor: pointer;
   text-align: center;
   margin: 3em 0;
@@ -20,7 +20,7 @@
 
 /*** PROGRESS ***/
 
-.pi-file-drop .pi-progress {
+.pi-file-drop-root .pi-progress {
   /* background-color: yellow; */
   max-width: 100%;
 
@@ -30,13 +30,13 @@
 
 }
 
-.pi-file-drop .pi-progress-label {
+.pi-file-drop-root .pi-progress-label {
   font-size: 1rem;
   font-weight: 600;
   line-height: 1.5rem;
 }
 
-.pi-file-drop .pi-progress-container {
+.pi-file-drop -root.pi-progress-container {
   position: relative;
   display: flex;
   height: 1rem;
@@ -45,7 +45,7 @@
   background-color: #dadfe5;
 }
 
-.pi-file-drop .pi-progress-bar {
+.pi-file-drop-root .pi-progress-bar {
   background-color: #0054a6;
   color: #ffffff;
   display: flex;
@@ -54,7 +54,7 @@
   overflow: hidden;
 }
 
-.pi-file-drop .pi-progress .label {
+.pi-file-drop-root .pi-progress .label {
   font-size: 1em;
   display: block;
 }
