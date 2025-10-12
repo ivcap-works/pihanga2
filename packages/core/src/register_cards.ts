@@ -1,5 +1,5 @@
 import equal from "deep-equal";
-import { getLogger } from "./logger";
+import {getLogger} from "./logger";
 import {
   CSSModuleClasses,
   CardAction,
@@ -18,7 +18,7 @@ import {
   StateMapper,
   StateMapperContext,
 } from "./types";
-import { Action, AnyAction, Dispatch } from "@reduxjs/toolkit";
+import {Action, AnyAction, Dispatch} from "@reduxjs/toolkit";
 
 const logger = getLogger("card-register");
 
@@ -28,11 +28,11 @@ export function isCardRef(p: any): boolean {
 
 export type Mapping = {
   cardType: string;
-  props: { [k: string]: unknown };
+  props: {[k: string]: unknown};
   eventMappers: {
     [k: string]: (ev: Action, ctxtProps: CardProp) => Action | null;
   };
-  cardEvents: { [key: string]: string };
+  cardEvents: {[key: string]: string};
   parameters: PiCardDef; // original
 };
 
@@ -40,14 +40,14 @@ export type MetaCard = {
   type: string;
   registerCard: RegisterCardF;
   mapper: MetaCardMapperF;
-  events?: { [key: string]: string };
+  events?: {[key: string]: string};
 };
 
-export const cardTypes: { [k: string]: PiRegisterComponent } = {};
-export const metacardTypes: { [k: string]: MetaCard } = {};
+export const cardTypes: {[k: string]: PiRegisterComponent} = {};
+export const metacardTypes: {[k: string]: MetaCard} = {};
 
 export let framework: string; // name of active UI framework
-export const cardMappings: { [k: string]: Mapping } = {};
+export const cardMappings: {[k: string]: Mapping} = {};
 export const dispatch2registerReducer: [
   React.Dispatch<any>,
   PiRegisterReducerF
@@ -71,12 +71,12 @@ export function registerCardComponent(card: PiRegisterComponent): void {
 
 export function registerMetacard(registerCard: RegisterCardF) {
   function f<C>(declaration: PiRegisterMetaCard) {
-    const { type, mapper, events } = declaration;
+    const {type, mapper, events} = declaration;
     if (metacardTypes[type]) {
       logger.warn(`Overwriting definition for meta card type "${type}"`);
     }
     logger.info(`Register meta card type "${type}"`);
-    metacardTypes[type] = { type, registerCard, mapper, events };
+    metacardTypes[type] = {type, registerCard, mapper, events};
   }
   return f;
 }
@@ -100,7 +100,7 @@ export function updateOrRegisterCard(
   dispatch2registerReducer.push([dispatchF, registerReducer]);
   return (
     name: string,
-    parameters: { [key: string]: GenericCardParameterT }
+    parameters: {[key: string]: GenericCardParameterT}
   ): PiCardRef => {
     return _updateCard(name, parameters, registerReducer);
   };
@@ -110,7 +110,7 @@ export function _registerCard(
   name: string,
   parameters: PiCardDef,
   registerReducer: PiRegisterReducerF,
-  overrideEvents?: { [key: string]: string }
+  overrideEvents?: {[key: string]: string}
 ): PiCardRef {
   if (cardMappings[name]) {
     logger.warn(`Overwriting definition for card "${name}"`);
@@ -137,9 +137,9 @@ export function _registerCard(
 
 export function _updateCard(
   name: string,
-  parameters: { [key: string]: GenericCardParameterT },
+  parameters: {[key: string]: GenericCardParameterT},
   registerReducer: PiRegisterReducerF,
-  overrideEvents?: { [key: string]: string }
+  overrideEvents?: {[key: string]: string}
 ): PiCardRef {
   const mappings = cardMappings[name];
   if (!mappings) {
@@ -152,7 +152,7 @@ export function _updateCard(
     return _registerCard(name, p, registerReducer, overrideEvents);
   }
 
-  const p = { ...mappings.parameters, ...parameters };
+  const p = {...mappings.parameters, ...parameters};
   _createCardMapping(name, p, registerReducer, mappings.cardEvents);
   return name;
 }
@@ -161,10 +161,10 @@ export function _createCardMapping(
   name: string,
   parameters: PiCardDef,
   registerReducer: PiRegisterReducerF,
-  cardEvents: { [key: string]: string }
+  cardEvents: {[key: string]: string}
 ) {
-  const props = {} as { [k: string]: unknown };
-  const eventMappers = {} as { [k: string]: (ev: Action) => Action };
+  const props = {} as {[k: string]: unknown};
+  const eventMappers = {} as {[k: string]: (ev: Action) => Action};
 
   Object.entries(parameters).forEach(([k, v]) => {
     if (k === "cardType") return;
@@ -272,8 +272,8 @@ export function createCardDeclaration<Props = {}, Events = {}>(
 function processEventParameter(
   propName: string,
   value: unknown,
-  events: { [key: string]: string },
-  eventMappers: { [k: string]: (ev: Action) => Action },
+  events: {[key: string]: string},
+  eventMappers: {[k: string]: (ev: Action) => Action},
   registerReducer: PiRegisterReducerF,
   cardName: string
 ): boolean {
@@ -304,7 +304,8 @@ function processEventParameter(
         return s;
       },
       0,
-      `${cardName}|${propName}`
+      `on card ${cardName} for ${propName}`,
+      r
     );
   }
   if (propName === `${evName}Mapper`) {
@@ -350,9 +351,9 @@ export function memo<P, T, S extends ReduxState, C = any>(
   filterF: (state: S, context: StateMapperContext<C>) => P,
   mapperF: (partial: P, context: StateMapperContext<C>, state: S) => T
 ): (state: S, context: StateMapperContext<C>) => T {
-  const lastFilter: { [k: string]: P } = {};
-  const lastValue: { [k: string]: T } = {};
-  const isNotFirst: { [k: string]: boolean } = {};
+  const lastFilter: {[k: string]: P} = {};
+  const lastValue: {[k: string]: T} = {};
+  const isNotFirst: {[k: string]: boolean} = {};
 
   return (state: S, context: StateMapperContext<C>): T => {
     const k = context.cardKey || "-";

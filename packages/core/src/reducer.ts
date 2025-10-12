@@ -1,4 +1,4 @@
-import { Action, Reducer } from "@reduxjs/toolkit"
+import {Action, Reducer} from "@reduxjs/toolkit";
 import {
   DispatchF,
   PiReducer,
@@ -9,110 +9,137 @@ import {
   ReduceOnceF,
   ReduxAction,
   ReduxState,
-} from "./types"
-import { produce } from "immer"
-import { RegisterCardState, UPDATE_STATE_ACTION } from "./card"
-import StackTrace from "stacktrace-js"
-import { getLogger } from "./logger"
-import { Dispatch } from "react"
-import { currentRoute } from "./router"
+} from "./types";
+import {produce} from "immer";
+import {RegisterCardState, UPDATE_STATE_ACTION} from "./card";
+import StackTrace from "stacktrace-js";
+import {getLogger} from "./logger";
+import {Dispatch} from "react";
+import {currentRoute} from "./router";
 
-const logger = getLogger("reducer")
+const logger = getLogger("reducer");
 
 type ReducerDef<S extends ReduxState, A extends ReduxAction> = {
-  mapperMany?: ReduceF<S, A>
-  mapperOnce?: ReduceOnceF<S, A>
-  priority?: number
-  key?: string
-  definedIn?: StackTrace.StackFrame
-}
+  mapperMulti?: ReduceF<S, A>;
+  mapperOnce?: ReduceOnceF<S, A>;
+  priority?: number;
+  key?: string;
+  definedIn?: StackTrace.StackFrame;
+  targetMapper?: ReduceF<S, A>;
+};
+
+type Source = {
+  file?: string;
+  line?: number;
+  column?: number;
+  functionName?: string;
+};
 
 export function createReducer(
   initialState: ReduxState,
-  dispatcher: Dispatch<any>,
+  dispatcher: Dispatch<any>
 ): [Reducer<ReduxState, Action>, PiReducer] {
-  const mappings: { [k: string]: ReducerDef<ReduxState, Action>[] } = {}
-  mappings[UPDATE_STATE_ACTION] = [{ mapperMany: RegisterCardState.reducer }]
+  const mappings: {[k: string]: ReducerDef<ReduxState, Action>[]} = {};
+  mappings[UPDATE_STATE_ACTION] = [
+    {
+      mapperMulti: RegisterCardState.reducer,
+      key: "@builtin:card:UPDATE_STATE_ACTION",
+    },
+  ];
 
   const delayedDispatcher = (a: any): void => {
-    setTimeout(() => dispatcher(a), 0)
-  }
+    setTimeout(() => dispatcher(a), 0);
+  };
   const reducer = (
     state: ReduxState | undefined,
-    action: Action,
+    action: Action
   ): ReduxState => {
-    const s = state || initialState
-    const ra = mappings[action.type]
-    const rany = mappings["*"]
+    const s = state || initialState;
+    const ra = mappings[action.type];
+    const rany = mappings["*"];
     if ((!ra || ra.length === 0) && (!rany || rany.length === 0)) {
-      return s
+      return s;
     }
 
     const nextState = produce<ReduxState, ReduxState>(s, (draft) => {
+      if (!draft.pihanga) {
+        draft.pihanga = {};
+      }
+      draft.pihanga.reducers = [];
       if (ra) {
-        const rout = _reduce(ra, draft, action, delayedDispatcher)
-        mappings[action.type] = rout
+        const rout = _reduce(ra, draft, action, delayedDispatcher);
+        mappings[action.type] = rout;
       }
       if (rany) {
-        const rout2 = _reduce(rany, draft, action, delayedDispatcher)
-        mappings["*"] = rout2
+        const rout2 = _reduce(rany, draft, action, delayedDispatcher);
+        mappings["*"] = rout2;
       }
-      return
-    })
-    return nextState
-  }
+      return;
+    });
+    return nextState;
+  };
 
   const registerReducer: PiRegisterReducerF = <
     S extends ReduxState,
-    A extends ReduxAction,
+    A extends ReduxAction
   >(
     eventType: string,
     mapper: ReduceF<S, A>,
     priority: number = 0,
-    key: string | undefined = undefined
+    key?: string,
+    targetMapper?: ReduceF<S, A>
   ): PiReducerCancelF => {
-    return addReducer(eventType, { mapperMany: mapper, priority, key })
-  }
+    return addReducer(eventType, {
+      mapperMulti: mapper,
+      priority,
+      key,
+      targetMapper,
+    });
+  };
 
   const registerOneShot: PiRegisterOneShotReducerF = <
     S extends ReduxState,
-    A extends ReduxAction,
+    A extends ReduxAction
   >(
     eventType: string,
     mapper: (state: S, action: A, dispatch: DispatchF) => boolean,
     priority: number = 0,
     key: string | undefined = undefined
   ): PiReducerCancelF => {
-    return addReducer(eventType, { mapperOnce: mapper, priority, key })
-  }
+    return addReducer(eventType, {mapperOnce: mapper, priority, key});
+  };
 
-  const nonCancelF = () => {}
+  const nonCancelF = () => {};
 
   function addReducer<S extends ReduxState, A extends ReduxAction>(
     eventType: string,
-    reducerDef: ReducerDef<S, A>,
+    reducerDef: ReducerDef<S, A>
   ): PiReducerCancelF {
-    let m = mappings[eventType] || []
-    const key = reducerDef.key
-    m = removeReducer(key, m)
-    m.push(reducerDef as any as ReducerDef<ReduxState, Action<any>>) // keep typing happy
-    m.sort((a, b) => (b.priority || 0) - (a.priority || 0))
-    mappings[eventType] = m
+    let m = mappings[eventType] || [];
+    const key = reducerDef.key;
+    m = removeReducer(key, m);
+    m.push(reducerDef as any as ReducerDef<ReduxState, Action<any>>); // keep typing happy
+    m.sort((a, b) => (b.priority || 0) - (a.priority || 0));
+    mappings[eventType] = m;
 
-    const callback = (frames: StackTrace.StackFrame[]) => {
-      // const stack = frames.map((sf) => `${sf.fileName}:${sf.lineNumber}`)
-      // console.log(stack)
-      reducerDef.definedIn = frames[2]
+    if (!reducerDef.key) {
+      const frames = StackTrace.getSync();
+      const sf = _get_source_frame(frames);
+      if (sf) {
+        // reducerDef.definedIn = sf;
+        reducerDef.key = sf.toString();
+      } else {
+        reducerDef.definedIn = sf;
+        console.log(">> cannot find source frame", eventType, frames);
+      }
     }
 
-    const errback = (err: any) => {
-      logger.warn(err.message)
-    }
-    StackTrace.get().then(callback).catch(errback)
-    return key ? () => {
-      let m = mappings[eventType] || []
-      mappings[eventType] = removeReducer(key, m)
-    } : nonCancelF
+    return key
+      ? () => {
+          let m = mappings[eventType] || [];
+          mappings[eventType] = removeReducer(key, m);
+        }
+      : nonCancelF;
   }
 
   const piReducer: PiReducer = {
@@ -120,9 +147,9 @@ export function createReducer(
     registerOneShot,
     dispatch: dispatcher,
     dispatchFromReducer: delayedDispatcher,
-  }
+  };
 
-  return [reducer, piReducer]
+  return [reducer, piReducer];
 }
 
 function removeReducer(
@@ -130,9 +157,9 @@ function removeReducer(
   m: ReducerDef<ReduxState, Action>[]
 ) {
   if (key) {
-    return m.filter((r) => r.key !== key)
+    return m.filter((r) => r.key !== key);
   } else {
-    return m
+    return m;
   }
 }
 
@@ -140,23 +167,53 @@ function _reduce(
   ra: ReducerDef<ReduxState, Action>[],
   draft: ReduxState,
   action: Action,
-  delayedDispatcher: (a: any) => void,
+  delayedDispatcher: (a: any) => void
 ): ReducerDef<ReduxState, Action<any>>[] {
-  const rout: ReducerDef<ReduxState, Action<any>>[] = []
+  const rout: ReducerDef<ReduxState, Action<any>>[] = [];
   ra.forEach((m) => {
     try {
-      if (m.mapperMany) {
-        m.mapperMany(draft, action, delayedDispatcher)
-        rout.push(m)
+      // if (m.definedIn || m.key) {
+      //   console.log(">>> executing reducer", action.type, m.key, m.definedIn);
+      // }
+      if (m.mapperMulti) {
+        draft.pihanga?.reducers?.push(m.definedIn || m.key || "unknown");
+        m.mapperMulti(draft, action, delayedDispatcher);
+        rout.push(m);
       } else if (m.mapperOnce) {
-        const flag = m.mapperOnce(draft, action, delayedDispatcher)
+        draft.pihanga?.reducers?.push(m.definedIn || m.key || "unknown");
+        const flag = m.mapperOnce(draft, action, delayedDispatcher);
         if (!flag) {
-          rout.push(m)
+          rout.push(m);
         }
       }
     } catch (err: any) {
-      logger.error(err.message, m.definedIn)
+      logger.error(err.message, m.definedIn);
     }
-  })
-  return rout
+  });
+  return rout;
+}
+
+function _get_source_frame(
+  frames: StackTrace.StackFrame[]
+): StackTrace.StackFrame | undefined {
+  // Heuristic: frame 0 = Error, 1 = getCallerSiteInBrowser, 2 = your function, 3 = its caller
+  for (let i = 3; i < frames.length; i++) {
+    const f = frames[i];
+    const fn = f.fileName;
+    if (_is_src_file(fn)) {
+      return f;
+    }
+  }
+  return undefined;
+}
+
+function _is_src_file(url: string | undefined): boolean {
+  if (!url) return false;
+  const m = url.match(/^(?:[a-z][a-z0-9+.-]*:)?\/\/[^\/]+\/([^\/?#]+)/);
+  if (m) {
+    const p1 = m[1];
+    const flag = !(p1.startsWith("@") || p1 === "node_modules");
+    return flag;
+  }
+  return true;
 }

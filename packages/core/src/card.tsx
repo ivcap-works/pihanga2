@@ -71,13 +71,19 @@ export function Card(props: CardProp): JSX.Element {
 
 export function usePiReducer<S extends ReduxState, A extends ReduxAction>(
   eventType: string,
-  mapper: ReduceF<S, A> // (state: S, action: A, dispatch: DispatchF) => S,
+  mapper: ReduceF<S, A>, // (state: S, action: A, dispatch: DispatchF) => S,
+  cardName: string
 ) {
   const store = useStore();
-  const id = useId();
+  let key: string;
+  if (cardName !== "") {
+    key = `inside card '${cardName}'`;
+  } else {
+    key = useId();
+  }
   useEffect(() => {
     const r = (store as any).piReducer as PiReducer;
-    return r.register(eventType, mapper, 0, id);
+    return r.register(eventType, mapper, 0, key);
   });
 }
 
@@ -306,7 +312,7 @@ type CardState = {
     dispatch: Dispatch<Action>
   ) => void;
   changed: (cardName: string, isUnchanged: boolean, props: CompProps) => void;
-  reducer: (state: ReduxState, action: Action) => ReduxState;
+  reducer: ReduceF<ReduxState, Action>;
 };
 
 export const RegisterCardState = createCardState();
@@ -376,7 +382,7 @@ function createCardState(): CardState {
       resetTimer();
     }
   };
-  const reducer = (state: ReduxState): ReduxState => {
+  const reducer = (state: ReduxState) => {
     const pi = Object.values(s)
       .filter((s) => s.reportedAt > lastReport)
       .reduce((p, s) => {
@@ -392,9 +398,8 @@ function createCardState(): CardState {
         p[name] = props;
         return p;
       }, {} as {[k: string]: any});
-    state.pihanga = pi;
+    (state.pihanga ??= {}).cards = pi;
     lastReport = Date.now();
-    return state;
   };
   return {props, changed, reducer};
 }

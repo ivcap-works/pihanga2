@@ -1,7 +1,7 @@
 export type ReduxState = {
   route: Route;
 
-  pihanga?: { [key: string]: any };
+  pihanga?: {[key: string]: any};
 };
 
 export type Route = {
@@ -10,7 +10,7 @@ export type Route = {
   url: string;
   fromBrowser?: boolean;
 };
-export type PathQuery = { [k: string]: string | number | boolean };
+export type PathQuery = {[k: string]: string | number | boolean};
 
 export type ReduxAction = {
   type: string;
@@ -23,7 +23,7 @@ export type CardAction = ReduxAction & {
 export type PiRegisterComponent = {
   name: string;
   component: any; // ReactComponent
-  events?: { [key: string]: string };
+  events?: {[key: string]: string};
   // defaults?: { [key: string]: any }
 };
 
@@ -48,11 +48,14 @@ export interface PiReducer {
   dispatchFromReducer: DispatchF;
 }
 
+export const DEF_REDUCER_PRIORITY = 0;
+
 export type PiRegisterReducerF = <S extends ReduxState, A extends ReduxAction>(
   eventType: string,
   mapper: ReduceF<S, A>, // (state: S, action: A, dispatch: DispatchF) => S,
   priority?: number,
-  key?: string
+  key?: string,
+  targetMapper?: ReduceF<S, A>
 ) => PiReducerCancelF;
 
 export type PiReducerCancelF = () => void;
@@ -69,7 +72,7 @@ export type PiRegisterOneShotReducerF = <
 // CARDS
 
 // context props given to <Card> in parent card
-export type PiDefCtxtProps = { [k: string]: any };
+export type PiDefCtxtProps = {[k: string]: any};
 
 // type for <Card .../>
 export type CardProp = {
@@ -95,7 +98,7 @@ export type PiCardProps<P, E = {}> = P & {
   [Key in keyof E]: (ev: E[Key]) => void;
 };
 
-export type CSSModuleClasses = { readonly [key: string]: string };
+export type CSSModuleClasses = {readonly [key: string]: string};
 
 export type PiCardRef = string | PiCardDef;
 
@@ -150,7 +153,7 @@ export type PiCardDef = {
 export type PiRegisterMetaCard = {
   type: string;
   mapper: MetaCardMapperF;
-  events?: { [key: string]: string };
+  events?: {[key: string]: string};
 };
 
 export type RegisterCardF = (name: string, parameters: PiCardDef) => PiCardRef;
