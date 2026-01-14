@@ -190,14 +190,17 @@ function getCardProps(
   props: CardProp
 ): CompProps {
   const mapping = cardMappings[cardName];
+  // fetch all the usage specific props in 'rest' and pass them down
+  const {cardName: _n, cardKey, parentCard: _p, children: _c, ...rest} = props;
   const ctxt: StateMapperContext<unknown> = {
     cardName,
-    cardKey: props.cardKey,
+    cardKey,
     ctxtProps: props,
   };
   const init: CompProps = {
     cardName,
-    cardKey: props.cardKey,
+    cardKey,
+    ...rest,
   };
   const cprops = Object.entries(mapping.props).reduce((p, [key, vf]) => {
     let v = vf;

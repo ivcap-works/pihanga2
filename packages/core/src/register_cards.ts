@@ -53,7 +53,7 @@ export const dispatch2registerReducer: [
   PiRegisterReducerF
 ][] = [];
 
-export function registerCardComponent(card: PiRegisterComponent): void {
+export function addCardComponent(card: PiRegisterComponent): void {
   if (cardTypes[card.name]) {
     logger.warn(`Overwriting definition for card type "${card.name}"`);
   }
@@ -81,7 +81,7 @@ export function registerMetacard(registerCard: RegisterCardF) {
   return f;
 }
 
-export function registerCard(
+export function addCard(
   registerReducer: PiRegisterReducerF,
   dispatchF: React.Dispatch<any>
 ) {

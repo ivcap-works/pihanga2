@@ -17,8 +17,8 @@ import {
 } from "./types";
 import {
   createCardDeclaration,
-  registerCard,
-  registerCardComponent,
+  addCard,
+  addCardComponent,
   registerMetacard,
   updateOrRegisterCard,
 } from "./register_cards";
@@ -121,6 +121,77 @@ export interface PiRegister {
   reducer: PiReducer;
 }
 
+type RegisterCbk = (register: PiRegister) => void;
+
+// These remain private and shared across all imports
+let registerF: PiRegister | null = null;
+let pendingRegistrations: RegisterCbk[] = [];
+
+function setRegisterF<T>(f: PiRegister): void {
+  registerF = f;
+
+  // Flush buffer
+  while (pendingRegistrations.length > 0) {
+    const cbk = pendingRegistrations.shift();
+    if (cbk) {
+      cbk(registerF);
+    }
+  }
+}
+
+// Register a callback which allows for eventual
+// registration when the Pihanga environment is setup
+//
+// Usage:
+//
+// import {register} from "@pihanga2/core";
+// register((register: PiRegister) => {
+//   register.foo(..)
+// });
+//
+export function register(cbk: RegisterCbk): void {
+  if (registerF) {
+    cbk(registerF);
+  } else {
+    pendingRegistrations.push(cbk);
+  }
+}
+
+// Added: Helper to clear the buffer if needed
+export function clearPendingRegistration(): void {
+  pendingRegistrations = [];
+}
+
+// Register a card component
+//
+// Usage:
+//
+// import {registerCardComponent} from "@pihanga2/core";
+// registerCardComponent({
+//   name: JSON_VIEWER_CARD,
+//   component: ImageViewerComponent,
+//   events: actionTypesToEvents(JSON_VIEWER_ACTION),
+// })
+//
+export function registerCardComponent(declaration: PiRegisterComponent) {
+  register((r: PiRegister) => r.cardComponent(declaration));
+}
+
+// Register a card
+//
+// Usage:
+//
+// import {registerCard} from "@pihanga2/core";
+// registerCard("page/main"", FlexGrid({...}))
+//
+export function registerCard(name: string, parameters: PiCardDef) {
+  register((r: PiRegister) => r.card(name, parameters));
+}
+
+export function registerFramework(parameters: PiCardDef) {
+  register((r: PiRegister) => r.card("_window", parameters));
+}
+
 export const DEFAULT_REDUX_STATE = {
   route: {path: [], query: {}, url: "", fromBrowser: false},
   pihanga: {},
@@ -189,7 +260,7 @@ export function start<S extends Partial<ReduxState>>(
 
   dispatchF = store.dispatch;
 
-  const card = registerCard(piReducer.register, dispatchF);
+  const card = addCard(piReducer.register, dispatchF);
   const updateCard = updateOrRegisterCard(piReducer.register, dispatchF);
   const window = <S extends ReduxState>(
     p: PiMapProps<WindowProps, S, {}>
@@ -201,7 +272,7 @@ export function start<S extends Partial<ReduxState>>(
     window,
     card,
     updateCard,
-    cardComponent: registerCardComponent,
+    cardComponent: addCardComponent,
     metaCard: registerMetacard(card),
     reducer: piReducer,
     GET: registerGET(piReducer),
@@ -210,6 +281,8 @@ export function start<S extends Partial<ReduxState>>(
     PATCH: registerPATCH(piReducer),
     DELETE: registerDELETE(piReducer),
   };
+  setRegisterF(register);
+
   inits.forEach((f) => f(register));
 
   piReducer.dispatch({type: ON_INIT_ACTION});
@@ -218,5 +291,6 @@ export function start<S extends Partial<ReduxState>>(
   const root = ReactDOM.createRoot(document.getElementById("root")!);
   root.render(rootComp);
 
+  setRegisterF(register);
   return register;
 }
