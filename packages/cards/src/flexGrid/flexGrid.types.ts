@@ -32,8 +32,8 @@ export type FlexGridProps = {
 
 // https://css-tricks.com/snippets/css/complete-guide-grid/
 export type TemplateT = {
-  area: string[][] // name of card dict
-  rows: string[] // grid-template-rows (e.g ["min-content", "1fr",  "min-content"])
-  columns: string[] // grid-template-cols (e.g. ["1fr", "50px", "1fr", "1fr"])
+  area?: string[][] // name of card dict
+  rows?: string[] // grid-template-rows (e.g ["min-content", "1fr",  "min-content"])
+  columns?: string[] // grid-template-cols (e.g. ["1fr", "50px", "1fr", "1fr"])
   gap?: string
 }

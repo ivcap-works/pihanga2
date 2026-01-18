@@ -18,14 +18,9 @@ export const FlexGridComponent = (
     _cls,
   } = props
 
-  const areaRows = template.area.map((rn) => `"${rn.join(" ")}"`)
-  const area = areaRows.join(" ")
   // console.log("AREA", area)
   const _style = {
     display: "grid",
-    gridTemplateAreas: area,
-    gridTemplateRows: template.rows.join(" "),
-    gridTemplateColumns: template.columns.join(" "),
     gridGap: template.gap || "10px",
     height,
     margin,
@@ -33,15 +28,28 @@ export const FlexGridComponent = (
     ...style?.root,
   }
 
+  if (template.area) {
+    const areaRows = template.area.map((rn) => `"${rn.join(" ")}"`)
+    _style.gridTemplateAreas = areaRows.join(" ")
+  }
+  if (template.rows) {
+    _style.gridTemplateRows = template.rows.join(" ")
+  }
+  if (template.columns) {
+    _style.gridTemplateColumns = template.columns.join(" ")
+  }
+
   function renderGridCard(v: [string, PiCardRef]): JSX.Element {
     const [name, gridCard] = v
     const _style = {
-      gridArea: name,
       overflow,
       ...style?.item,
     }
+    if (template.area) {
+      _style.gridArea = name
+    }
     return (
-      <div style={_style} key={name}>
+      <div style={_style} data-pihanga-grid={name} key={name}>
         <Card cardName={gridCard} parentCard={cardName} />
       </div>
     )

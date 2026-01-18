@@ -8,14 +8,30 @@ import {
 } from "./fileDrop.types"
 import "./fileDrop.css"
 
-let last_dropped: { name: string; file: File } | undefined
+type LastDropped = { name: string; file: File }
+
+const KEY = Symbol.for("pihanga.card.FileDrop.LastDropped")
+
+const globalForCache = globalThis as unknown as Record<
+  symbol,
+  LastDropped | null | undefined
+>
 
 export function get_last_dropped(name: string): File | null {
-  if (last_dropped?.name === name) {
-    const file = last_dropped.file
+  const slot = (globalForCache[KEY] ??= null)
+  if (slot?.name === name) {
+    const file = slot.file
     return file
   }
   return null
+}
+
+function setLastDropped(value: LastDropped): void {
+  globalForCache[KEY] = value
+}
+
+function clearLastDropped(): void {
+  globalForCache[KEY] = null
 }
 
 export const FileDropComponent = (
@@ -39,10 +55,11 @@ export const FileDropComponent = (
   function handleChange(file: File): void {
     console.log(">>>> FILE", file)
     const { name, size, type } = file
-    last_dropped = { name, file }
+    setLastDropped({ name, file })
+    // last_dropped = { name, file }
     onFileDropped({ name, size, type })
     // clean up reference to File in a few sec to avoid dangling reference
-    setTimeout(() => (last_dropped = undefined), 2000)
+    setTimeout(clearLastDropped, 2000)
   }
 
   function handleTypeError(err: any): void {
