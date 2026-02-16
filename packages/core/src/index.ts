@@ -8,15 +8,12 @@ import {
   ReduxAction,
   ReduxState,
   PiReducer,
-  RegisterCardF,
-  MetaCardMapperF,
   PiRegisterMetaCard,
   PiMapProps,
   WindowProps,
   GenericCardParameterT,
 } from "./types";
 import {
-  createCardDeclaration,
   addCard,
   addCardComponent,
   registerMetacard,
@@ -25,7 +22,7 @@ import {
 import {createReducer} from "./reducer";
 import {ON_INIT_ACTION, currentRoute, init as routerInit} from "./router";
 
-import {configureStore} from "@reduxjs/toolkit";
+import {configureStore, isPlain} from "@reduxjs/toolkit";
 
 //import monitorReducerEnhancer from "./monitor_enhancer"
 import {getLogger} from "./logger";
@@ -78,13 +75,13 @@ export interface PiRegister {
   //window(parameters: PiCardDef): PiCardRef
 
   window<S extends ReduxState>(
-    parameters: PiMapProps<WindowProps, S, {}>
+    parameters: PiMapProps<WindowProps, S, {}>,
   ): PiCardRef;
 
   card(name: string, parameters: PiCardDef): PiCardRef;
   updateCard(
     name: string,
-    parameters: {[key: string]: GenericCardParameterT}
+    parameters: {[key: string]: GenericCardParameterT},
   ): PiCardRef;
 
   cardComponent(declaration: PiRegisterComponent): void;
@@ -102,19 +99,19 @@ export interface PiRegister {
   metaCard<C>(declaration: PiRegisterMetaCard): void;
 
   GET<S extends ReduxState, A extends ReduxAction, R, C = any>(
-    props: PiRegisterGetProps<S, A, R, C>
+    props: PiRegisterGetProps<S, A, R, C>,
   ): void;
   PUT<S extends ReduxState, A extends ReduxAction, R, C = any>(
-    props: PiRegisterPoPuPaProps<S, A, R, C>
+    props: PiRegisterPoPuPaProps<S, A, R, C>,
   ): void;
   POST<S extends ReduxState, A extends ReduxAction, R, C = any>(
-    props: PiRegisterPoPuPaProps<S, A, R, C>
+    props: PiRegisterPoPuPaProps<S, A, R, C>,
   ): void;
   PATCH<S extends ReduxState, A extends ReduxAction, R, C = any>(
-    props: PiRegisterPoPuPaProps<S, A, R, C>
+    props: PiRegisterPoPuPaProps<S, A, R, C>,
   ): void;
   DELETE<S extends ReduxState, A extends ReduxAction, R, C = any>(
-    props: PiRegisterDeleteProps<S, A, R, C>
+    props: PiRegisterDeleteProps<S, A, R, C>,
   ): void;
   //registerPeriodicGET<S extends ReduxState, A extends ReduxAction, R>(props: PiRegisterPeridicGetProps<S, A, R>): void;
 
@@ -204,12 +201,28 @@ export type StartProps = {
   ignoredActions?: string[];
   ignoredActionPaths?: string[];
   ignoredStatePaths?: string[];
+
+  /**
+   * Predicate used by Redux Toolkit's `serializableCheck`.
+   *
+   * By default RTK considers only "plain" JS values/objects serializable.
+   * If your app intentionally carries extra types (e.g. `Date`) in actions/state,
+   * you can extend this function:
+   *
+   * ```ts
+   * isSerializable: (v) => isPlain(v) || v instanceof Date
+   * ```
+   *
+   * This is useful for allowing things like Luxon DateTime, Map/Set wrappers,
+   * etc. (Prefer normalizing to plain data where possible.)
+   */
+  isSerializable?: (value: unknown) => boolean;
 };
 
 export function start<S extends Partial<ReduxState>>(
   initialState: S,
   inits: ((register: PiRegister) => void)[] = [],
-  props: StartProps = {}
+  props: StartProps = {},
 ): PiRegister {
   const state = {
     ...DEFAULT_REDUX_STATE,
@@ -239,6 +252,8 @@ export function start<S extends Partial<ReduxState>>(
   ].concat(props.ignoredActionPaths || []);
   const ignoredPaths = ["cause.content"].concat(props.ignoredStatePaths || []);
 
+  const isSerializable = props.isSerializable ?? isPlain;
+
   const store = configureStore({
     reducer,
     preloadedState: state as any, // keep type checking happy
@@ -251,6 +266,7 @@ export function start<S extends Partial<ReduxState>>(
           ignoredPaths,
           ignoreState: props.disableSerializableStateCheck,
           ignoreAction: props.disableSerializableActionCheck,
+          isSerializable,
         },
       }),
   });
@@ -263,7 +279,7 @@ export function start<S extends Partial<ReduxState>>(
   const card = addCard(piReducer.register, dispatchF);
   const updateCard = updateOrRegisterCard(piReducer.register, dispatchF);
   const window = <S extends ReduxState>(
-    p: PiMapProps<WindowProps, S, {}>
+    p: PiMapProps<WindowProps, S, {}>,
   ): PiCardRef => {
     return card("_window", {cardType: "framework", ...p});
   };

@@ -37,7 +37,7 @@ type Source = {
 
 export function createReducer(
   initialState: ReduxState,
-  dispatcher: Dispatch<any>
+  dispatcher: Dispatch<any>,
 ): [Reducer<ReduxState, Action>, PiReducer] {
   const mappings: {[k: string]: ReducerDef<ReduxState, Action>[]} = {};
   mappings[UPDATE_STATE_ACTION] = [
@@ -52,12 +52,20 @@ export function createReducer(
   };
   const reducer = (
     state: ReduxState | undefined,
-    action: Action
+    action: Action,
   ): ReduxState => {
     const s = state || initialState;
     const ra = mappings[action.type];
     const rany = mappings["*"];
     if ((!ra || ra.length === 0) && (!rany || rany.length === 0)) {
+      const ra = s.pihanga?.reducers;
+      if (ra && ra.length > 0) {
+        return produce<ReduxState, ReduxState>(s, (draft) => {
+          if (draft.pihanga) {
+            draft.pihanga.reducers = [];
+          }
+        });
+      }
       return s;
     }
 
@@ -81,13 +89,13 @@ export function createReducer(
 
   const registerReducer: PiRegisterReducerF = <
     S extends ReduxState,
-    A extends ReduxAction
+    A extends ReduxAction,
   >(
     eventType: string,
     mapper: ReduceF<S, A>,
     priority: number = 0,
     key?: string,
-    targetMapper?: ReduceF<S, A>
+    targetMapper?: ReduceF<S, A>,
   ): PiReducerCancelF => {
     return addReducer(eventType, {
       mapperMulti: mapper,
@@ -99,12 +107,12 @@ export function createReducer(
 
   const registerOneShot: PiRegisterOneShotReducerF = <
     S extends ReduxState,
-    A extends ReduxAction
+    A extends ReduxAction,
   >(
     eventType: string,
     mapper: (state: S, action: A, dispatch: DispatchF) => boolean,
     priority: number = 0,
-    key: string | undefined = undefined
+    key: string | undefined = undefined,
   ): PiReducerCancelF => {
     return addReducer(eventType, {mapperOnce: mapper, priority, key});
   };
@@ -113,7 +121,7 @@ export function createReducer(
 
   function addReducer<S extends ReduxState, A extends ReduxAction>(
     eventType: string,
-    reducerDef: ReducerDef<S, A>
+    reducerDef: ReducerDef<S, A>,
   ): PiReducerCancelF {
     let m = mappings[eventType] || [];
     const key = reducerDef.key;
@@ -154,7 +162,7 @@ export function createReducer(
 
 function removeReducer(
   key: string | undefined,
-  m: ReducerDef<ReduxState, Action>[]
+  m: ReducerDef<ReduxState, Action>[],
 ) {
   if (key) {
     return m.filter((r) => r.key !== key);
@@ -167,7 +175,7 @@ function _reduce(
   ra: ReducerDef<ReduxState, Action>[],
   draft: ReduxState,
   action: Action,
-  delayedDispatcher: (a: any) => void
+  delayedDispatcher: (a: any) => void,
 ): ReducerDef<ReduxState, Action<any>>[] {
   const rout: ReducerDef<ReduxState, Action<any>>[] = [];
   ra.forEach((m) => {
@@ -194,7 +202,7 @@ function _reduce(
 }
 
 function _get_source_frame(
-  frames: StackTrace.StackFrame[]
+  frames: StackTrace.StackFrame[],
 ): StackTrace.StackFrame | undefined {
   // Heuristic: frame 0 = Error, 1 = getCallerSiteInBrowser, 2 = your function, 3 = its caller
   for (let i = 3; i < frames.length; i++) {
