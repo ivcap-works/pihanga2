@@ -1,13 +1,14 @@
 {
   "name": "@pihanga2/core",
-  "version": "0.3.7",
+  "version": "0.3.8",
   "private": false,
   "type": "module",
   "license": "MIT",
   "author": "max.ott@data61.csiro.au",
   "files": [
     "dist",
-    "src"
+    "src",
+    "REST-USAGE.md"
   ],
   "main": "./dist/index.js",
   "keywords": [
