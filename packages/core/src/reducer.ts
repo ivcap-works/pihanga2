@@ -1,7 +1,7 @@
 import {Action, Reducer} from "@reduxjs/toolkit";
 import {
   DispatchF,
-  DispatchPReduceTimeoutAction,
+  DispatchPTimeoutAction,
   PiReducer,
   PiReducerCancelF,
   PiRegisterOneShotReducerF,
@@ -53,9 +53,9 @@ export function createReducer(
     setTimeout(() => dispatcher(a), 0);
   };
 
-  const DISPATCH_P_REDUCE_TIMEOUT_TYPE = "pi/dispatchPReduce/timeout";
+  const DISPATCH_P_REDUCE_TIMEOUT_TYPE = "pi/dispatchP/timeout";
 
-  const dispatchPReduce: ReduceOpts<ReduxState>["dispatchP"] = (
+  const dispatchP: ReduceOpts<ReduxState>["dispatchP"] = (
     request,
     pOpts,
     onReply,
@@ -68,8 +68,8 @@ export function createReducer(
     const token = `${Date.now()}:${Math.random()}`;
 
     // Use `register` (not registerOneShot) so we can cancel explicitly.
-    const keyReply = `dispatchPReduce:reply:${replyType}:${token}`;
-    const keyTimeout = `dispatchPReduce:timeout:${replyType}:${token}`;
+    const keyReply = `dispatchP:reply:${replyType}:${token}`;
+    const keyTimeout = `dispatchP:timeout:${replyType}:${token}`;
 
     let settled = false;
 
@@ -133,7 +133,7 @@ export function createReducer(
         cleanup();
         return;
       }
-      const timeoutAction: DispatchPReduceTimeoutAction = {
+      const timeoutAction: DispatchPTimeoutAction = {
         type: DISPATCH_P_REDUCE_TIMEOUT_TYPE,
         cause: "timeout",
         token,
@@ -167,7 +167,7 @@ export function createReducer(
     const nextState = produce<ReduxState, ReduxState>(s, (draft) => {
       const opts: ReduceOpts<ReduxState> = {
         rawState: s,
-        dispatchP: dispatchPReduce,
+        dispatchP: dispatchP,
       };
       if (!draft.pihanga) {
         draft.pihanga = {};

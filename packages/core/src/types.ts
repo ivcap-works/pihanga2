@@ -27,7 +27,7 @@ export type PiRegisterComponent = {
   // defaults?: { [key: string]: any }
 };
 
-export type DispatchPReduceTimeoutAction = ReduxAction & {
+export type DispatchPTimeoutAction = ReduxAction & {
   cause: "timeout";
   /** Correlation token to route to the correct handler */
   token: string;
@@ -90,7 +90,7 @@ export interface ReduceOpts<S extends ReduxState> {
     ) => void,
     onTimeout?: (
       state: S,
-      action: DispatchPReduceTimeoutAction,
+      action: DispatchPTimeoutAction,
       dispatch: DispatchF,
       opts?: ReduceOpts<S>,
     ) => void,
