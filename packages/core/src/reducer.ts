@@ -1,7 +1,7 @@
 import {Action, Reducer} from "@reduxjs/toolkit";
 import {
   DispatchF,
-  DispatchPTimeoutAction,
+  DispatchPipeTimeoutAction,
   PiReducer,
   PiReducerCancelF,
   PiRegisterOneShotReducerF,
@@ -53,9 +53,9 @@ export function createReducer(
     setTimeout(() => dispatcher(a), 0);
   };
 
-  const DISPATCH_P_REDUCE_TIMEOUT_TYPE = "pi/dispatchP/timeout";
+  const DISPATCH_PIPE_REDUCE_TIMEOUT_TYPE = "pi/dispatchPipe/timeout";
 
-  const dispatchP: ReduceOpts<ReduxState>["dispatchP"] = (
+  const dispatchPipe: ReduceOpts<ReduxState>["dispatchPipe"] = (
     request,
     pOpts,
     onReply,
@@ -68,8 +68,8 @@ export function createReducer(
     const token = `${Date.now()}:${Math.random()}`;
 
     // Use `register` (not registerOneShot) so we can cancel explicitly.
-    const keyReply = `dispatchP:reply:${replyType}:${token}`;
-    const keyTimeout = `dispatchP:timeout:${replyType}:${token}`;
+    const keyReply = `dispatchPipe:reply:${replyType}:${token}`;
+    const keyTimeout = `dispatchPipe:timeout:${replyType}:${token}`;
 
     let settled = false;
 
@@ -113,7 +113,7 @@ export function createReducer(
     // Timeout handler: triggered by a dispatched internal timeout action.
     if (onTimeout) {
       cancelTimeout = registerReducer(
-        DISPATCH_P_REDUCE_TIMEOUT_TYPE,
+        DISPATCH_PIPE_REDUCE_TIMEOUT_TYPE,
         (s2: any, a2: any, d2: any, o2: any) => {
           if (settled) return;
           if (!a2 || a2.token !== token) return;
@@ -133,8 +133,8 @@ export function createReducer(
         cleanup();
         return;
       }
-      const timeoutAction: DispatchPTimeoutAction = {
-        type: DISPATCH_P_REDUCE_TIMEOUT_TYPE,
+      const timeoutAction: DispatchPipeTimeoutAction = {
+        type: DISPATCH_PIPE_REDUCE_TIMEOUT_TYPE,
         cause: "timeout",
         token,
         replyType,
@@ -167,7 +167,7 @@ export function createReducer(
     const nextState = produce<ReduxState, ReduxState>(s, (draft) => {
       const opts: ReduceOpts<ReduxState> = {
         rawState: s,
-        dispatchP: dispatchP,
+        dispatchPipe: dispatchPipe,
       };
       if (!draft.pihanga) {
         draft.pihanga = {};

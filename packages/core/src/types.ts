@@ -27,7 +27,7 @@ export type PiRegisterComponent = {
   // defaults?: { [key: string]: any }
 };
 
-export type DispatchPTimeoutAction = ReduxAction & {
+export type DispatchPipeTimeoutAction = ReduxAction & {
   cause: "timeout";
   /** Correlation token to route to the correct handler */
   token: string;
@@ -64,7 +64,7 @@ export interface ReduceOpts<S extends ReduxState> {
    * Dispatch a request action (after the current reducer has finished) and then
    * handle the next matching reply.
    */
-  dispatchP: <
+  dispatchPipe: <
     Req extends ReduxAction,
     Rep extends ReduxAction,
     Err extends Rep = never,
@@ -76,24 +76,9 @@ export interface ReduceOpts<S extends ReduxState> {
       matchReply?: (reply: Rep) => boolean;
       matchError?: (reply: Rep) => reply is Err;
     },
-    onReply: (
-      state: S,
-      action: Rep,
-      dispatch: DispatchF,
-      opts?: ReduceOpts<S>,
-    ) => void,
-    onError?: (
-      state: S,
-      action: Err,
-      dispatch: DispatchF,
-      opts?: ReduceOpts<S>,
-    ) => void,
-    onTimeout?: (
-      state: S,
-      action: DispatchPTimeoutAction,
-      dispatch: DispatchF,
-      opts?: ReduceOpts<S>,
-    ) => void,
+    onReply: ReduceF<S, Rep>,
+    onError?: ReduceF<S, Err>,
+    onTimeout?: ReduceF<S, DispatchPipeTimeoutAction>,
   ) => void;
 }
 

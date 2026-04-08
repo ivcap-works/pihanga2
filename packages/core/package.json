@@ -1,6 +1,6 @@
 {
   "name": "@pihanga2/core",
-  "version": "0.3.10",
+  "version": "0.3.11",
   "private": false,
   "type": "module",
   "license": "MIT",
@@ -11,6 +11,38 @@
     "REST-USAGE.md"
   ],
   "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./types": {
+      "types": "./dist/types.d.ts",
+      "default": "./dist/types.js"
+    },
+    "./rest": {
+      "types": "./dist/rest/index.d.ts",
+      "default": "./dist/rest/index.js"
+    },
+    "./rest/*": {
+      "types": "./dist/rest/*.d.ts",
+      "default": "./dist/rest/*.js"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "types": [
+        "dist/types.d.ts"
+      ],
+      "rest": [
+        "dist/rest/index.d.ts"
+      ],
+      "rest/*": [
+        "dist/rest/*.d.ts"
+      ]
+    }
+  },
   "keywords": [
     "pihanga",
     "module",

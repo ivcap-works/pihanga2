@@ -47,6 +47,7 @@ export type {
   ReduxAction,
   DispatchF,
   ReduceF,
+  ReduceOpts,
   PiDefCtxtProps,
   StateMapperContext,
   StateMapper,
@@ -61,6 +62,7 @@ export {getLogger} from "./logger";
 export type {PiCardProps, PiCardRef} from "./types";
 export type {ErrorAction as RestErrorAction} from "./rest";
 export {RestContentType} from "./rest";
+export * from "./rest";
 
 export {
   showPage,
