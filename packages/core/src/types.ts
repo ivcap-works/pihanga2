@@ -73,8 +73,23 @@ export interface ReduceOpts<S extends ReduxState> {
     opts: {
       replyType: string;
       timeoutMs?: number;
-      matchReply?: (reply: Rep) => boolean;
-      matchError?: (reply: Rep) => reply is Err;
+      /**
+       * Optional predicate to further filter replies (e.g. by correlation-id).
+       *
+       * Note: this intentionally takes a generic ReduxAction rather than `Rep`
+       * because callers typically do runtime checks on `type` and contextual
+       * fields before narrowing.
+       */
+      matchReply?: (reply: ReduxAction) => boolean;
+
+      /**
+       * Optional type guard to treat certain replies as errors.
+       *
+       * Note: this intentionally takes a generic ReduxAction rather than `Rep`
+       * because callers typically do runtime checks on `type` and contextual
+       * fields before narrowing.
+       */
+      matchError?: (reply: ReduxAction) => reply is Err;
     },
     onReply: ReduceF<S, Rep>,
     onError?: ReduceF<S, Err>,
