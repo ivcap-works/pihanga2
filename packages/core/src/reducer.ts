@@ -1,10 +1,12 @@
 import {Action, Reducer} from "@reduxjs/toolkit";
 import {
   DispatchF,
+  DispatchPReduceTimeoutAction,
   PiReducer,
   PiReducerCancelF,
   PiRegisterOneShotReducerF,
   PiRegisterReducerF,
+  ReduceOpts,
   ReduceF,
   ReduceOnceF,
   ReduxAction,
@@ -50,6 +52,99 @@ export function createReducer(
   const delayedDispatcher = (a: any): void => {
     setTimeout(() => dispatcher(a), 0);
   };
+
+  const DISPATCH_P_REDUCE_TIMEOUT_TYPE = "pi/dispatchPReduce/timeout";
+
+  const dispatchPReduce: ReduceOpts<ReduxState>["dispatchP"] = (
+    request,
+    pOpts,
+    onReply,
+    onError,
+    onTimeout,
+  ) => {
+    const {replyType, timeoutMs = 10000, matchReply, matchError} = pOpts;
+
+    // Use a token so we can route timeout actions.
+    const token = `${Date.now()}:${Math.random()}`;
+
+    // Use `register` (not registerOneShot) so we can cancel explicitly.
+    const keyReply = `dispatchPReduce:reply:${replyType}:${token}`;
+    const keyTimeout = `dispatchPReduce:timeout:${replyType}:${token}`;
+
+    let settled = false;
+
+    let cancelReply: PiReducerCancelF = () => {};
+    let cancelTimeout: PiReducerCancelF = () => {};
+    let timer: ReturnType<typeof setTimeout> | undefined;
+
+    const cleanup = () => {
+      cancelReply();
+      cancelTimeout();
+      if (timer) {
+        clearTimeout(timer);
+      }
+    };
+
+    // Reply handler: decides whether to call onReply or onError.
+    cancelReply = registerReducer(
+      replyType,
+      (s2: any, a2: any, d2: any, o2: any) => {
+        if (settled) return;
+        if (matchReply && !matchReply(a2)) return;
+        settled = true;
+        cleanup();
+
+        // If matchError is provided and the action matches, treat as error.
+        if (matchError && matchError(a2)) {
+          if (onError) {
+            onError(s2, a2, d2, o2);
+          } else {
+            // Fall back to onReply if no onError was provided.
+            onReply(s2, a2, d2, o2);
+          }
+          return;
+        }
+        onReply(s2, a2, d2, o2);
+      },
+      0,
+      keyReply,
+    );
+
+    // Timeout handler: triggered by a dispatched internal timeout action.
+    if (onTimeout) {
+      cancelTimeout = registerReducer(
+        DISPATCH_P_REDUCE_TIMEOUT_TYPE,
+        (s2: any, a2: any, d2: any, o2: any) => {
+          if (settled) return;
+          if (!a2 || a2.token !== token) return;
+          settled = true;
+          cleanup();
+          onTimeout(s2, a2, d2, o2);
+        },
+        0,
+        keyTimeout,
+      );
+    }
+
+    timer = setTimeout(() => {
+      if (settled) return;
+      if (!onTimeout) {
+        // no timeout handler requested
+        cleanup();
+        return;
+      }
+      const timeoutAction: DispatchPReduceTimeoutAction = {
+        type: DISPATCH_P_REDUCE_TIMEOUT_TYPE,
+        cause: "timeout",
+        token,
+        replyType,
+      };
+      delayedDispatcher(timeoutAction);
+    }, timeoutMs);
+
+    // Must dispatch after the current reducer tick.
+    delayedDispatcher(request);
+  };
   const reducer = (
     state: ReduxState | undefined,
     action: Action,
@@ -70,16 +165,20 @@ export function createReducer(
     }
 
     const nextState = produce<ReduxState, ReduxState>(s, (draft) => {
+      const opts: ReduceOpts<ReduxState> = {
+        rawState: s,
+        dispatchP: dispatchPReduce,
+      };
       if (!draft.pihanga) {
         draft.pihanga = {};
       }
       draft.pihanga.reducers = [];
       if (ra) {
-        const rout = _reduce(ra, draft, action, delayedDispatcher);
+        const rout = _reduce(ra, draft, action, delayedDispatcher, opts);
         mappings[action.type] = rout;
       }
       if (rany) {
-        const rout2 = _reduce(rany, draft, action, delayedDispatcher);
+        const rout2 = _reduce(rany, draft, action, delayedDispatcher, opts);
         mappings["*"] = rout2;
       }
       return;
@@ -110,7 +209,7 @@ export function createReducer(
     A extends ReduxAction,
   >(
     eventType: string,
-    mapper: (state: S, action: A, dispatch: DispatchF) => boolean,
+    mapper: ReduceOnceF<S, A>,
     priority: number = 0,
     key: string | undefined = undefined,
   ): PiReducerCancelF => {
@@ -176,6 +275,7 @@ function _reduce(
   draft: ReduxState,
   action: Action,
   delayedDispatcher: (a: any) => void,
+  opts: ReduceOpts<ReduxState>,
 ): ReducerDef<ReduxState, Action<any>>[] {
   const rout: ReducerDef<ReduxState, Action<any>>[] = [];
   ra.forEach((m) => {
@@ -185,11 +285,11 @@ function _reduce(
       // }
       if (m.mapperMulti) {
         draft.pihanga?.reducers?.push(m.definedIn || m.key || "unknown");
-        m.mapperMulti(draft, action, delayedDispatcher);
+        m.mapperMulti(draft, action, delayedDispatcher, opts);
         rout.push(m);
       } else if (m.mapperOnce) {
         draft.pihanga?.reducers?.push(m.definedIn || m.key || "unknown");
-        const flag = m.mapperOnce(draft, action, delayedDispatcher);
+        const flag = m.mapperOnce(draft, action, delayedDispatcher, opts);
         if (!flag) {
           rout.push(m);
         }

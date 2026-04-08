@@ -27,19 +27,75 @@ export type PiRegisterComponent = {
   // defaults?: { [key: string]: any }
 };
 
+export type DispatchPReduceTimeoutAction = ReduxAction & {
+  cause: "timeout";
+  /** Correlation token to route to the correct handler */
+  token: string;
+  /** The awaited reply action type */
+  replyType: string;
+};
+
 export type ReduceF<S extends ReduxState, A extends ReduxAction> = (
   state: S,
   action: A,
-  dispatch: DispatchF
+  dispatch: DispatchF,
+  opts?: ReduceOpts<S>,
 ) => void; // S
 
 export type ReduceOnceF<S extends ReduxState, A extends ReduxAction> = (
   state: S,
   action: A,
-  dispatch: DispatchF
+  dispatch: DispatchF,
+  opts?: ReduceOpts<S>,
 ) => boolean; // [S, boolean]
 
 export type DispatchF = <T extends ReduxAction>(a: T) => void;
+
+/**
+ * Options passed to reducer mappers.
+ */
+export interface ReduceOpts<S extends ReduxState> {
+  /**
+   * The current redux state **before** immer's draft wrapping.
+   */
+  rawState: Readonly<S>;
+
+  /**
+   * Dispatch a request action (after the current reducer has finished) and then
+   * handle the next matching reply.
+   */
+  dispatchP: <
+    Req extends ReduxAction,
+    Rep extends ReduxAction,
+    Err extends Rep = never,
+  >(
+    request: Req,
+    opts: {
+      replyType: string;
+      timeoutMs?: number;
+      matchReply?: (reply: Rep) => boolean;
+      matchError?: (reply: Rep) => reply is Err;
+    },
+    onReply: (
+      state: S,
+      action: Rep,
+      dispatch: DispatchF,
+      opts?: ReduceOpts<S>,
+    ) => void,
+    onError?: (
+      state: S,
+      action: Err,
+      dispatch: DispatchF,
+      opts?: ReduceOpts<S>,
+    ) => void,
+    onTimeout?: (
+      state: S,
+      action: DispatchPReduceTimeoutAction,
+      dispatch: DispatchF,
+      opts?: ReduceOpts<S>,
+    ) => void,
+  ) => void;
+}
 
 export interface PiReducer {
   register: PiRegisterReducerF;
@@ -55,18 +111,18 @@ export type PiRegisterReducerF = <S extends ReduxState, A extends ReduxAction>(
   mapper: ReduceF<S, A>, // (state: S, action: A, dispatch: DispatchF) => S,
   priority?: number,
   key?: string,
-  targetMapper?: ReduceF<S, A>
+  targetMapper?: ReduceF<S, A>,
 ) => PiReducerCancelF;
 
 export type PiReducerCancelF = () => void;
 
 export type PiRegisterOneShotReducerF = <
   S extends ReduxState,
-  A extends ReduxAction
+  A extends ReduxAction,
 >(
   eventType: string,
   mapper: ReduceOnceF<S, A>,
-  priority?: number
+  priority?: number,
 ) => void;
 
 // CARDS
@@ -105,7 +161,7 @@ export type PiCardRef = string | PiCardDef;
 export type RefF = any;
 export type StateMapper<T, S extends ReduxState, C = PiDefCtxtProps> = (
   state: S,
-  context: StateMapperContext<C>
+  context: StateMapperContext<C>,
 ) => T;
 
 export type StateMapperContext<C> = {
@@ -119,7 +175,7 @@ export type PiMapProps<
   CType,
   S extends ReduxState,
   EType = {},
-  C = PiDefCtxtProps
+  C = PiDefCtxtProps,
 > = {
   [Property in keyof CType]:
     | CType[Property]
@@ -134,7 +190,7 @@ export type EventHandler<T, S extends ReduxState> = {
 export type EventMapper<T, C = PiDefCtxtProps> = {
   [Key in keyof T as `${Key & string}Mapper`]?: (
     ev: T[Key],
-    ctxt: C
+    ctxt: C,
   ) => ReduxAction | null;
 };
 
@@ -160,5 +216,5 @@ export type RegisterCardF = (name: string, parameters: PiCardDef) => PiCardRef;
 export type MetaCardMapperF = (
   name: string,
   props: any,
-  registerCard: RegisterCardF
+  registerCard: RegisterCardF,
 ) => PiCardDef;
