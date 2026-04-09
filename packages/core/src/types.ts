@@ -14,6 +14,16 @@ export type PathQuery = {[k: string]: string | number | boolean};
 
 export type ReduxAction = {
   type: string;
+
+  /** Optional correlation id. Used by `dispatchPipe` default reply matching. */
+  _id?: string;
+};
+
+/**
+ * A reply action correlated to an earlier request action via `_replyTo`.
+ */
+export type ReplyAction = ReduxAction & {
+  _replyTo: string;
 };
 
 export type CardAction = ReduxAction & {
@@ -39,17 +49,22 @@ export type ReduceF<S extends ReduxState, A extends ReduxAction> = (
   state: S,
   action: A,
   dispatch: DispatchF,
-  opts?: ReduceOpts<S>,
+  opts: ReduceOpts<S>,
 ) => void; // S
 
 export type ReduceOnceF<S extends ReduxState, A extends ReduxAction> = (
   state: S,
   action: A,
   dispatch: DispatchF,
-  opts?: ReduceOpts<S>,
+  opts: ReduceOpts<S>,
 ) => boolean; // [S, boolean]
 
-export type DispatchF = <T extends ReduxAction>(a: T) => void;
+/**
+ * Dispatch an action.
+ *
+ * Ensures `a._id` exists (generating one if needed) and returns it.
+ */
+export type DispatchF = <T extends ReduxAction>(a: T) => string;
 
 /**
  * Options passed to reducer mappers.
@@ -66,13 +81,29 @@ export interface ReduceOpts<S extends ReduxState> {
    */
   dispatchPipe: <
     Req extends ReduxAction,
-    Rep extends ReduxAction,
-    Err extends Rep = never,
+    Rep extends ReplyAction,
+    Err extends ReplyAction = never,
   >(
     request: Req,
     opts: {
-      replyType: string;
+      /**
+       * The awaited reply action type.
+       *
+       * If omitted, dispatchPipe will listen on "*" and rely on `matchReply` to
+       * select the intended reply.
+       */
+      replyType?: string;
+
+      /**
+       * Optional error reply action type.
+       *
+       * If provided and `matchError` is omitted, dispatchPipe will generate a
+       * default matchError which correlates `_replyTo` with `request._id`.
+       */
+      errorType?: string;
+
       timeoutMs?: number;
+
       /**
        * Optional predicate to further filter replies (e.g. by correlation-id).
        *
@@ -80,21 +111,21 @@ export interface ReduceOpts<S extends ReduxState> {
        * because callers typically do runtime checks on `type` and contextual
        * fields before narrowing.
        */
-      matchReply?: (reply: ReduxAction) => boolean;
+      matchReply?: (reply: ReplyAction) => boolean;
 
       /**
-       * Optional type guard to treat certain replies as errors.
+       * Optional predicate to treat certain replies as errors.
        *
-       * Note: this intentionally takes a generic ReduxAction rather than `Rep`
+       * Note: this intentionally takes a generic ReduxAction rather than `Err`
        * because callers typically do runtime checks on `type` and contextual
-       * fields before narrowing.
+       * fields.
        */
-      matchError?: (reply: ReduxAction) => reply is Err;
+      matchError?: (reply: ReplyAction) => boolean;
     },
     onReply: ReduceF<S, Rep>,
     onError?: ReduceF<S, Err>,
     onTimeout?: ReduceF<S, DispatchPipeTimeoutAction>,
-  ) => void;
+  ) => string;
 }
 
 export interface PiReducer {

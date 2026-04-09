@@ -18,6 +18,7 @@ import StackTrace from "stacktrace-js";
 import {getLogger} from "./logger";
 import {Dispatch} from "react";
 import {currentRoute} from "./router";
+import {uuidv7} from "./uuid";
 
 const logger = getLogger("reducer");
 
@@ -49,8 +50,17 @@ export function createReducer(
     },
   ];
 
-  const delayedDispatcher = (a: any): void => {
+  const ensureId = <T extends ReduxAction>(a: T): string => {
+    if (!a._id) {
+      a._id = uuidv7();
+    }
+    return a._id;
+  };
+
+  const delayedDispatcher: DispatchF = (a: any): string => {
+    const id = ensureId(a);
     setTimeout(() => dispatcher(a), 0);
+    return id;
   };
 
   const DISPATCH_PIPE_REDUCE_TIMEOUT_TYPE = "pi/dispatchPipe/timeout";
@@ -62,23 +72,70 @@ export function createReducer(
     onError,
     onTimeout,
   ) => {
-    const {replyType, timeoutMs = 10000, matchReply, matchError} = pOpts;
+    // Ensure request has a correlation id.
+    const requestId = ensureId(request as any);
+
+    const {
+      replyType,
+      errorType,
+      timeoutMs = 10000,
+      matchReply: userMatchReply,
+      matchError: userMatchError,
+    } = pOpts;
+
+    // Default matching behaviour:
+    // If the caller didn't provide a matchReply but did provide a replyType,
+    // then match on both action type and correlation fields:
+    //   reply.type === replyType && reply._replyTo === request._id
+    //
+    // This is intentionally done at runtime because action shapes are
+    // application-specific.
+    const matchReply = (() => {
+      if (userMatchReply) return userMatchReply;
+
+      if (!replyType) {
+        throw new Error(
+          "dispatchPipe: either opts.replyType or opts.matchReply must be provided",
+        );
+      }
+
+      return (reply: any) =>
+        reply?.type === replyType && reply?._replyTo === requestId;
+    })();
+
+    // Default error matching behaviour (optional):
+    // If the caller didn't provide a matchError but did provide an errorType,
+    // then match on both action type and correlation fields:
+    //   reply.type === errorType && reply._replyTo === request._id
+    //
+    // If neither errorType nor matchError are provided, no error reporting is
+    // performed.
+    const matchError = (() => {
+      if (userMatchError) return userMatchError;
+      if (!errorType) return undefined;
+
+      return (reply: any) =>
+        reply?.type === errorType && reply?._replyTo === requestId;
+    })();
 
     // Use a token so we can route timeout actions.
     const token = `${Date.now()}:${Math.random()}`;
 
     // Use `register` (not registerOneShot) so we can cancel explicitly.
-    const keyReply = `dispatchPipe:reply:${replyType}:${token}`;
-    const keyTimeout = `dispatchPipe:timeout:${replyType}:${token}`;
+    const keyReply = `dispatchPipe:reply:${replyType || "*"}:${token}`;
+    const keyError = `dispatchPipe:error:${errorType || "-"}:${token}`;
+    const keyTimeout = `dispatchPipe:timeout:${replyType || "*"}:${token}`;
 
     let settled = false;
 
     let cancelReply: PiReducerCancelF = () => {};
+    let cancelError: PiReducerCancelF = () => {};
     let cancelTimeout: PiReducerCancelF = () => {};
     let timer: ReturnType<typeof setTimeout> | undefined;
 
     const cleanup = () => {
       cancelReply();
+      cancelError();
       cancelTimeout();
       if (timer) {
         clearTimeout(timer);
@@ -86,29 +143,33 @@ export function createReducer(
     };
 
     // Reply handler: decides whether to call onReply or onError.
-    cancelReply = registerReducer(
-      replyType,
-      (s2: any, a2: any, d2: any, o2: any) => {
-        if (settled) return;
-        if (matchReply && !matchReply(a2)) return;
-        settled = true;
-        cleanup();
+    const handler = (s2: any, a2: any, d2: any, o2: any) => {
+      if (settled) return;
 
-        // If matchError is provided and the action matches, treat as error.
-        if (matchError && matchError(a2)) {
-          if (onError) {
-            onError(s2, a2, d2, o2);
-          } else {
-            // Fall back to onReply if no onError was provided.
-            onReply(s2, a2, d2, o2);
-          }
-          return;
-        }
-        onReply(s2, a2, d2, o2);
-      },
-      0,
-      keyReply,
-    );
+      // Only consider errors if an explicit onError handler was provided.
+      const isError = !!onError && matchError ? matchError(a2) : false;
+      const isReply = matchReply ? matchReply(a2) : false;
+      if (!isReply && !isError) return;
+
+      settled = true;
+      cleanup();
+
+      if (isError) {
+        // TypeScript can't infer `onError` from `isError`, so guard explicitly.
+        if (onError) onError(s2, a2, d2, o2);
+        return;
+      }
+
+      onReply(s2, a2, d2, o2);
+    };
+
+    cancelReply = registerReducer(replyType || "*", handler, 0, keyReply);
+
+    // If errorType differs from replyType, register a second handler so we can
+    // settle on errors too.
+    if (onError && errorType && replyType !== "*" && replyType !== errorType) {
+      cancelError = registerReducer(errorType, handler, 0, keyError);
+    }
 
     // Timeout handler: triggered by a dispatched internal timeout action.
     if (onTimeout) {
@@ -137,13 +198,15 @@ export function createReducer(
         type: DISPATCH_PIPE_REDUCE_TIMEOUT_TYPE,
         cause: "timeout",
         token,
-        replyType,
+        replyType: replyType || "*",
       };
       delayedDispatcher(timeoutAction);
     }, timeoutMs);
 
     // Must dispatch after the current reducer tick.
     delayedDispatcher(request);
+
+    return requestId;
   };
   const reducer = (
     state: ReduxState | undefined,
@@ -252,7 +315,11 @@ export function createReducer(
   const piReducer: PiReducer = {
     register: registerReducer,
     registerOneShot,
-    dispatch: dispatcher,
+    dispatch: (a: any): string => {
+      const id = ensureId(a);
+      dispatcher(a);
+      return id;
+    },
     dispatchFromReducer: delayedDispatcher,
   };
 
@@ -274,7 +341,7 @@ function _reduce(
   ra: ReducerDef<ReduxState, Action>[],
   draft: ReduxState,
   action: Action,
-  delayedDispatcher: (a: any) => void,
+  delayedDispatcher: DispatchF,
   opts: ReduceOpts<ReduxState>,
 ): ReducerDef<ReduxState, Action<any>>[] {
   const rout: ReducerDef<ReduxState, Action<any>>[] = [];

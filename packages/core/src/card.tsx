@@ -55,7 +55,7 @@ export function Card(props: CardProp): JSX.Element {
   if (cardName === "") {
     logger.error("card name is not of type string", props.cardName);
     return ErrorCard(
-      <div>Unknown type of cardName '{`${props.cardName}`}'</div>
+      <div>Unknown type of cardName '{`${props.cardName}`}'</div>,
     );
   }
 
@@ -72,7 +72,7 @@ export function Card(props: CardProp): JSX.Element {
 export function usePiReducer<S extends ReduxState, A extends ReduxAction>(
   eventType: string,
   mapper: ReduceF<S, A>, // (state: S, action: A, dispatch: DispatchF) => S,
-  cardName: string
+  cardName: string,
 ) {
   const store = useStore();
   let key: string;
@@ -90,7 +90,7 @@ export function usePiReducer<S extends ReduxState, A extends ReduxAction>(
 function checkForAnonymousCard(
   props: any,
   id: number,
-  dispatch: Dispatch<AnyAction>
+  dispatch: Dispatch<AnyAction>,
 ): string {
   const cardType = props.cardName?.cardType;
   if (!cardType) {
@@ -131,26 +131,30 @@ function GenericCard(
   cardName: string,
   props: CardProp,
   info: CardInfo,
-  id: number
+  id: number,
 ) {
   const cardProps = useSelector<ReduxState, CompProps>(
     (s) => getCardProps(cardName, s, props),
-    propEq
+    propEq,
   );
   const dispatch = useDispatch();
+  const store = useStore();
+  const piReducer = (store as any).piReducer as PiReducer | undefined;
+  const dispatchWithId = (a: AnyAction) =>
+    piReducer ? piReducer.dispatch(a as any) : dispatch(a);
 
   const extCardProps = appendEventHandlers(
     info,
     cardProps,
     cardName,
     props,
-    dispatch
+    dispatchWithId,
   );
   extCardProps._cls = cls_f(cardName, info.mapping.cardType);
   return React.createElement(
     info.cardType.component,
     extCardProps,
-    props.children
+    props.children,
   );
 }
 
@@ -160,7 +164,7 @@ function ErrorCard(el: JSX.Element) {
   // Note: call the EXACT same hooks as 'GenericCard'
   useSelector<ReduxState, CompProps>(
     (s) => EmptyCompProps,
-    (a, b) => false
+    (a, b) => false,
   );
   useDispatch();
   return el;
@@ -187,7 +191,7 @@ function getCardInfo(cardName: string): [CardInfo?, JSX.Element?] {
 function getCardProps(
   cardName: string,
   state: ReduxState,
-  props: CardProp
+  props: CardProp,
 ): CompProps {
   const mapping = cardMappings[cardName];
   // fetch all the usage specific props in 'rest' and pass them down
@@ -223,7 +227,7 @@ function getCardProps(
 export function cls_f(
   cardName: string,
   cardComp: string,
-  prefix: string = "pi"
+  prefix: string = "pi",
 ): (nodeName: string | string[], className?: string) => string {
   const cn = cardName.replaceAll(/[/:]/g, "_");
   const cp = cardComp.replaceAll(/[/:]/g, "_");
@@ -263,7 +267,7 @@ function appendEventHandlers(
   cardProps: CompProps,
   cardName: string,
   ctxtProps: CardProp,
-  dispatch: Dispatch<Action>
+  dispatch: (a: AnyAction) => any,
 ): CompProps {
   RegisterCardState.props(cardName, cardProps, dispatch);
   const cp: CompProps = {
@@ -312,7 +316,7 @@ type CardState = {
   props: (
     cardName: string,
     cardProps: CompProps,
-    dispatch: Dispatch<Action>
+    dispatch: (a: AnyAction) => any,
   ) => void;
   changed: (cardName: string, isUnchanged: boolean, props: CompProps) => void;
   reducer: ReduceF<ReduxState, Action>;
@@ -327,7 +331,7 @@ function createCardState(): CardState {
     reportedAt: number;
   };
   const s: {[name: string]: S} = {};
-  let dispatch: Dispatch<Action>;
+  let dispatch: (a: AnyAction) => any;
   let timer: number;
   let lastReport = 0;
 
@@ -354,7 +358,7 @@ function createCardState(): CardState {
       //logger.debug("... timer went off") // , s, dispatch)
       if (dispatch) {
         const changed = Object.values(s).filter(
-          (s) => s.changedAt > lastReport
+          (s) => s.changedAt > lastReport,
         );
         if (changed.length > 0) {
           clearTimeout(timer); // just in case
@@ -366,7 +370,7 @@ function createCardState(): CardState {
   const props = (
     cardName: string,
     cardProps: CompProps,
-    _dispatch: Dispatch<Action>
+    _dispatch: (a: AnyAction) => any,
   ) => {
     const e = getS(cardName, cardProps);
     e.cardProps = cardProps;
@@ -375,7 +379,7 @@ function createCardState(): CardState {
   const changed = (
     cardName: string,
     isUnchanged: boolean,
-    props: CompProps
+    props: CompProps,
   ) => {
     const e = getS(cardName, props);
     e.reportedAt = Date.now();

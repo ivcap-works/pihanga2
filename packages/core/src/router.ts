@@ -38,14 +38,14 @@ export const onShowPage = createOnAction<ShowPageEvent>(ACTION_TYPES.SHOW_PAGE);
 export const showPage = (
   dispatch: DispatchF,
   path: string[],
-  query?: PathQuery
+  query?: PathQuery,
 ) => {
-  dispatch(createShowPageAction(path, query));
+  return dispatch(createShowPageAction(path, query));
 };
 
 export const createShowPageAction = (
   path: string[],
-  query?: PathQuery
+  query?: PathQuery,
 ): ReduxAction & ShowPageEvent => ({
   type: ACTION_TYPES.SHOW_PAGE,
   path,
@@ -58,7 +58,7 @@ export type NavigateToPageEvent = {
   fromBrowser: boolean;
 };
 export const onNavigateToPage = createOnAction<NavigateToPageEvent>(
-  ACTION_TYPES.NAVIGATE_TO_PAGE
+  ACTION_TYPES.NAVIGATE_TO_PAGE,
 );
 
 export const ON_INIT_ACTION = "pi/start";
@@ -111,7 +111,7 @@ export function init(reducer: PiReducer, pathPrefix = ""): Route {
       return state;
     },
     DEF_REDUCER_PRIORITY,
-    "@builtin:router:NAVIGATE_TO_PAGE"
+    "@builtin:router:NAVIGATE_TO_PAGE",
   );
 
   reducer.register<ReduxState, ReduxAction & ShowPageEvent>(
@@ -132,7 +132,7 @@ export function init(reducer: PiReducer, pathPrefix = ""): Route {
       return state;
     },
     DEF_REDUCER_PRIORITY,
-    "@builtin:router:SHOW_PAGE"
+    "@builtin:router:SHOW_PAGE",
   );
 
   reducer.register(
@@ -144,7 +144,7 @@ export function init(reducer: PiReducer, pathPrefix = ""): Route {
       return state;
     },
     DEF_REDUCER_PRIORITY,
-    "@builtin:router:@@INIT"
+    "@builtin:router:@@INIT",
   );
   return f.location2route(browserHistory.location);
 }
